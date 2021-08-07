@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+      <form class="form-floating" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="col-auto">
+          <label for="name" class="col-form-label">Логин:</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" id="name" formControlName="login">
+          <div *ngIf="isInvalid('login')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <label for="version" class="col-form-label">Пароль:</label>
+        </div>
+        <div class="col-auto">
+          <input type="password" class="form-control" id="version" formControlName="password">
+          <div *ngIf="isInvalid('password')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <br>
+        <div class="row">
+          <button type="submit" class="btn btn-primary w-100" [disabled]="!form.valid">Войти</button>
+        </div>
+
+        <div *ngIf="authFall">
+          <small class="text-danger">Неверный логин или пароль</small>
+        </div>
+
+      </form>
+    </div>
+    <div class="col-2"></div>
+  </div>
+</div>

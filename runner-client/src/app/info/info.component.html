@@ -1,0 +1,76 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header bg-dark">
+      <div class="text-white text-center">Данные приложения:</div>
+    </div>
+    <ul class="list-group list-group-flush">
+
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-6">
+            <div>Проект: </div>
+          </div>
+          <div class="col-6">
+            <div class="text-end">
+              <div>{{ app.project.name }}</div>
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-6">
+            <div>Язык: </div>
+          </div>
+          <div class="col-6">
+            <div class="text-end">{{ config.language.name }} {{ config.language.version }}</div>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-6">
+            <div>Сборщик: </div>
+          </div>
+          <div class="col-6">
+            <div class="text-end">{{ config.builder.name }} {{ config.builder.version }}</div>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-6">
+            <div>Время запуска: </div>
+          </div>
+          <div class="col-6">
+            <div class="text-end">{{ app.startAt | time }}</div>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-6">
+            <div>Состояние: </div>
+          </div>
+          <div class="col-6">
+            <div class="text-end" [ngClass]="{
+              'text-success': app.isActive,
+              'text-danger': !app.isActive
+            }">{{ app.isActive ? 'Запущено': 'Прервано' }}</div>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div class="text-center">
+          <a href="#">Информация о проекте {{app.project.id}}</a>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</div>

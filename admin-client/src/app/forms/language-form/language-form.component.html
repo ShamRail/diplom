@@ -1,0 +1,25 @@
+<div class="container">
+  <form class="row justify-content-end" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="col-auto">
+      <label for="name" class="col-form-label">Имя:</label>
+    </div>
+    <div class="col-auto">
+      <input type="text" class="form-control" id="name" formControlName="name">
+      <div *ngIf="isInvalid('name')">
+        <small class="text-danger">Поле должно быть заполнено</small>
+      </div>
+    </div>
+    <div class="col-auto">
+      <label for="version" class="col-form-label">Версия:</label>
+    </div>
+    <div class="col-auto">
+      <input type="text" class="form-control" id="version" formControlName="version">
+      <div *ngIf="isInvalid('version')">
+        <small class="text-danger">Поле должно быть заполнено</small>
+      </div>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-success" type="submit" [disabled]="!form.valid">Добавить</button>
+    </div>
+  </form>
+</div>

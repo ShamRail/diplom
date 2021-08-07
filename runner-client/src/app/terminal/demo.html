@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+
+        <textarea id="txt-area" style="height: 500px; width: 500px;" cols="0" rows="0" onkeypress="sendData()">
+
+        </textarea>
+
+        <script>
+
+            var socket = new WebSocket(
+                // "ws://localhost:2375/containers/bdd5671ff23b/attach/ws?stdin=true&stdout=true&stderr=true&stream=true"
+             "ws://localhost:2375/containers/c0a367b351f1/attach/ws?stdout=true&stderr=true&stream=true"
+            );
+
+            var lastCommand = "";
+            var buffer = "";
+
+            function sendData() {
+                var key = window.event.keyCode;
+                if (key === 13) { // enter
+                    console.log("Send data " + buffer);
+                    socket.send(buffer + "\n");
+                    lastCommand = buffer;
+                    buffer = "";
+                } else if (key === 8) { // backspace
+                    console.log("Trim \n");
+                    buffer = buffer.substring(0, buffer.length - 1);
+                    console.log(buffer + "\n");
+                } else {
+                    buffer += String.fromCharCode(key);
+                }
+            }
+
+            socket.onopen = function() {
+                appendTxtArea("\rСоединение установлено. \n");
+                socket.send("\n");
+            };
+
+            socket.onclose = function(event) {
+                if (event.wasClean) {
+                    appendTxtArea('Соединение закрыто чисто\n');
+                } else {
+                    appendTxtArea('Обрыв соединения\n'); // например, "убит" процесс сервера
+                }
+                appendTxtArea('Код: ' + event.code + ' причина: ' + event.reason);
+            };
+
+            socket.onmessage = async function(event) {
+                var blob = event.data;
+                const text = await blob.text();
+                var index = text.indexOf(lastCommand);
+                var out = text.substring(index + lastCommand.length);
+                console.log(text + "\n");
+                console.log(out + "\n");
+                lastCommand = "";
+                appendTxtArea(out.trimStart());
+            };
+
+            socket.onerror = function(error) {
+                appendTxtArea("Ошибка " + error.message);
+            };
+
+            function appendTxtArea(msg) {
+                document.getElementById("txt-area").value += msg;
+            }
+
+        </script>
+    </body>
+</html>

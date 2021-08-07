@@ -1,0 +1,42 @@
+<div class="container">
+  <form class="row justify-content-end" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="col-auto">
+      <label for="name" class="col-form-label">Имя:</label>
+    </div>
+    <div class="col-auto">
+      <input type="text" class="form-control" id="name" formControlName="name">
+      <div *ngIf="isInvalid('name')">
+        <small class="text-danger">Поле должно быть заполно</small>
+      </div>
+    </div>
+    <div class="col-auto">
+      <label for="version" class="col-form-label">Версия:</label>
+    </div>
+    <div class="col-auto">
+      <input type="text" class="form-control" id="version" formControlName="version">
+      <div *ngIf="isInvalid('version')">
+        <small class="text-danger">Поле должно быть заполно</small>
+      </div>
+    </div>
+
+    <div class="col-auto">
+      <label for="language" class="col-form-label">Язык:</label>
+    </div>
+    <div class="col-auto">
+      <select id="language" class="form-select" formControlName="languages"
+              [size]="selectSize" (mouseleave)="selectSize=1" (mouseenter)="selectSize = 5"
+              multiple>
+        <option
+          *ngFor="let l of languages;" [value]="l.id">{{ l.name }} {{ l.version }}
+        </option>
+      </select>
+      <div *ngIf="isInvalid('languages')">
+        <small class="text-danger">Поле должно быть заполно</small>
+      </div>
+    </div>
+
+    <div class="col-auto">
+      <button class="btn btn-success" type="submit" [disabled]="!form.valid">Добавить</button>
+    </div>
+  </form>
+</div>

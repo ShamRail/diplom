@@ -1,0 +1,25 @@
+<div class="container">
+  <table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Название</th>
+      <th>Версия</th>
+      <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let language of findAll(); let n = index;">
+        <td>{{ n + 1 }}</td>
+        <td>{{ language.name }}</td>
+        <td>{{ language.version }}</td>
+        <td class="col-3">
+          <a class="btn btn-primary w-50"
+                  [routerLink]="['/languages/', language.id]">Редактировать</a>
+          <button class="btn btn-danger w-50" (click)="remove(language.id)">Удалить</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<app-language-form [languages]="languages"></app-language-form>

@@ -1,0 +1,7 @@
+-- drop table if exists databasechangelog;
+-- drop table if exists databasechangeloglock;
+--
+-- drop table if exists configuration;
+-- drop table if exists language_builder;
+-- drop table if exists builder;
+-- drop table if exists language;

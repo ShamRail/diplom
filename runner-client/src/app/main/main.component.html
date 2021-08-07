@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-6">
+    <app-info [app]="app" #info></app-info>
+    <br>
+    <app-panel #panel
+      (onPreview)="buffer.updateBuffer($event)"
+      (onRun)="terminal.sendMessage($event, true)"
+      (onInput)="terminal.disableTerminal()"
+      (onStop)="terminal.killApp()"
+      (onStart)="terminal.onStart()"
+      [app]="app"></app-panel>
+    <br>
+    <app-buffer #buffer></app-buffer>
+  </div>
+  <div class="col-6">
+    <app-terminal [app]="app" #terminal (onStarted)="panel.updateApp($event); info.updateApp($event)"></app-terminal>
+  </div>
+</div>

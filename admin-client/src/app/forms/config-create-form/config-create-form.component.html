@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+      <form class="form-floating" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="col-auto">
+          <label for="name" class="col-form-label">Название:</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" id="name" formControlName="name">
+          <div *ngIf="isInvalid('name')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <label for="version" class="col-form-label">Версия:</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" class="form-control" id="version" formControlName="version">
+          <div *ngIf="isInvalid('version')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <label for="language" class="col-form-label">Язык:</label>
+        </div>
+        <div class="col-auto">
+          <select id="language" class="form-select" formControlName="language">
+            <option *ngFor="let l of languages;" [value]="l.id">{{ l.name }} {{ l.version }}</option>
+          </select>
+          <div *ngIf="isInvalid('language')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <label for="builder" class="col-form-label">Сборщик:</label>
+        </div>
+        <div class="col-auto">
+          <select id="builder" class="form-select" formControlName="builder">
+            <option *ngFor="let b of builders;" [value]="b.id">{{ b.name }} {{ b.version }}</option>
+          </select>
+          <div *ngIf="isInvalid('builder')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <label for="description" class="col-form-label">Описание:</label>
+        </div>
+        <div class="col-auto">
+          <textarea class="form-control" style="height: 50px" id="description" formControlName="description"></textarea>
+          <div *ngIf="isInvalid('description')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <label for="dockerFile" class="col-form-label">Dockerfile:</label>
+        </div>
+        <div class="col-auto">
+          <textarea class="form-control" style="height: 250px" id="dockerFile" formControlName="dockerFile"></textarea>
+          <div *ngIf="isInvalid('dockerFile')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-6">
+            <button routerLink="/configs" type="button" class="btn btn-warning w-100">Назад</button>
+          </div>
+          <div class="col-6">
+            <button type="submit" class="btn btn-primary w-100" [disabled]="!form.valid">Сохранить</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <div class="col-2"></div>
+  </div>
+</div>

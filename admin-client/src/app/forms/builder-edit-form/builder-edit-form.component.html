@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Название:</label>
+          <input formControlName="name" type="text" class="form-control" id="name" [value]="builder.name">
+          <div *ngIf="isInvalid('name')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="version" class="form-label">Версия:</label>
+          <input formControlName="version" type="text" class="form-control" id="version" [value]="builder.version">
+          <div *ngIf="isInvalid('version')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="languages" class="form-label">Язык:</label>
+          <select id="languages" class="form-select" formControlName="languages" multiple>
+            <option *ngFor="let l of languages;"
+                    [value]="l.id" [selected]="contains(l.id)">
+              {{ l.name }} {{ l.version }}</option>
+          </select>
+          <div *ngIf="isInvalid('languages')">
+            <small class="text-danger">Поле должно быть заполно</small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <button routerLink="/builders" type="button" class="btn btn-warning w-100">Назад</button>
+          </div>
+          <div class="col-6">
+            <button type="submit" class="btn btn-primary w-100" [disabled]="!form.valid">Сохранить</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <div class="col-3"></div>
+  </div>
+</div>

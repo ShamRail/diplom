@@ -1,0 +1,33 @@
+language: java
+jdk:
+  - openjdk14
+
+sudo: true
+
+services:
+  - docker
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  # скачиваем зарнее образы, чтобы ускорить тесты
+  - docker pull maven
+  - docker pull gcc:4.9
+  - docker pull ubuntu
+  - docker pull mcr.microsoft.com/dotnet/sdk:3.1-focal
+
+env:
+  global:
+    - CODECOV_TOKEN="489e1d25-a30c-42d7-841c-b3204a6745ec"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+notifications:
+  email:
+    recipients:
+      - rail.shamsemukhametov@mail.ru
+    on_success: never
+    on_failure: always

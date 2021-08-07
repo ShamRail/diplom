@@ -1,0 +1,29 @@
+<div class="container">
+  <table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Название</th>
+      <th>Версия</th>
+      <th>Язык</th>
+      <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let builder of builders; let n = index;">
+      <td>{{ n + 1 }}</td>
+      <td>{{ builder.name }}</td>
+      <td>{{ builder.version }}</td>
+      <td>
+        <span *ngFor="let language of builder.languages">{{ language.name + ' ' + language.version}} </span>
+      </td>
+      <td class="col-3">
+        <a class="btn btn-primary w-50"
+           [routerLink]="['/builders/', builder.id]">Редактировать</a>
+        <button class="btn btn-danger w-50" (click)="remove(builder.id)">Удалить</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<app-builder-form (onAdd)="addBuilder($event)"></app-builder-form>

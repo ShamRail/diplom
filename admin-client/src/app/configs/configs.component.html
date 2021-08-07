@@ -1,0 +1,28 @@
+<div class="container">
+  <table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Название</th>
+      <th>Версия</th>
+      <th>Язык</th>
+      <th>Сборщик</th>
+      <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let config of configs; let n = index;">
+      <td>{{ n + 1 }}</td>
+      <td>{{ config.name }}</td>
+      <td>{{ config.version }}</td>
+      <td>{{ config.language.name }}</td>
+      <td>{{ config.builder.name }}</td>
+      <td class="col-3">
+        <a class="btn btn-success w-50"
+           [routerLink]="['/configs/', config.id]">Просмотр</a>
+        <button class="btn btn-danger w-50" (click)="remove(config.id)">Удалить</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

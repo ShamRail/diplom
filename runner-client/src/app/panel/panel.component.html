@@ -1,0 +1,154 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header bg-dark">
+      <div class="text-white text-center">Панель управления:</div>
+    </div>
+
+    <ul class="list-group list-group-flush">
+
+      <li class="list-group-item" *ngFor="let f of inFiles; let i = index;">
+        <div>
+          <form class="form"
+                [formGroup]="inForms[i]" (ngSubmit)="onClickUpload(i)">
+            <div class="row">
+              <div class="col-1">
+                <label class="col-form-label" [for]="'upload' + i">Путь:</label>
+              </div>
+              <div class="col-3">
+                <input class="form-control" [id]="'upload' + i" type="text" readonly
+                       [value]="f" formControlName="path">
+              </div>
+              <div class="col-4">
+                <input class="form-control" type="file" name="file"
+                       (change)="onFileValueChanged($event, i)" formControlName="file">
+              </div>
+              <div class="col-4">
+                <button type="submit" class="btn btn-secondary w-100"
+                        [disabled]="!app.isActive">Загрузить файл</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div>
+          <form class="form" [formGroup]="uploadAnyForm" (ngSubmit)="onClickUpload()">
+            <div class="row">
+              <div class="col-1">
+                <label class="col-form-label" for="uploadAny">Путь:</label>
+              </div>
+              <div class="col-3">
+                <input class="form-control" id="uploadAny" type="text" formControlName="path"
+                       (focusin)="disableTerminal()" [disabled]="!app.isActive">
+                <div *ngIf="isInvalid(uploadAnyForm.get('path')); else empty">
+                  <div>
+                    <small class="text-danger">Путь некорректный</small>
+                  </div>
+                </div>
+                <ng-template #empty>
+                  <div></div>
+                </ng-template>
+              </div>
+              <div class="col-4">
+                <input class="form-control" type="file" name="file"
+                       (change)="onFileValueChanged($event)" formControlName="file">
+              </div>
+              <div class="col-4">
+                <button type="submit" class="btn btn-secondary w-100"
+                        [disabled]="!app.isActive || !uploadAnyForm.valid">Загрузить файл</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+
+      <li class="list-group-item" *ngFor="let f of outFiles;">
+        <div>
+          <form class="form">
+            <div class="row">
+              <div class="col-1">
+                <label class="col-form-label" for="upload2">Путь:</label>
+              </div>
+              <div class="col-7">
+                <input class="form-control" id="upload2" type="text" readonly [value]="f">
+              </div>
+              <div class="col-4">
+                <div class="row">
+                  <div class="col-6">
+                    <button class="btn btn-warning w-100" [disabled]="!app.isActive" (click)="onClickPreview(f)">
+                      Просмотр
+                    </button>
+                  </div>
+                  <div class="col-6">
+                    <a *ngIf="app.isActive; else btnStub" [download]="getFileName(f)" class="btn btn-primary w-100"
+                       (click)="onClickDownload(f)">Скачать</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div>
+          <form class="form" [formGroup]="downLoadAny">
+            <div class="row">
+              <div class="col-1">
+                <label class="col-form-label" for="downLoadAny">Путь:</label>
+              </div>
+              <div class="col-7">
+                <input class="form-control" id="downLoadAny" type="text"
+                       (focusin)="disableTerminal()"
+                       [disabled]="!app.isActive" #inputDownloadAny formControlName="path">
+                <div *ngIf="isInvalid(downLoadAny.get('path')); else empty">
+                  <div>
+                    <small class="text-danger">Путь некорректный</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="row">
+                  <div class="col-6">
+                    <button class="btn btn-warning w-100"
+                            [disabled]="!app.isActive || !downLoadAny.valid" (click)="onClickPreview(inputDownloadAny.value, true)">
+                      Просмотр
+                    </button>
+                  </div>
+                  <div class="col-6">
+                    <a *ngIf="app.isActive && downLoadAny.valid; else btnStub" [download]="getFileName(inputDownloadAny.value)"
+                       class="btn btn-primary w-100"
+                       (click)="onClickDownload(inputDownloadAny.value, true)">Скачать</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-3">
+            <button class="btn btn-success w-100" [disabled]="app.isActive" (click)="start()">Start</button>
+          </div>
+          <div class="col-3">
+            <button class="btn btn-danger w-100" (click)="stop()" [disabled]="!app.isActive">Stop</button>
+          </div>
+          <div class="col-3">
+            <button class="btn btn-dark w-100" (click)="restart()">Restart</button>
+          </div>
+          <div class="col-3">
+            <button class="btn btn-primary w-100" [disabled]="!app.isActive" (click)="onClickRunCommand()">Run</button>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</div>
+
+<ng-template #btnStub>
+  <button class="btn btn-primary w-100" [disabled]="!app.isActive || downLoadAny.invalid">Скачать</button>
+</ng-template>
