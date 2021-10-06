@@ -1,0 +1,11 @@
+{
+    "id": 1,
+    "name": "Java project",
+    "configID": 1,
+    "archiveInnerDir": "java_docker_sample-master",
+    "buildCommand": "mvn install",
+    "inFiles": "in",
+    "outFiles": "out",
+    "runCommand": "java -jar target/program.jar",
+    "sourceCodeURL": "https://github.com/ShamRail/diplom/raw/master/builder/src/test/data/docker/apps/java-maven-project.zip"
+}
