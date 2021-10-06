@@ -1,5 +1,6 @@
 version: "3.9"
 services:
+  
   # DATABASES
   admindb:
     image: postgres
@@ -34,6 +35,18 @@ services:
     volumes:
         - ./volumes/runnerdb/data:/var/lib/postgresql/data
     restart: always
+  sitedb:
+    image: postgres
+    container_name: sitedb
+    environment:
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_USER=postgres
+        - POSTGRES_DB=sitedb
+        - PGDATA=/var/lib/postgresql/data
+    volumes:
+        - ./volumes/sitedb/data:/var/lib/postgresql/data
+    restart: always
+  
   # Backend apps
   admin-api: 
     build: ./admin
@@ -88,35 +101,47 @@ services:
         - runnerdb
     volumes: 
       - ./volumes/runner/apps:/app/apps
-  # # Frontend apps
-  # admin:
-  #   build: ./admin-client
-  #   container_name: admin
-  #   ports: 
-  #     - 4200:80
-  #   depends_on: 
-  #     - admin-api
-  #   # volumes: 
-  #   #   - ./client1.conf:/etc/nginx/nginx.conf
-  # runner: 
-  #   build:  ./runner-client
-  #   container_name: runner
-  #   depends_on: 
-  #     - runner-api
-  #   ports: 
-  #     - 4201:80
-    # volumes: 
-    #   - ./client2.conf:/etc/nginx/nginx.conf
-  # # Proxy
-  # nginx: 
-  #   image: nginx
-  #   container_name: nginx
-  #   volumes: 
-  #     - ./local.conf:/etc/nginx/nginx.conf:ro
-  #   ports: 
-  #     - 80:80
-  #   depends_on: 
-  #     - admin
-  #     - runner
-  #     - runner-api
-  #     - builder-api
+  site:
+    build: ./site
+    container_name: site
+    environment:
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://sitedb:5432/sitedb
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=password
+    ports:
+        - 8083:8083
+    depends_on:
+        - sitedb
+  
+  # Frontend apps
+  admin:
+    build: ./admin-client
+    container_name: admin
+    ports: 
+      - 4200:80
+    depends_on: 
+      - admin-api
+    volumes: 
+      - ./client.conf:/etc/nginx/nginx.conf
+  runner: 
+    build:  ./runner-client
+    container_name: runner
+    depends_on: 
+      - runner-api
+    ports: 
+      - 4201:80
+    volumes: 
+      - ./client.conf:/etc/nginx/nginx.conf
+
+  # Proxy
+  nginx: 
+    image: nginx
+    container_name: nginx
+    volumes: 
+      - ./proxy/v3.conf:/etc/nginx/nginx.conf:ro
+    ports: 
+      - 80:80
+    depends_on: 
+      - admin
+      - runner
+      - site
