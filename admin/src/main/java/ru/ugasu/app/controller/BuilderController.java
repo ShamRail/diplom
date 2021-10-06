@@ -1,7 +1,10 @@
 package ru.ugasu.app.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import ru.ugasu.app.model.Builder;
 import ru.ugasu.app.model.Language;
@@ -11,22 +14,20 @@ import ru.ugasu.app.repo.LanguageRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@RestController
+@Controller
 @RequestMapping("/builders")
 public class BuilderController {
 
-    private BuilderRepository builderRepository;
+    private final BuilderRepository builderRepository;
 
-    private LanguageRepository languageRepository;
+    private final LanguageRepository languageRepository;
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public BuilderController(BuilderRepository builderRepository,
                              LanguageRepository languageRepository,
@@ -36,23 +37,37 @@ public class BuilderController {
         this.entityManager = entityManager;
     }
 
-    @PostMapping
-    public Builder save(@RequestBody BuilderDTO builderDTO) {
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public @ResponseBody Builder save(@RequestBody BuilderDTO builderDTO, @RequestParam("file") MultipartFile file) {
         List<Language> languages = checkAndGetLanguage(builderDTO.getLanguageID());
-        return builderRepository.save(new Builder(
+        Builder builder = new Builder(
                 builderDTO.getName(), builderDTO.getVersion(), languages
-        ));
+        );
+        convertToBase64(file, builder);
+        return builderRepository.save(builder);
     }
 
-    @PutMapping("/{id}")
-    public void update(@PathVariable int id, @RequestBody BuilderDTO builderDTO) {
+    @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public void update(@PathVariable int id, @RequestBody BuilderDTO builderDTO, @RequestParam("file") MultipartFile file) {
         if (!builderRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid builder id");
         }
         List<Language> languages = checkAndGetLanguage(builderDTO.getLanguageID());
-        builderRepository.save(new Builder(
+        Builder builder = new Builder(
                 id, builderDTO.getName(), builderDTO.getVersion(), languages
-        ));
+        );
+        convertToBase64(file, builder);
+        builderRepository.save(builder);
+    }
+
+    private void convertToBase64(@RequestParam("file") MultipartFile file, Builder builder) {
+        if (file != null) {
+            try {
+                builder.setLogo(Base64.getEncoder().encodeToString(file.getBytes()));
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something went wrong during handling file content");
+            }
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -64,7 +79,7 @@ public class BuilderController {
     }
 
     @GetMapping("/{id}")
-    public Builder findById(@PathVariable int id) {
+    public @ResponseBody Builder findById(@PathVariable int id) {
         try {
             return entityManager.createQuery(
                     "SELECT b FROM Builder AS b JOIN FETCH b.languages WHERE b.id=:id", Builder.class)
@@ -75,7 +90,7 @@ public class BuilderController {
     }
 
     @GetMapping
-    public List<Builder> findAll() {
+    public @ResponseBody List<Builder> findAll() {
         return entityManager.createQuery(
                 "SELECT b FROM Builder AS b JOIN FETCH b.languages", Builder.class)
                 .getResultStream().collect(Collectors.toList());

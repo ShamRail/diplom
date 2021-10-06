@@ -2,14 +2,16 @@ create table language
 (
     id      serial primary key,
     name    text,
-    version text
+    version text,
+    logo    text
 );
 
 create table builder
 (
-    id          serial primary key,
-    name        text,
-    version     text
+    id      serial primary key,
+    name    text,
+    version text,
+    logo    text
 );
 
 create table language_builder

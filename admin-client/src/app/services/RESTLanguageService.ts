@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {environment} from '../../environments/environment';
 
@@ -8,6 +8,7 @@ export class Language {
   id: any = 0;
   name = '';
   version = '';
+  logo = '';
 
   constructor(name: string, version: string, id?: number) {
     this.id = id;
@@ -31,9 +32,21 @@ export class RESTLanguageService {
     );
   }
 
+  saveFormData(data: FormData): Observable<Language> {
+    return this.httpClient.post<Language>(
+      `${environment.api}/languages`, data
+    );
+  }
+
   update(id: number, language: Language): Observable<void> {
     return this.httpClient.put<void>(
       `${environment.api}/languages/${id}`, language
+    );
+  }
+
+  updateFormData(id: number, data: FormData): Observable<void> {
+    return this.httpClient.put<void>(
+      `${environment.api}/languages/${id}`, data
     );
   }
 

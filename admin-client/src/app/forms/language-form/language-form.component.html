@@ -1,5 +1,13 @@
 <div class="container">
   <form class="row justify-content-end" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <div class="col-auto">
+      <label for="file" class="col-form-label">Лого:</label>
+    </div>
+    <div class="col-auto">
+      <input type="file" class="form-control" id="file" formControlName="file" (change)="onFileValueChanged($event)">
+    </div>
+
     <div class="col-auto">
       <label for="name" class="col-form-label">Имя:</label>
     </div>

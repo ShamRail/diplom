@@ -2,27 +2,42 @@
   <div class="row">
     <div class="col-3"></div>
     <div class="col-6">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label for="name" class="form-label">Название:</label>
-          <input formControlName="name" type="text" class="form-control" id="name" [value]="language.name">
-          <div *ngIf="isInvalid('name')">
-            <small class="text-danger">Поле должно быть заполнено</small>
+      <form class="row" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="col-3">
+          <div class="mb-3">
+            <label for="name" class="form-label">Лого:</label>
+            <div>
+              <img style="width: 100%" [src]="safeUrl">
+            </div>
+            <input formControlName="file" type="file" class="form-control" id="file"
+                   (change)="onFileValueChanged($event)">
+            <div *ngIf="isInvalid('file')">
+              <small class="text-danger">Поле должно быть заполнено</small>
+            </div>
           </div>
         </div>
-        <div class="mb-3">
-          <label for="version" class="form-label">Версия:</label>
-          <input formControlName="version" type="text" class="form-control" id="version" [value]="language.version">
-          <div *ngIf="isInvalid('version')">
-            <small class="text-danger">Поле должно быть заполнено</small>
+        <div class="col-9">
+          <div class="mb-3">
+            <label for="name" class="form-label">Название:</label>
+            <input formControlName="name" type="text" class="form-control" id="name" [value]="language.name">
+            <div *ngIf="isInvalid('name')">
+              <small class="text-danger">Поле должно быть заполнено</small>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <button routerLink="/languages" type="button" class="btn btn-warning w-100">Назад</button>
+          <div class="mb-3">
+            <label for="version" class="form-label">Версия:</label>
+            <input formControlName="version" type="text" class="form-control" id="version" [value]="language.version">
+            <div *ngIf="isInvalid('version')">
+              <small class="text-danger">Поле должно быть заполнено</small>
+            </div>
           </div>
-          <div class="col-6">
-            <button type="submit" class="btn btn-primary w-100" [disabled]="!form.valid">Сохранить</button>
+          <div class="row">
+            <div class="col-6">
+              <button routerLink="/languages" type="button" class="btn btn-warning w-100">Назад</button>
+            </div>
+            <div class="col-6">
+              <button type="submit" class="btn btn-primary w-100" [disabled]="!form.valid">Сохранить</button>
+            </div>
           </div>
         </div>
       </form>

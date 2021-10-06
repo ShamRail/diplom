@@ -3,6 +3,7 @@
     <thead>
     <tr>
       <th>#</th>
+      <th>Лого</th>
       <th>Название</th>
       <th>Версия</th>
       <th>Действие</th>
@@ -11,6 +12,9 @@
     <tbody>
       <tr *ngFor="let language of findAll(); let n = index;">
         <td>{{ n + 1 }}</td>
+        <td>
+          <img style="width: 50px; height: 50px" [src]="logoUrls[n]" alt="invalid data">
+        </td>
         <td>{{ language.name }}</td>
         <td>{{ language.version }}</td>
         <td class="col-3">
@@ -22,4 +26,4 @@
     </tbody>
   </table>
 </div>
-<app-language-form [languages]="languages"></app-language-form>
+<app-language-form (save)="onSave($event)"></app-language-form>

@@ -1,7 +1,6 @@
 package ru.ugasu.app.model;
 
-import ru.ugasu.app.model.Versioned;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -11,6 +10,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "language")
 public class Language extends Versioned {
+
+    @Column(name = "logo")
+    private String logo;
 
     public Language() { }
 
@@ -22,4 +24,11 @@ public class Language extends Versioned {
         super(id, name, version);
     }
 
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 }

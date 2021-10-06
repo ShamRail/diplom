@@ -24,6 +24,9 @@ public class Builder extends Versioned {
     )
     private List<Language> languages;
 
+    @Column(name = "logo")
+    private String logo;
+
     public Builder() { }
 
     public Builder(String name, String version) {
@@ -46,5 +49,13 @@ public class Builder extends Versioned {
 
     public void setLanguages(List<Language> languages) {
         this.languages = languages;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }
