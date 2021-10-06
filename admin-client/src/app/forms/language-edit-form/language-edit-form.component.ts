@@ -14,6 +14,7 @@ export class LanguageEditFormComponent implements OnInit {
   language: any = {name: 'stub', version: 'stub'};
   form: FormGroup;
   safeUrl: SafeUrl = '#';
+  uploadFile: any;
 
   constructor(
     private languageCrudService: RESTLanguageService,
@@ -24,7 +25,7 @@ export class LanguageEditFormComponent implements OnInit {
     this.form = new FormGroup({
       name: new FormControl('', Validators.required),
       version: new FormControl('', Validators.required),
-      file: new FormControl(Validators.required)
+      file: new FormControl('')
     });
   }
 
@@ -37,7 +38,7 @@ export class LanguageEditFormComponent implements OnInit {
             this.form = new FormGroup({
               name: new FormControl(this.language.name, Validators.required),
               version: new FormControl(this.language.version, Validators.required),
-              file: new FormControl('', Validators.required)
+              file: new FormControl('')
             });
             this.safeUrl = this.transformUrl(this.language.logo);
             URL.revokeObjectURL(this.safeUrl.toString());
@@ -50,7 +51,7 @@ export class LanguageEditFormComponent implements OnInit {
     const formData = new FormData();
     formData.append('name', this.form.value.name);
     formData.append('version', this.form.value.version);
-    formData.append('file', this.form.value.file);
+    formData.append('file', this.uploadFile);
 
     this.languageCrudService.updateFormData(this.language.id, formData)
       .subscribe(() => {
@@ -73,9 +74,7 @@ export class LanguageEditFormComponent implements OnInit {
   onFileValueChanged(event: any): any {
     if (event.target.files.length > 0) {
       const targetFile = event.target.files[0];
-      this.form.patchValue({
-        file: targetFile
-      });
+      this.uploadFile = targetFile;
       const reader = new FileReader();
       reader.onload = () => {
         const url = reader.result as string;

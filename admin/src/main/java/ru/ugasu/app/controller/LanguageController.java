@@ -51,12 +51,14 @@ public class LanguageController {
     public ResponseEntity<?> update(@PathVariable int id,
                                  @RequestParam("name") String name,
                                  @RequestParam("version") String version,
-                                 @RequestParam("file") MultipartFile file) {
+                                 @RequestParam(value = "file", required = false) MultipartFile file) {
         var language = new Language(name, version);
-        if (!languageRepository.existsById(id)) {
+        var dbLanguage = languageRepository.findById(id);
+        if (dbLanguage.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Language with specified id not found!");
         }
         language.setId(id);
+        language.setLogo(dbLanguage.get().getLogo());
         convertToBase64(language, file);
         languageRepository.save(language);
         return ResponseEntity.ok().build();

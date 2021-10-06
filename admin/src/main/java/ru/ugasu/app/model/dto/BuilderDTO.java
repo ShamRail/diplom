@@ -1,5 +1,7 @@
 package ru.ugasu.app.model.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class BuilderDTO {
 
     private String name;
@@ -7,6 +9,20 @@ public class BuilderDTO {
     private String version;
 
     private Integer[] languageID;
+
+    public static class WithFile extends BuilderDTO {
+
+        private MultipartFile file;
+
+        public MultipartFile getFile() {
+            return file;
+        }
+
+        public void setFile(MultipartFile file) {
+            this.file = file;
+        }
+
+    }
 
     public BuilderDTO() { }
 
@@ -39,4 +55,5 @@ public class BuilderDTO {
     public void setLanguageID(Integer[] languageID) {
         this.languageID = languageID;
     }
+
 }

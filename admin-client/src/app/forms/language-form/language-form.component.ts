@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { Language, RESTLanguageService } from '../../services/RESTLanguageService';
-import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-language-form',

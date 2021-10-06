@@ -1,7 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { Language, RESTLanguageService } from '../../services/RESTLanguageService';
-import { BuilderIn, BuilderOut, RESTBuilderService } from '../../services/RESTBuilderService';
+import {Language, RESTLanguageService} from '../../services/RESTLanguageService';
+import {BuilderIn, BuilderOut, RESTBuilderService} from '../../services/RESTBuilderService';
 
 @Component({
   selector: 'app-builder-form',
@@ -13,6 +13,7 @@ export class BuilderFormComponent implements OnInit {
   form: any;
   languages: Language[] = [];
   selectSize = 1;
+  uploadFile: any;
 
   @Output() onAdd: EventEmitter<BuilderOut> = new EventEmitter<BuilderOut>();
 
@@ -24,7 +25,8 @@ export class BuilderFormComponent implements OnInit {
     this.form = new FormGroup({
       name: new FormControl('', Validators.required),
       version: new FormControl('', Validators.required),
-      languages: new FormControl('', Validators.required)
+      languages: new FormControl('', Validators.required),
+      file: new FormControl()
     });
     this.languageCrudService.findAll()
       .subscribe((langs) => {
@@ -32,10 +34,14 @@ export class BuilderFormComponent implements OnInit {
       });
   }
   onSubmit(): void {
-    const builder = new BuilderIn(
-      this.form.value.name, this.form.value.version, this.form.value.languages
-    );
-    this.builderService.save(builder)
+
+    const formData = new FormData();
+    formData.append('name', this.form.value.name);
+    formData.append('version', this.form.value.version);
+    formData.append('languageID', this.form.value.languages);
+    formData.append('file', this.uploadFile);
+
+    this.builderService.saveByFormData(formData)
       .subscribe((resp) => {
           this.form.reset();
           this.onAdd.emit(resp);
@@ -48,6 +54,12 @@ export class BuilderFormComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  onFileValueChanged(event: any): void {
+    if (event.target.files.length > 0) {
+      this.uploadFile = event.target.files[0];
+    }
   }
 
 }

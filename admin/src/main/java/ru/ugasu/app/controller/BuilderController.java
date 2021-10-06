@@ -38,24 +38,30 @@ public class BuilderController {
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public @ResponseBody Builder save(@RequestBody BuilderDTO builderDTO, @RequestParam("file") MultipartFile file) {
+    public @ResponseBody Builder save(@ModelAttribute BuilderDTO.WithFile builderDTO) {
         List<Language> languages = checkAndGetLanguage(builderDTO.getLanguageID());
         Builder builder = new Builder(
                 builderDTO.getName(), builderDTO.getVersion(), languages
         );
-        convertToBase64(file, builder);
+        convertToBase64(builderDTO.getFile(), builder);
         return builderRepository.save(builder);
     }
 
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void update(@PathVariable int id, @RequestBody BuilderDTO builderDTO, @RequestParam("file") MultipartFile file) {
-        if (!builderRepository.existsById(id)) {
+    @ResponseStatus(HttpStatus.OK)
+    public void update(@PathVariable int id,
+                       @ModelAttribute BuilderDTO builderDTO,
+                       @RequestParam(required = false) MultipartFile file
+    ) {
+        var builderDb = builderRepository.findById(id);
+        if (builderDb.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid builder id");
         }
         List<Language> languages = checkAndGetLanguage(builderDTO.getLanguageID());
         Builder builder = new Builder(
                 id, builderDTO.getName(), builderDTO.getVersion(), languages
         );
+        builder.setLogo(builderDb.get().getLogo());
         convertToBase64(file, builder);
         builderRepository.save(builder);
     }

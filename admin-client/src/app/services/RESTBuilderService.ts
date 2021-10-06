@@ -24,6 +24,7 @@ export class BuilderOut {
   name = '';
   version = '';
   languages: Language[] = [];
+  logo = '';
 
 }
 
@@ -38,12 +39,23 @@ export class RESTBuilderService {
     return this.httpClient.post<BuilderOut>(
       `${environment.api}/builders`, builder
     );
+  }
 
+  saveByFormData(builder: FormData): Observable<BuilderOut> {
+    return this.httpClient.post<BuilderOut>(
+      `${environment.api}/builders`, builder
+    );
   }
 
   update(id: number, builder: BuilderIn): Observable<void> {
     return this.httpClient.put<void>(
       `${environment.api}/builders/${id}`, builder
+    );
+  }
+
+  updateByFormData(id: number, formData: FormData): Observable<void> {
+    return this.httpClient.put<void>(
+      `${environment.api}/builders/${id}`, formData
     );
   }
 
@@ -64,5 +76,4 @@ export class RESTBuilderService {
       `${environment.api}/builders`
     );
   }
-
 }

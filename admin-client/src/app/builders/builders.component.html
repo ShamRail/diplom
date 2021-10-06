@@ -3,6 +3,7 @@
     <thead>
     <tr>
       <th>#</th>
+      <th>Лого</th>
       <th>Название</th>
       <th>Версия</th>
       <th>Язык</th>
@@ -12,6 +13,9 @@
     <tbody>
     <tr *ngFor="let builder of builders; let n = index;">
       <td>{{ n + 1 }}</td>
+      <td>
+        <img style="height: 50px; width: 50px" [src]="safeUrls[n]">
+      </td>
       <td>{{ builder.name }}</td>
       <td>{{ builder.version }}</td>
       <td>
