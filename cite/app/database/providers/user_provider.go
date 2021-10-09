@@ -10,9 +10,9 @@ import (
 
 type IUserProvider interface {
 	List(filter *models.UserFilter) []models.User
-	Add(userList []models.User)
-	Delete(userDelete *models.UserDelete)
-	Update()
+	Add(userList []models.User) error
+	Delete(userDelete *models.UserDelete) error
+	Update(user models.User) error
 }
 
 type UserProvider struct {
@@ -46,11 +46,12 @@ func (u *UserProvider) List(filter *models.UserFilter) []models.User {
 	return users
 }
 
-func (u *UserProvider) Add(userList []models.User) {
-	u.DataBase.Db.NamedExec(`INSERT INTO users (id, name, password) VALUES (:id, :name, :password)`, userList)
+func (u *UserProvider) Add(userList []models.User) error {
+	var _, err = u.DataBase.Db.NamedExec(`INSERT INTO users (id, name, password) VALUES (:id, :name, :password)`, userList)
+	return err
 }
 
-func (u *UserProvider) Delete(userDelete *models.UserDelete) {
+func (u *UserProvider) Delete(userDelete *models.UserDelete) error {
 	var deleteString = "DELETE FROM users"
 	if userDelete != nil {
 		deleteString += " WHERE ("
@@ -72,10 +73,12 @@ func (u *UserProvider) Delete(userDelete *models.UserDelete) {
 		}
 		deleteString = deleteString[:len(deleteString)-4] + ")"
 	}
-	u.DataBase.Db.Exec(deleteString)
+	var _, err = u.DataBase.Db.Exec(deleteString)
+	return err
 }
 
-func (u *UserProvider) Update(user models.User) {
+func (u *UserProvider) Update(user models.User) error {
 	var updateString = `UPDATE users SET name=$1, password=$2 WHERE id=$3`
-	u.DataBase.Db.Exec(updateString, user.Name, user.Password, user.Id)
+	var _, err = u.DataBase.Db.Exec(updateString, user.Name, user.Password, user.Id)
+	return err
 }
