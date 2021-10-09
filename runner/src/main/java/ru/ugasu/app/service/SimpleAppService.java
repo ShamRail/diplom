@@ -51,6 +51,8 @@ public abstract class SimpleAppService implements AppService {
     @Autowired
     private DockerClient dockerClient;
 
+    private static final int CONTAINER_WEBSOCKET_PORT = 80;
+
     private final Map<Integer, AppLogger> loggers = new ConcurrentHashMap<>();
 
     @Autowired
@@ -119,7 +121,7 @@ public abstract class SimpleAppService implements AppService {
             String containerName = "app" + System.currentTimeMillis();
             String containerId = dockerClient.createContainerCmd(project.getImageID())
                     .withTty(true).withStdinOpen(true)
-                    .withExposedPorts(ExposedPort.tcp(80))
+                    .withExposedPorts(ExposedPort.tcp(CONTAINER_WEBSOCKET_PORT))
                     .withName(containerName)
                     .exec().getId();
             dockerClient.startContainerCmd(containerId).exec();
