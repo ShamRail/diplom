@@ -1,7 +1,7 @@
 package database_tests
 
 import (
-	"cite_app/database"
+	"site_app/database"
 	"testing"
 )
 

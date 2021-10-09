@@ -1,8 +1,8 @@
 package main
 
 import (
-	"cite_app/injection"
 	"github.com/gorilla/mux"
+	"site_app/injection"
 )
 
 func addRoutes(app *injection.Injection) *mux.Router {

@@ -1,10 +1,10 @@
 package providers
 
 import (
-	"cite_app/database"
-	"cite_app/database/models"
-	"cite_app/halpers"
 	"fmt"
+	"site_app/database"
+	"site_app/database/models"
+	"site_app/halpers"
 	"strings"
 )
 
@@ -60,16 +60,6 @@ func (u *UserProvider) Delete(userDelete *models.UserDelete) error {
 			strs = halpers.UuidsToStrings(userDelete.Ids)
 			halpers.UseCommas(strs)
 			deleteString += fmt.Sprintf(" id in (%s) and", strings.Join(strs, ", "))
-		}
-		if userDelete.Names != nil {
-			strs = userDelete.Names
-			halpers.UseCommas(strs)
-			deleteString += fmt.Sprintf(" name in (%s) and", strings.Join(strs, ", "))
-		}
-		if userDelete.Passwords != nil {
-			strs = userDelete.Passwords
-			halpers.UseCommas(strs)
-			deleteString += fmt.Sprintf(" password in (%s) and", strings.Join(strs, ", "))
 		}
 		deleteString = deleteString[:len(deleteString)-4] + ")"
 	}
