@@ -1,8 +1,8 @@
 version: "3.9"
 services:
-  cite_db:
+  site_db:
     volumes:
-      - ./cite/app/database/migrations/.:/docker-entrypoint-initdb.d/.
+      - ./site/app/database/migrations/.:/docker-entrypoint-initdb.d/.
     image: postgres:alpine
     restart: always
     environment:
@@ -11,7 +11,21 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
-  
+
+  site_app:
+    build:
+      context: /site/app
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=site_db
+    depends_on:
+      - site_db
+    ports:
+      - "80:80"
+
 #  # DATABASES
 #  admindb:
 #    image: postgres

@@ -1,4 +1,4 @@
-module cite_app
+module site_app
 
 go 1.17
 

@@ -1,7 +1,7 @@
 package injection
 
 import (
-	"cite_app/database/providers"
+	"site_app/database/providers"
 )
 
 type Injection struct {

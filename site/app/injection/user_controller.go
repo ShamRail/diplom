@@ -1,10 +1,9 @@
 package injection
 
 import (
-	"cite_app/database/models"
 	"encoding/json"
-	uuid "github.com/satori/go.uuid"
 	"net/http"
+	"site_app/database/models"
 )
 
 func (app *Injection) AddUser(writer http.ResponseWriter, request *http.Request) {
@@ -12,13 +11,13 @@ func (app *Injection) AddUser(writer http.ResponseWriter, request *http.Request)
 	var user models.User
 	var err = json.NewDecoder(request.Body).Decode(&user)
 	if err != nil {
-		http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		writer.WriteHeader(500)
 	} else {
 		err = app.UserProvider.Add([]models.User{
 			user,
 		})
 		if err != nil {
-			http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			writer.WriteHeader(500)
 		} else {
 			writer.WriteHeader(200)
 		}
@@ -30,11 +29,11 @@ func (app *Injection) UpdateUser(writer http.ResponseWriter, request *http.Reque
 	var user models.User
 	var err = json.NewDecoder(request.Body).Decode(&user)
 	if err != nil {
-		http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		writer.WriteHeader(500)
 	} else {
 		err = app.UserProvider.Update(user)
 		if err != nil {
-			http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			writer.WriteHeader(500)
 		} else {
 			writer.WriteHeader(200)
 		}
@@ -43,16 +42,14 @@ func (app *Injection) UpdateUser(writer http.ResponseWriter, request *http.Reque
 
 func (app *Injection) DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var userId uuid.UUID
-	var err = json.NewDecoder(request.Body).Decode(&userId)
+	var userDelete models.UserDelete
+	var err = json.NewDecoder(request.Body).Decode(&userDelete)
 	if err != nil {
-		http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		writer.WriteHeader(500)
 	} else {
-		err = app.UserProvider.Delete(&models.UserDelete{
-			Ids: []uuid.UUID{userId},
-		})
+		err = app.UserProvider.Delete(&userDelete)
 		if err != nil {
-			http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			writer.WriteHeader(500)
 		} else {
 			writer.WriteHeader(200)
 		}

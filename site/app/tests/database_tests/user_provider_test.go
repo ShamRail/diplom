@@ -1,10 +1,10 @@
 package database_tests
 
 import (
-	"cite_app/database/models"
-	"cite_app/database/providers"
 	"github.com/satori/go.uuid"
 	"log"
+	"site_app/database/models"
+	"site_app/database/providers"
 	"testing"
 )
 
@@ -87,9 +87,7 @@ func TestCanUpdateUser(t *testing.T) {
 
 func TestCanDeleteUser(t *testing.T) {
 	var deleteUser = models.UserDelete{
-		Ids:       uuidList,
-		Names:     nil,
-		Passwords: nil,
+		Ids: uuidList,
 	}
 	userProvider.Delete(&deleteUser)
 }
