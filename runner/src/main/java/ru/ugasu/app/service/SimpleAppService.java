@@ -1,6 +1,7 @@
 package ru.ugasu.app.service;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.ExposedPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +57,12 @@ public abstract class SimpleAppService implements AppService {
     @Qualifier("tarDecompressService")
     private DecompressService decompressService;
 
+    @Value("${DOCKER_NET}")
+    private String netWork;
+
+    @Value("${WEBSOCKET_HOST}")
+    private String websocketHost;
+
     @PostConstruct
     private void initDir() {
         try {
@@ -109,13 +116,21 @@ public abstract class SimpleAppService implements AppService {
             Files.createDirectory(Path.of(app.getAppPath()));
 
             logOut(app, "Create container and start it");
+            String containerName = "app" + System.currentTimeMillis();
             String containerId = dockerClient.createContainerCmd(project.getImageID())
                     .withTty(true).withStdinOpen(true)
+                    .withExposedPorts(ExposedPort.tcp(80))
+                    .withName(containerName)
                     .exec().getId();
             dockerClient.startContainerCmd(containerId).exec();
 
+            logOut(app, "Connect container to network");
+            dockerClient.connectToNetworkCmd()
+                    .withContainerId(containerId)
+                    .withNetworkId(netWork).exec();
+
             String message = "Environment is started";
-            app.setWsURI(String.format("/containers/%s/attach/ws?stdout=true&stderr=true&stream=true", containerId));
+            app.setWsURI(String.format("%s/ws/%s", websocketHost, containerName));
             app.setContainerID(containerId);
 
             updateInDb(app, AppStatus.STARTED, message);
