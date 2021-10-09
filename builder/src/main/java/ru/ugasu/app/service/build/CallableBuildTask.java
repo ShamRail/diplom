@@ -166,7 +166,9 @@ public class CallableBuildTask implements BuildTask, Callable<Build> {
             Optional<Path> dockerFilePath = configService.uploadDockerfile(project.getConfigurationId());
             String dockerFile = "";
             if (dockerFilePath.isEmpty()) {
-                buildLogger.append("Failed to download Dockerfile");
+                String message = "Failed to download Dockerfile";
+                buildLogger.append(message);
+                updateBuildInDB(BuildStatus.FALLEN, message);
                 return Optional.empty();
             }
             dockerFile = dockerFilePath.get().toAbsolutePath().toString();
