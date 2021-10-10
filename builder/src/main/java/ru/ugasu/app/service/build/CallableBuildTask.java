@@ -95,6 +95,7 @@ public class CallableBuildTask implements BuildTask, Callable<Build> {
         build.setBuildStatus(buildStatus);
         build.setMessage(message);
         buildRepository.save(build);
+        projectRepository.updateStatusById(build.getProject().getId(), buildStatus);
     }
 
     private Optional<Path> uploadProject() {

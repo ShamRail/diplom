@@ -25,6 +25,7 @@ public class Build extends TimeRanged {
      */
     @OneToOne
     @JoinColumn(name = "project_id")
+    @JsonIgnore
     private Project project;
 
     /**

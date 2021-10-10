@@ -13,6 +13,7 @@ import ru.ugasu.app.service.build.logger.BuildLogger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 @Service
+@Transactional
 public abstract class ThreadPoolBuildService implements BuildService {
 
     @Value("${app.projects.build.logpath}")
@@ -56,6 +58,8 @@ public abstract class ThreadPoolBuildService implements BuildService {
         String buildPath = Path.of(logPath, UUID.randomUUID().toString()).toString() + ".txt";
         Build build = new Build(project, "Start build project", buildPath, BuildStatus.STARTED);
         build.setStartAt(LocalDateTime.now());
+
+        buildRepository.deleteByProject(project);
         buildRepository.save(build);
 
         projectRepository.updateStatusById(project.getId(), BuildStatus.STARTED);

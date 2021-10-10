@@ -8,9 +8,11 @@ import ru.ugasu.app.model.build.Build;
 import ru.ugasu.app.model.build.BuildStatus;
 import ru.ugasu.app.model.build.Project;
 import ru.ugasu.app.model.dto.ProjectDTO;
+import ru.ugasu.app.repo.BuildRepository;
 import ru.ugasu.app.repo.ProjectRepository;
 import ru.ugasu.app.service.build.BuildService;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 /**
@@ -27,7 +29,11 @@ public class BuildController {
     @Autowired
     private BuildService buildService;
 
+    @Autowired
+    private BuildRepository buildRepository;
+
     @PostMapping("/build")
+    @Transactional
     public Build buildProject(@RequestBody ProjectDTO projectDTO) {
 
         fieldValidation(projectDTO);

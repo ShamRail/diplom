@@ -19,4 +19,6 @@ public interface BuildRepository extends JpaRepository<Build, Integer> {
     // TODO протестировать
     Optional<Build> findByProject(Project project);
 
+    void deleteByProject(Project project);
+
 }

@@ -1,5 +1,7 @@
 package ru.ugasu.app.service.build.logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +13,15 @@ import java.util.List;
 
 @Component
 @Scope("prototype")
-public class FileBuildLogger implements BuildLogger {
+public class FileConsoleBuildLogger implements BuildLogger {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileConsoleBuildLogger.class.getSimpleName());
 
     private final List<String> buffer = new ArrayList<>();
 
     private final String logPath;
 
-    public FileBuildLogger(String logPath) {
+    public FileConsoleBuildLogger(String logPath) {
         this.logPath = logPath;
     }
 
@@ -30,6 +34,7 @@ public class FileBuildLogger implements BuildLogger {
     public void flush() {
         try {
             Files.write(Path.of(logPath), buffer);
+            buffer.forEach(LOGGER::info);
         } catch (IOException e) {
             e.printStackTrace();
         }
