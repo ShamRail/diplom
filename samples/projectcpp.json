@@ -1,0 +1,11 @@
+{
+    "id": 2,
+    "name": "Alina project",
+    "configID": 4,
+    "archiveInnerDir": "src",
+    "buildCommand": "g++ main2.cpp -o program",
+    "inFiles": "in",
+    "outFiles": "out",
+    "runCommand": "./program",
+    "sourceCodeURL": "https://github.com/ShamRail/diplom/raw/master/samples/cpp-demo.zip"
+}

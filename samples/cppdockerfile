@@ -1,0 +1,19 @@
+FROM mwendler/wget AS wget
+RUN wget --no-check-certificate \
+    https://github.com/joewalnes/websocketd/releases/download/v0.4.1/websocketd-0.4.1-linux_amd64.zip \
+    -O ws.zip
+
+FROM garthk/unzip AS unzip
+WORKDIR /ws
+COPY --from=wget ws.zip .
+RUN unzip ws.zip
+RUN rm ws.zip
+
+FROM frolvlad/alpine-gxx
+WORKDIR /app
+COPY --from=unzip /ws .
+COPY . .
+ARG BUILD_COMMAND
+RUN echo $BUILD_COMMAND > echo.txt
+RUN $BUILD_COMMAND > build_log.txt
+ENTRYPOINT ./websocketd --port=80 --binary=true /bin/sh -c "/bin/sh 2>&1"

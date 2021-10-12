@@ -39,6 +39,7 @@ services:
   # Backend apps
   docker-api:
     image: alpine/socat
+    container_name: docker-api
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
@@ -91,7 +92,7 @@ services:
         - DOCKER_HOST=tcp://docker-api:2375
         - DOCKER_USER=shrail
         - DOCKER_PASSWORD=3857rail
-        - DOCKET_NET=runner_net
+        - DOCKER_NET=runner_net
         - BUILDER_HOST=http://builder-api:8080/api/builder
         - WEBSOCKET_HOST=localhost
     ports:
@@ -111,6 +112,7 @@ services:
       - admin-api
     volumes: 
       - ./nginx/client.conf:/etc/nginx/nginx.conf
+ 
   runner: 
     build:  ./runner-client
     container_name: runner
@@ -126,15 +128,15 @@ services:
     image: nginx
     container_name: nginx
     volumes: 
-      - ./proxy/v3.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy/v4.conf:/etc/nginx/nginx.conf:ro
     ports: 
       - 80:80
     depends_on: 
       - admin
       - runner
-      - site
+      - builder
 
 networks:
   default:
-    external: true
+    # external: true
     name: runner_net
