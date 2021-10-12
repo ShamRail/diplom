@@ -2,6 +2,9 @@ package ru.ugasu.app.service;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.ExposedPort;
+import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.api.model.PortBinding;
+import com.github.dockerjava.api.model.Ports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -119,9 +122,15 @@ public abstract class SimpleAppService implements AppService {
 
             logOut(app, "Create container and start it");
             String containerName = "app" + System.currentTimeMillis();
+
+            ExposedPort exposedPort = ExposedPort.tcp(CONTAINER_WEBSOCKET_PORT);
+//            Ports ports = new Ports();
+//            ports.bind(exposedPort, Ports.Binding.bindPort(8090));
+
             String containerId = dockerClient.createContainerCmd(project.getImageID())
                     .withTty(true).withStdinOpen(true)
-                    .withExposedPorts(ExposedPort.tcp(CONTAINER_WEBSOCKET_PORT))
+                    .withExposedPorts(exposedPort)
+                    //.withHostConfig(HostConfig.newHostConfig().withPortBindings(ports))
                     .withName(containerName)
                     .exec().getId();
             dockerClient.startContainerCmd(containerId).exec();
@@ -132,7 +141,8 @@ public abstract class SimpleAppService implements AppService {
                     .withNetworkId(netWork).exec();
 
             String message = "Environment is started";
-            app.setWsURI(String.format("%s/ws/%s", websocketHost, containerName));
+            // app.setWsURI(websocketHost);
+            app.setWsURI(String.format("ws://%s/ws/%s", websocketHost, containerName));
             app.setContainerID(containerId);
 
             updateInDb(app, AppStatus.STARTED, message);
@@ -145,6 +155,7 @@ public abstract class SimpleAppService implements AppService {
             updateInDb(app, AppStatus.FALLEN, message);
             logOut(app, message);
         }
+        flush();
         return app;
     }
 
@@ -203,6 +214,7 @@ public abstract class SimpleAppService implements AppService {
             commandInfo.setMessage(message);
             commandInfo.setCommandStatus(CommandStatus.FALLEN);
         }
+        flush();
         return commandInfo;
     }
 
@@ -254,7 +266,7 @@ public abstract class SimpleAppService implements AppService {
             commandInfo.setMessage(message);
             commandInfo.setCommandStatus(CommandStatus.FALLEN);
         }
-
+        flush();
         return commandInfo;
     }
 
@@ -290,6 +302,7 @@ public abstract class SimpleAppService implements AppService {
             updateInDb(app, AppStatus.FALLEN, message);
             logOut(app, message);
         }
+        flush();
         return commandInfo;
     }
 
