@@ -33,7 +33,6 @@ public class BuildController {
     private BuildRepository buildRepository;
 
     @PostMapping("/build")
-    @Transactional
     public Build buildProject(@RequestBody ProjectDTO projectDTO) {
 
         fieldValidation(projectDTO);
