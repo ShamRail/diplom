@@ -35,7 +35,7 @@ export class ConfigService {
   constructor(private httpClient: HttpClient) { }
 
   findById(id: number): Observable<Config> {
-    return this.httpClient.get<Config>(`${environment.api}/configuration/${id}`);
+    return this.httpClient.get<Config>(`${environment.configApi}/configuration/${id}`);
   }
 
 }

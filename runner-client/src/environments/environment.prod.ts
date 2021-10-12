@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  api: 'http://localhost:8082/api/runner'
+  configApi: 'http://localhost/api/admin',
+  runnerApi: 'http://localhost/api/runner'
 };

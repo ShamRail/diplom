@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  api: 'http://localhost:8082/api/runner'
+  configApi: 'http://localhost:8080/api/admin',
+  runnerApi: 'http://localhost:8082/api/runner'
 };
 
 /*

@@ -13,6 +13,7 @@ import { TimePipe } from './pipes/time.pipe';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ProjectNotFoundComponent } from './errors/project-not-found/project-not-found.component';
 import { BufferComponent } from './buffer/buffer.component';
+import { NgTerminalModule } from 'ng-terminal';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { BufferComponent } from './buffer/buffer.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule, ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgTerminalModule
   ],
   providers: [],
   bootstrap: [AppComponent]

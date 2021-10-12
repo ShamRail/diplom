@@ -6,13 +6,15 @@
     <div class="card-body">
       <div class="overflow-auto" style="height: 750px;">
 
-        <div *ngFor="let line of lines;"
-             style="background-color: black; height: 25px; font-size: 20px;"
-             class="text-white"
-             (click)="activeTerminal()"
-        >
-          {{ line.join('') }}
-        </div>
+<!--        <div *ngFor="let line of lines;"-->
+<!--             style="background-color: black; height: 25px; font-size: 20px;"-->
+<!--             class="text-white"-->
+<!--             (click)="activeTerminal()"-->
+<!--        >-->
+<!--          {{ line.join('') }}-->
+<!--        </div>-->
+
+        <ng-terminal #terminal></ng-terminal>
 
       </div>
     </div>

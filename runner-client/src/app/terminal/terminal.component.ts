@@ -1,94 +1,155 @@
-import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {App, AppService} from "../services/AppService";
+import {FunctionsUsingCSI, NgTerminal} from "ng-terminal";
+import {WebsocketService} from "../services/WebsocketService";
 
-const BUFFER_LENGTH: number = 63;
+const IGNORE_KEYS = [
+  'Tab', 'Escape', 'Insert',
+  'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',
+  'PageUp', 'PageDown', 'End', 'Home',
+  'ArrowDown', 'ArrowUp'
+];
+
+const ENTER = 'Enter';
+const NUMPAD_ENTER = 'NumpadEnter';
+const BACKSPACE = 'Backspace';
+const ARROW_LEFT = 'ArrowLeft';
+const ARROW_RIGHT = 'ArrowRight';
 
 @Component({
   selector: 'app-terminal',
   templateUrl: './terminal.component.html',
   styleUrls: ['./terminal.component.css']
 })
-export class TerminalComponent implements OnInit, OnDestroy {
+export class TerminalComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  lines: string[][] = [];
-  linesCount: number = 35;
-  activeLine: number = 0;
+  // @ts-ignore
+  @ViewChild('terminal', { static: true }) terminal: NgTerminal;
 
   isActive: boolean = true;
-  socket: WebSocket | null = null;
 
   @Input() app: App = new App();
   @Output() onStarted: EventEmitter<App> = new EventEmitter<App>();
 
-  textBuffer: string[] = [];
-  lastCommand: string = '';
+  typingCommand: string = '';
+  lastLine = '';
 
-  constructor(private appService: AppService) {
-    this.initTerminal();
+  constructor(private appService: AppService,
+              private websocketService: WebsocketService) { }
+
+  ngAfterViewInit(): void {
+    this.terminal.keyEventInput.subscribe(e => {
+
+      const ev = e.domEvent;
+      if (ev.altKey || ev.ctrlKey || ev.metaKey || IGNORE_KEYS.includes(ev.code)) {
+        return;
+      }
+
+      let prefixedLine = false;
+      if (ev.code === ENTER || ev.code === NUMPAD_ENTER) {
+        if (this.typingCommand !== '') {
+          this.typingCommand += '\n';
+          this.websocketService.sendMessage(this.typingCommand);
+          this.terminal.write('\r\n');
+          this.lastLine = '';
+        } else {
+          this.terminal.write('\r\n$ ');
+          this.lastLine = '$ ';
+        }
+        this.typingCommand = '';
+      } else if (ev.code === BACKSPACE) {
+        let cursor = this.terminal.underlying.buffer.active.cursorX;
+        if (this.lastLine.startsWith('$')) {
+          prefixedLine = true;
+          cursor -= 2;
+        }
+        if (cursor > 0) {
+          if (this.typingCommand.length == cursor) {
+            this.typingCommand = this.typingCommand.slice(0, -1);
+            this.lastLine = prefixedLine ? '$ ' + this.typingCommand : this.typingCommand;
+            this.terminal.write('\b \b');
+          } else {
+            let lineCursor = cursor;
+            let left = this.typingCommand.substring(0, lineCursor - 1);
+            let right = this.typingCommand.substring(lineCursor);
+            this.typingCommand = left + right;
+
+            let buffer = '\r' + (prefixedLine ? '$ ' + this.typingCommand + ' ' : this.typingCommand + ' ');
+            this.lastLine = buffer;
+            buffer += FunctionsUsingCSI.cursorBackward(right.length + 1);
+            this.terminal.write(buffer);
+          }
+        }
+
+        // if (cursor > 2) {
+        //   if (this.typingCommand.length == (cursor - 2)) {
+        //     this.typingCommand = this.typingCommand.slice(0, -1);
+        //     this.terminal.write('\b \b');
+        //   } else {
+        //     let lineCursor = cursor - 2;
+        //     let left = this.typingCommand.substring(0, lineCursor - 1);
+        //     let right = this.typingCommand.substring(lineCursor);
+        //     this.typingCommand = left + right;
+        //     let buffer = '\r$ ' + this.typingCommand + ' ';
+        //     buffer += FunctionsUsingCSI.cursorBackward(right.length + 1);
+        //     this.terminal.write(buffer);
+        //   }
+        // }
+      } else {
+        this.terminal.write(e.key);
+        if (ev.code !== ARROW_LEFT && ev.code !== ARROW_RIGHT) {
+          this.typingCommand += e.key;
+          this.lastLine = prefixedLine ? '$ ' + this.typingCommand : this.typingCommand;
+        }
+      }
+    })
+    this.lastLine = '$ ';
+    this.terminal.write(this.lastLine);
   }
 
   ngOnInit(): void {
+    console.log(this.app);
     this.initSocket();
   }
 
-  initTerminal() {
-    this.isActive = true;
-    this.lines = [];
-    this.linesCount = 35;
-    for (let n = 1; n <= this.linesCount; n++) {
-      this.lines.push([]);
-    }
-  }
-
   initSocket(): void {
-    this.socket = new WebSocket(
-      `ws://localhost:2375/containers/${this.app.containerID.substring(0, 12)}/attach/ws?stdout=true&stderr=true&stream=true&logs=true`
-    );
-    this.socket.onopen = (ev) => {
+    this.websocketService.initSocket(this.app.wsURI);
+    this.websocketService.subscribeOnOpen().subscribe(() => {
       console.log('Сокет успешно подключен!');
-      this.socket?.send('\n');
-    }
-    this.socket.onclose = (ev) => {
+      this.websocketService.sendMessage('echo Среда успешно запущена!\n');
+    });
+    this.websocketService.subscribeOnClose().subscribe(() => {
       this.app.isActive = false;
       this.killApp();
       alert('Соединение прервано. Повторите запуск приложения.');
-    }
-    this.socket.onerror = (ev) => {
+    });
+    this.websocketService.subscribeOnError().subscribe((error) => {
       console.log('Произошла ошибка');
-      console.log(ev);
-    }
-    this.socket.onmessage = async (msg) => {
-      let text: string = await msg.data.text();
-      this.onMessage(text);
-    }
+      console.log(error);
+      // @ts-ignore
+      alert(`Произошла ошибка. ${error.message}`)
+    });
+    this.websocketService.subscribeOnMessage().subscribe((message) => {
+      if (typeof message === "string") {
+        this.onMessage(message);
+      } else {
+        console.log(`Неверный формат данных: ${message}`);
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.killApp();
-  }
-
-  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
-    if (!this.app.isActive || !this.isActive) {
-      return;
-    }
-    if (event.key.length == 1 || event.key == 'Enter' || event.key == 'Backspace') {
-      if (event.key == 'Enter') {
-        this.sendMessage(this.textBuffer.join(''));
-        this.activeLine++;
-        return;
-      }
-      if (event.key == 'Backspace') {
-        if (this.textBuffer.length > 0) {
-          this.lines[this.activeLine].pop();
-          this.textBuffer.pop();
-        }
-        return;
-      }
-      if (this.textBuffer.length < BUFFER_LENGTH) {
-        this.lines[this.activeLine].push(event.key);
-        this.textBuffer.push(event.key);
-      }
-    }
   }
 
   @HostListener('window:beforeunload', ['$event']) onClose(event: any) {
@@ -96,48 +157,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   onMessage(text: string) {
-    console.log("Получено сообщение", text.split(''));
-    let lines: string[] = text.split("\n");
-    for (let i = 0; i < lines.length - 1; i++) {
-      let trimmedOutput = text.trim();
-      if (this.lastCommand.trim() != trimmedOutput) {
-        if (trimmedOutput.length <= BUFFER_LENGTH) {
-          this.expandTerminal();
-          this.lines[this.activeLine++].push(lines[i]);
-          continue;
-        }
-        this.divideLine(trimmedOutput);
-      }
-      this.expandTerminal();
-    }
-    if (lines[lines.length - 1].length <= BUFFER_LENGTH) {
-      this.lines[this.activeLine].push(lines[lines.length - 1]);
-    } else {
-      this.divideLine(lines[lines.length - 1]);
-    }
-  }
-
-  divideLine(trimmedOutput: string) {
-    let hasPart: boolean = true;
-    let startIndex = 0;
-    let endIndex = BUFFER_LENGTH + 1;
-    do {
-      this.expandTerminal();
-      let subString = trimmedOutput.substring(startIndex, endIndex);
-      this.lines[this.activeLine++].push(subString);
-      startIndex += (BUFFER_LENGTH + 1);
-      endIndex = Math.min(endIndex + BUFFER_LENGTH, trimmedOutput.length);
-      hasPart = startIndex < trimmedOutput.length;
-    } while (hasPart);
-  }
-
-  expandTerminal() {
-    if (this.activeLine == this.lines.length) {
-      this.linesCount += 100;
-      for (let i = 0; i < 100; i++) {
-        this.lines.push([]);
-      }
-    }
+    const data = text.split('\n').join('\r\n');
+    this.lastLine = data[data.length - 1];
+    this.terminal.write(data);
   }
 
   sendMessage(msg: string, isCommand?: boolean) {
@@ -145,15 +167,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
       alert('Отправка сообщения невозможна. Приложение не запущено.');
       return;
     }
-    if (msg.toLowerCase() == 'exit') {
-      msg = 'echo exit';
-    }
-    if (isCommand) {
-      this.lines[this.activeLine++].push(msg);
-    }
-    this.socket?.send(msg + "\n");
-    this.lastCommand = msg;
-    this.textBuffer = [];
+    this.terminal.write('\r\n');
+    this.websocketService.sendMessage(msg + "\n");
   }
 
   killApp() {
@@ -168,18 +183,12 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.isActive = false;
   }
 
-  activeTerminal() {
-    this.isActive = true;
-  }
-
   onStart() {
-    this.socket?.close();
     this.appService.run(this.app.project.id)
       .subscribe(
         (next) => {
            this.app = next;
            this.app.isActive = true;
-           this.initTerminal();
            this.initSocket();
            this.onStarted.emit(this.app);
           },

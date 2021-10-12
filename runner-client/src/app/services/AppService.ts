@@ -43,14 +43,14 @@ export class AppService {
 
   run(id: number): Observable<App> {
     return this.httpClient.post<App>(
-      `${environment.api}/run`, {}, {
+      `${environment.runnerApi}/run`, {}, {
         params: new HttpParams().append('projectID', id)
       }
     );
   }
 
   uploadFile(idApp: number, data: FormData): Observable<CommandInfo> {
-    return this.httpClient.post<CommandInfo>(`${environment.api}/uploadFile`, data, {
+    return this.httpClient.post<CommandInfo>(`${environment.runnerApi}/uploadFile`, data, {
       params: new HttpParams().append('appID', idApp)
     });
   }
@@ -58,13 +58,13 @@ export class AppService {
   downloadFile(appID: number, filePath: string): Observable<any> {
     //return `${environment.api}/downloadFile?appID=${appID}&filePath=${filePath}`;
     return this.httpClient.get(
-      `${environment.api}/downloadFile?appID=${appID}&filePath=${filePath}`,
+      `${environment.runnerApi}/downloadFile?appID=${appID}&filePath=${filePath}`,
       { responseType: 'blob'}
     );
   }
 
   kill(id: number): Observable<any> {
-    return this.httpClient.get<any>(`${environment.api}/kill`, {
+    return this.httpClient.get<any>(`${environment.runnerApi}/kill`, {
       params: new HttpParams().append('id', id)
     })
   }
