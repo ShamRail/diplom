@@ -1,19 +1,19 @@
-package injection
+package app_controllers
 
 import (
 	"encoding/json"
 	"net/http"
-	"site_app/database/models"
+	. "site_app/database/models/user_models"
 )
 
-func (app *Injection) AddUser(writer http.ResponseWriter, request *http.Request) {
+func (app *App) AddUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var user models.User
+	var user User
 	var err = json.NewDecoder(request.Body).Decode(&user)
 	if err != nil {
 		writer.WriteHeader(500)
 	} else {
-		err = app.UserProvider.Add([]models.User{
+		err = app.UserProvider.Add([]User{
 			user,
 		})
 		if err != nil {
@@ -24,9 +24,9 @@ func (app *Injection) AddUser(writer http.ResponseWriter, request *http.Request)
 	}
 }
 
-func (app *Injection) UpdateUser(writer http.ResponseWriter, request *http.Request) {
+func (app *App) UpdateUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var user models.User
+	var user User
 	var err = json.NewDecoder(request.Body).Decode(&user)
 	if err != nil {
 		writer.WriteHeader(500)
@@ -40,9 +40,9 @@ func (app *Injection) UpdateUser(writer http.ResponseWriter, request *http.Reque
 	}
 }
 
-func (app *Injection) DeleteUser(writer http.ResponseWriter, request *http.Request) {
+func (app *App) DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var userDelete models.UserDelete
+	var userDelete UserDelete
 	var err = json.NewDecoder(request.Body).Decode(&userDelete)
 	if err != nil {
 		writer.WriteHeader(500)
@@ -56,11 +56,11 @@ func (app *Injection) DeleteUser(writer http.ResponseWriter, request *http.Reque
 	}
 }
 
-func (app *Injection) GetUsers(writer http.ResponseWriter, request *http.Request) {
+func (app *App) GetUsers(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var userFilter *models.UserFilter
+	var userFilter *UserFilter
 	var err = json.NewDecoder(request.Body).Decode(&userFilter)
-	var users []models.User
+	var users []User
 	if err != nil {
 		users = app.UserProvider.List(nil)
 	} else {

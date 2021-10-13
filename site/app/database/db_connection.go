@@ -7,11 +7,6 @@ import (
 	"log"
 )
 
-type IDataBase interface {
-	Connect(host, port, user, password, dbName, sslmode string)
-	IsConnected() bool
-}
-
 type DataBase struct {
 	Db *sqlx.DB
 }

@@ -24,7 +24,7 @@ services:
     depends_on:
       - site_db
     ports:
-      - "80:80"
+      - "8080:8080"
 
 #  # DATABASES
 #  admindb:
