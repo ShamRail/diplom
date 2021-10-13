@@ -1,0 +1,43 @@
+<!doctype HTMl>
+<html>
+<head>
+    <title>App</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+</head>
+<header id="header"></header>
+<body>
+    <ul id="users"></ul>
+    <button id="btn">Show Users</button>
+</body>
+<footer id="footer"></footer>
+</html>
+<script>
+    $(function () {
+        $("#header").load("./header.html");
+    });
+
+    $(function () {
+        $("#footer").load("./footer.html");
+    });
+
+    $(document).ready(async function () {
+        console.log("Doc ready")
+        $("#btn").click(function () {
+            console.log("Btn press")
+            GetUsers()
+        })
+    })
+
+    async function GetUsers() {
+        let url = "http://localhost:8080/users"
+        let response = await fetch(url);
+
+        if (response.ok) {
+            let json = await response.json();
+            let list = $("#users")
+            json.map(t => list.append(`<li>${t.Name}</li>`))
+        } else {
+            alert("Ошибка HTTP: " + response.status);
+        }
+    }
+</script>

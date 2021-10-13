@@ -1,13 +1,12 @@
 package main
 
 import (
-	"github.com/gorilla/handlers"
 	"log"
 	"net/http"
 	"os"
+	"site_app/app_controllers"
 	"site_app/database"
 	"site_app/database/providers"
-	"site_app/injection"
 )
 
 func main() {
@@ -39,15 +38,11 @@ func main() {
 	var us = providers.UserProvider{
 		DataBase: db,
 	}
-	var app = injection.Injection{
+	var app = app_controllers.App{
 		UserProvider: &us,
 	}
 
 	var router = addRoutes(&app)
 
-	log.Fatal(http.ListenAndServe(":80",
-		handlers.CORS(
-			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
-			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
-			handlers.AllowedOrigins([]string{"*"}))(router)))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
