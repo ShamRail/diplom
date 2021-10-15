@@ -128,7 +128,6 @@ export class PanelComponent implements OnInit {
     this.appService.downloadFile(this.app.id, file)
       .subscribe(
         data => {
-          console.log('Отдаю данные буфферу');
           this.onPreview.emit({file: file, blob: data});
         },
         (error: HttpErrorResponse) => {
@@ -157,7 +156,6 @@ export class PanelComponent implements OnInit {
   }
 
   disableTerminal() {
-    console.log('Disable terminal');
     this.onInput.emit();
   }
 

@@ -28,14 +28,11 @@ export class BufferComponent implements OnInit {
   }
 
   updateBuffer(input: BufferDTO) {
-    console.log('Данные принял');
     this.hasData = true;
     if (this.isImage(input.file)) {
-      console.log('Данные это изображение');
       this.hasImageData = true;
       this.setImage(input.blob);
     } else {
-      console.log('Данные это текст');
       this.hasImageData = false;
       this.setText(input.blob);
     }
@@ -48,19 +45,15 @@ export class BufferComponent implements OnInit {
   private setImage(data: Blob) {
     let urlString = URL.createObjectURL(data);
     this.imgURLString = this.sanitizer.bypassSecurityTrustUrl(urlString);
-    console.log(urlString);
   }
 
   private setText(data: Blob) {
     if (this.imgURLString != '#') {
       URL.revokeObjectURL(this.imgURLString.toString());
     }
-    console.log('Читаю данные');
     let reader = new FileReader();
     reader.readAsText(data);
     reader.onload = () => {
-      console.log('Данные прочитал');
-      console.log(reader.result);
       this.textData = reader.result;
     }
   }

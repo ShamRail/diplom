@@ -42,79 +42,60 @@ export class TerminalComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output() onStarted: EventEmitter<App> = new EventEmitter<App>();
 
   typingCommand: string = '';
-  lastLine = '';
+  prefix = '';
 
   constructor(private appService: AppService,
               private websocketService: WebsocketService) { }
 
   ngAfterViewInit(): void {
     this.terminal.keyEventInput.subscribe(e => {
-
       const ev = e.domEvent;
       if (ev.altKey || ev.ctrlKey || ev.metaKey || IGNORE_KEYS.includes(ev.code)) {
         return;
       }
-
-      let prefixedLine = false;
+      let cursor = this.terminal.underlying.buffer.active.cursorX;
       if (ev.code === ENTER || ev.code === NUMPAD_ENTER) {
         if (this.typingCommand !== '') {
-          this.typingCommand += '\n';
-          this.websocketService.sendMessage(this.typingCommand);
+          this.websocketService.sendMessage(this.typingCommand + "\n");
           this.terminal.write('\r\n');
-          this.lastLine = '';
+          this.prefix = '';
         } else {
           this.terminal.write('\r\n$ ');
-          this.lastLine = '$ ';
+          this.prefix = '$ ';
         }
         this.typingCommand = '';
       } else if (ev.code === BACKSPACE) {
-        let cursor = this.terminal.underlying.buffer.active.cursorX;
-        if (this.lastLine.startsWith('$')) {
-          prefixedLine = true;
-          cursor -= 2;
+        if (this.prefix.length === cursor) {
+          return;
         }
-        if (cursor > 0) {
-          if (this.typingCommand.length == cursor) {
-            this.typingCommand = this.typingCommand.slice(0, -1);
-            this.lastLine = prefixedLine ? '$ ' + this.typingCommand : this.typingCommand;
-            this.terminal.write('\b \b');
-          } else {
-            let lineCursor = cursor;
-            let left = this.typingCommand.substring(0, lineCursor - 1);
-            let right = this.typingCommand.substring(lineCursor);
-            this.typingCommand = left + right;
-
-            let buffer = '\r' + (prefixedLine ? '$ ' + this.typingCommand + ' ' : this.typingCommand + ' ');
-            this.lastLine = buffer;
-            buffer += FunctionsUsingCSI.cursorBackward(right.length + 1);
-            this.terminal.write(buffer);
-          }
+        if ((this.prefix.length + this.typingCommand.length) === cursor) {
+          this.typingCommand = this.typingCommand.slice(0, -1);
+          this.terminal.write('\b \b');
+        } else {
+          cursor -= this.prefix.length;
+          let left = this.typingCommand.substring(0, cursor - 1);
+          let right = this.typingCommand.substring(cursor);
+          this.typingCommand = left + right;
+          let buffer = '\r' + this.prefix + this.typingCommand + ' ';
+          buffer += FunctionsUsingCSI.cursorBackward(right.length + 1);
+          this.terminal.write(buffer);
         }
-
-        // if (cursor > 2) {
-        //   if (this.typingCommand.length == (cursor - 2)) {
-        //     this.typingCommand = this.typingCommand.slice(0, -1);
-        //     this.terminal.write('\b \b');
-        //   } else {
-        //     let lineCursor = cursor - 2;
-        //     let left = this.typingCommand.substring(0, lineCursor - 1);
-        //     let right = this.typingCommand.substring(lineCursor);
-        //     this.typingCommand = left + right;
-        //     let buffer = '\r$ ' + this.typingCommand + ' ';
-        //     buffer += FunctionsUsingCSI.cursorBackward(right.length + 1);
-        //     this.terminal.write(buffer);
-        //   }
-        // }
       } else {
-        this.terminal.write(e.key);
-        if (ev.code !== ARROW_LEFT && ev.code !== ARROW_RIGHT) {
-          this.typingCommand += e.key;
-          this.lastLine = prefixedLine ? '$ ' + this.typingCommand : this.typingCommand;
+        if ((ev.code === ARROW_LEFT || ev.code === ARROW_RIGHT)
+          && cursor > this.prefix.length && cursor <= (this.prefix.length + this.typingCommand.length)) {
+          this.terminal.write(e.key);
+        } else if (ev.code !== ARROW_LEFT && ev.code !== ARROW_RIGHT) {
+          cursor -= this.prefix.length;
+          let left = this.typingCommand.substring(0, cursor);
+          let right = this.typingCommand.substring(cursor);
+          this.typingCommand = left + e.key + right;
+          this.terminal.write("\r" + this.prefix + this.typingCommand + ' '
+            + FunctionsUsingCSI.cursorBackward(right.length + 1));
         }
       }
     })
-    this.lastLine = '$ ';
-    this.terminal.write(this.lastLine);
+    this.prefix = '$ ';
+    this.terminal.write(this.prefix);
   }
 
   ngOnInit(): void {
@@ -126,7 +107,7 @@ export class TerminalComponent implements OnInit, OnDestroy, AfterViewInit {
     this.websocketService.initSocket(this.app.wsURI);
     this.websocketService.subscribeOnOpen().subscribe(() => {
       console.log('Сокет успешно подключен!');
-      this.websocketService.sendMessage('echo Среда успешно запущена!\n');
+      this.websocketService.sendMessage('echo Среда успешно запущена! Нажмите Enter для продолжения...\n');
     });
     this.websocketService.subscribeOnClose().subscribe(() => {
       this.app.isActive = false;
@@ -157,9 +138,11 @@ export class TerminalComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onMessage(text: string) {
-    const data = text.split('\n').join('\r\n');
-    this.lastLine = data[data.length - 1];
-    this.terminal.write(data);
+    const data = text.split('\n');
+    const output = data.join('\r\n');
+    this.prefix = data[data.length - 1].replace('\n', '');
+    this.terminal.write(output);
+    this.terminal.write(this.typingCommand);
   }
 
   sendMessage(msg: string, isCommand?: boolean) {
@@ -167,8 +150,12 @@ export class TerminalComponent implements OnInit, OnDestroy, AfterViewInit {
       alert('Отправка сообщения невозможна. Приложение не запущено.');
       return;
     }
+    msg = this.typingCommand + msg + "\n";
+    this.terminal.write(msg);
     this.terminal.write('\r\n');
-    this.websocketService.sendMessage(msg + "\n");
+    this.typingCommand = '';
+    this.prefix = '';
+    this.websocketService.sendMessage(msg);
   }
 
   killApp() {
