@@ -1,10 +1,9 @@
 package ru.ugasu.app.service;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
+import com.github.dockerjava.api.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import ru.ugasu.app.model.BaseEntity;
 import ru.ugasu.app.model.Project;
 import ru.ugasu.app.model.run.App;
 import ru.ugasu.app.repo.AppRepository;
@@ -31,10 +31,14 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -47,6 +51,10 @@ public abstract class SimpleAppService implements AppService {
 
     @Value("${app.apps}")
     private String appsPath;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleAppService.class.getSimpleName());
+
+    public static final int REMOVING_DELAY = 4; // in hours
 
     @Autowired
     private AppRepository appRepository;
@@ -96,6 +104,7 @@ public abstract class SimpleAppService implements AppService {
      * Создает и запускает контейнер приложения.
      * При создании контейнера, также создает локальная директория, куда предварительно скачиваются файлы. С этой
      * директории также будет идти раздача файлов.
+     *
      * @param project проект, на основе образа, которого будет создаваться контейнер. Проект обязательно
      *                должен быть загружен из БД и быть в контексте, т.к. вызываются методы project
      * @return app приложение с сообщением о результатах запуска и статусе.
@@ -124,13 +133,13 @@ public abstract class SimpleAppService implements AppService {
             String containerName = "app" + System.currentTimeMillis();
 
             ExposedPort exposedPort = ExposedPort.tcp(CONTAINER_WEBSOCKET_PORT);
-//            Ports ports = new Ports();
-//            ports.bind(exposedPort, Ports.Binding.bindPort(8090));
+            Ports ports = new Ports();
+            ports.bind(exposedPort, Ports.Binding.bindPort(8090));
 
             String containerId = dockerClient.createContainerCmd(project.getImageID())
                     .withTty(true).withStdinOpen(true)
                     .withExposedPorts(exposedPort)
-                    //.withHostConfig(HostConfig.newHostConfig().withPortBindings(ports))
+                    .withHostConfig(HostConfig.newHostConfig().withPortBindings(ports))
                     .withName(containerName)
                     .exec().getId();
             dockerClient.startContainerCmd(containerId).exec();
@@ -141,8 +150,8 @@ public abstract class SimpleAppService implements AppService {
                     .withNetworkId(netWork).exec();
 
             String message = "Environment is started";
-            // app.setWsURI(websocketHost);
-            app.setWsURI(String.format("ws://%s/ws/%s", websocketHost, containerName));
+            app.setWsURI(websocketHost);
+            // app.setWsURI(String.format("ws://%s/ws/%s", websocketHost, containerName));
             app.setContainerID(containerId);
 
             updateInDb(app, AppStatus.STARTED, message);
@@ -163,9 +172,10 @@ public abstract class SimpleAppService implements AppService {
      * Копирует содержимое в файл. Важно, что file это путь конечного файла, а не директории.
      * Конечнй файл должен быть как минимум в одной директории, т.к. апи поддерживает только копирование диреторий.
      * Сначала создаются директории и файл в локально. Далее переносится директория в которой хранятся файлы
-     * @param app контейнер, в который копируем. App должен быть в контексте, т.е. загружен из БД
+     *
+     * @param app     контейнер, в который копируем. App должен быть в контексте, т.е. загружен из БД
      * @param content содержимое которое копируемся
-     * @param file путь в контейнере
+     * @param file    путь в контейнере
      * @return commandInfo, содержащий результаты копирования в виде сообщения и статуса.
      */
     @Override
@@ -221,7 +231,8 @@ public abstract class SimpleAppService implements AppService {
     /**
      * Копирует файлы из контейнера. Сначала создается такая же иерархия директорий. Далее переносится директория
      * Если результат команды COMPLETE. Значит по пути file из контекста локальной директории приложения можно получить файл
-     * @param app контейнер, в который копируем. App должен быть в контексте, т.е. загружен из БД
+     *
+     * @param app  контейнер, в который копируем. App должен быть в контексте, т.е. загружен из БД
      * @param file путь в контейнере в конечному файлу
      * @return commandInfo. Результат выполнения команды в виде сообщения и статуса
      */
@@ -272,6 +283,7 @@ public abstract class SimpleAppService implements AppService {
 
     /**
      * Уничтожает контейнер в котором шла работы с приложением
+     *
      * @param app приложение, которое находится в контейнере. App должен быть в контексте, т.е. загружен из БД
      * @return commandInfo. Результат выполнения команды в виде сообщения и статуса
      */
@@ -304,6 +316,57 @@ public abstract class SimpleAppService implements AppService {
         }
         flush();
         return commandInfo;
+    }
+
+    @Async
+    @Scheduled(fixedDelay = REMOVING_DELAY * 60 * 60 * 1000)
+    public void removeOldContainers() {
+        dockerClient.listContainersCmd().exec().stream()
+                .filter(container ->
+                        Arrays.stream(container.getNames()).anyMatch(name -> name.startsWith("app")))
+                .filter(container -> {
+                    var creatingTime = new Timestamp(container.getCreated()).toLocalDateTime();
+                    var limit = LocalDateTime.now().minusHours(REMOVING_DELAY);
+                    return creatingTime.isBefore(limit);
+                })
+                .forEach(container -> {
+                    LOGGER.info("Remove old container with id {}", container.getId());
+                    var appOptional = appRepository.findByContainerID(container.getId());
+                    if (appOptional.isPresent()) {
+                        LOGGER.info("App exists on db. Killing from AppService");
+                        kill(appOptional.get());
+                        return;
+                    }
+                    try {
+                        LOGGER.info("App doesnt exist on db. Killing by Docker engine directly");
+                        dockerClient.removeContainerCmd(container.getId()).withForce(true).exec();
+                    } catch (Exception e) {
+                        LOGGER.info("Failed to remove container. {}. {}", e.getMessage(), e.getMessage());
+                    }
+                });
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 60 * 60 * 1000)
+    public void removeAlreadyDeleted() {
+        var workingAppsIds = appRepository.findAllById(loggers.keySet()).stream()
+                .collect(Collectors.toMap(App::getContainerID, BaseEntity::getId));
+        var existingContainersIds = dockerClient.listContainersCmd().exec()
+                .stream()
+                .filter(container -> Arrays.stream(container.getNames()).anyMatch(name -> name.startsWith("app")))
+                .map(Container::getId)
+                .collect(Collectors.toSet());
+        workingAppsIds.entrySet().stream()
+                .filter(entry -> !existingContainersIds.contains(entry.getKey()))
+                .forEach(entry -> {
+                    LOGGER.info("Found removed container with id {}", entry.getKey());
+                    var logger = loggers.remove(entry.getValue());
+                    if (logger != null) {
+                        logger.flush();
+                    }
+                    appRepository.findById(entry.getValue())
+                            .ifPresent(value -> updateInDb(value, AppStatus.DIED, "Container is already removed from outside"));
+                });
     }
 
     private void logOut(App app, String message) {
