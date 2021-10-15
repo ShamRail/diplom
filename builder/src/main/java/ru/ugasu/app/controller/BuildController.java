@@ -57,6 +57,20 @@ public class BuildController {
         return buildOptional.get();
     }
 
+    @DeleteMapping("/deleteProject")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProject(@RequestParam("projectID") int projectID) {
+        Optional<Project> optionalProject = projectRepository.findById(projectID);
+        if (optionalProject.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project is not found!");
+        }
+        Optional<Build> buildOptional = buildService.getBuild(new Project(projectID));
+        if (buildOptional.isPresent() && buildOptional.get().getBuildStatus() == BuildStatus.BUILDING) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project is building now. Removing will be available after buildings endings.");
+        }
+        buildService.removeProject(optionalProject.get());
+    }
+
     private Project mapDTO(ProjectDTO projectDTO) {
         Project project = new Project();
         project.setId(projectDTO.getId());

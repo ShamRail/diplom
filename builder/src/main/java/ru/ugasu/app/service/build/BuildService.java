@@ -33,4 +33,6 @@ public interface BuildService {
      */
     Optional<Build> getBuild(Project project);
 
+    void removeProject(Project project);
+
 }

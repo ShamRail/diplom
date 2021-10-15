@@ -1,5 +1,8 @@
 package ru.ugasu.app.service.build;
 
+import com.github.dockerjava.api.DockerClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +29,8 @@ import java.util.concurrent.ExecutorService;
 @Transactional
 public abstract class ThreadPoolBuildService implements BuildService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPoolBuildService.class.getSimpleName());
+
     @Value("${app.projects.build.logpath}")
     private String logPath;
 
@@ -37,6 +42,9 @@ public abstract class ThreadPoolBuildService implements BuildService {
 
     @Autowired
     private BuildRepository buildRepository;
+
+    @Autowired
+    private DockerClient dockerClient;
 
     @PostConstruct
     public void initDirs() {
@@ -59,7 +67,7 @@ public abstract class ThreadPoolBuildService implements BuildService {
         Build build = new Build(project, "Start build project", buildPath, BuildStatus.STARTED);
         build.setStartAt(LocalDateTime.now());
 
-        buildRepository.deleteByProject(project);
+        deletePreviousImageAndDbData(project);
         buildRepository.save(build);
 
         projectRepository.updateStatusById(project.getId(), BuildStatus.STARTED);
@@ -74,10 +82,41 @@ public abstract class ThreadPoolBuildService implements BuildService {
         return buildRepository.findByProject(project);
     }
 
+    @Override
+    public void removeProject(Project project) {
+        LOGGER.info("Remove project with id {}", project.getId());
+        deletePreviousImageAndDbData(project);
+        projectRepository.delete(project);
+    }
+
     @Lookup
     protected abstract CallableBuildTask buildTask(Project project, Build build, BuildLogger buildLogger);
 
     @Lookup
     protected abstract BuildLogger buildLogger(String logPath);
+
+    private void deletePreviousImageAndDbData(Project project) {
+        try {
+            LOGGER.info("Remove previous image");
+            if (project.getImageID() != null) {
+                dockerClient.removeImageCmd(project.getImageID())
+                        .withForce(true)
+                        .exec();
+            }
+        } catch (Exception e) {
+            LOGGER.info("Failed to remove image. Image with id {} not found", project.getImageID());
+        }
+        var buildOptional = buildRepository.findByProject(project);
+        if (buildOptional.isPresent()) {
+            LOGGER.info("Delete build logs");
+            try {
+                Files.delete(Path.of(buildOptional.get().getLogPath()));
+            } catch (IOException e) {
+                LOGGER.info("Failed to remove build logs. File is not found.");
+            }
+        }
+        LOGGER.info("Remove previous builds from DB");
+        buildRepository.deleteByProject(project);
+    }
 
 }
