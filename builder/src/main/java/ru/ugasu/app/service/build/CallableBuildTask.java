@@ -190,7 +190,9 @@ public class CallableBuildTask implements BuildTask, Callable<Build> {
             buildLogger.append("Dockerfile copied");
 
             buildLogger.append("Preparing args");
-            BuildImageCmd buildImageCmd = putArgs(dockerClient.buildImageCmd(sourcePath.toFile()));
+            BuildImageCmd buildImageCmd = putArgs(
+                    dockerClient.buildImageCmd(sourcePath.toFile()).withNoCache(true)
+            );
             buildLogger.append("Args prepared. Start building");
 
             updateBuildInDB(BuildStatus.BUILDING, "Start building");
