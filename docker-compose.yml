@@ -47,7 +47,14 @@ services:
     expose: 
       - "2375"
   admin-api: 
-    build: ./admin
+    build: 
+      context: .
+      dockerfile: ./Dockerfile-java
+      args:
+        - APP_DIR=admin
+        - BUILD_COMMAND=mvn install -DskipTests
+        - TARGET_JAR=admin-1.0.0.jar
+        - JAVA_OPTIONS=-Xmx256m
     container_name: admin-api
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://admindb:5432/admindb
@@ -61,11 +68,21 @@ services:
       - admindb
     volumes: 
       - ./volumes/admin/configurations:/app/configurations
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    restart: always
   builder-api:
-    build: ./builder
+    build:
+      context: .
+      dockerfile: ./Dockerfile-java
+      args:
+        - APP_DIR=builder
+        - BUILD_COMMAND=mvn install -DskipTests
+        - TARGET_JAR=builder-1.0.0.jar
+        - JAVA_OPTIONS=-Xmx256m
     container_name: builder-api
-    # extra_hosts: 
-    #   - "host.docker.internal:host-gateway"
     environment:
         - SPRING_DATASOURCE_URL=jdbc:postgresql://builderdb:5432/builderdb
         - SPRING_DATASOURCE_USERNAME=postgres
@@ -80,11 +97,21 @@ services:
         - builderdb
     volumes: 
       - ./volumes/builder/builds/logs:/app/builds/logs
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    restart: always
   runner-api:
-    build: ./runner
+    build:
+      context: .
+      dockerfile: ./Dockerfile-java
+      args:
+        - APP_DIR=runner
+        - BUILD_COMMAND=mvn install -DskipTests
+        - TARGET_JAR=runner-1.0.0.jar
+        - JAVA_OPTIONS=-Xmx256m
     container_name: runner-api
-    # extra_hosts: 
-    #   - "host.docker.internal:host-gateway"
     environment:
         - SPRING_DATASOURCE_URL=jdbc:postgresql://runnerdb:5432/runnerdb
         - SPRING_DATASOURCE_USERNAME=postgres
@@ -101,10 +128,21 @@ services:
         - runnerdb
     volumes: 
       - ./volumes/runner/apps:/app/apps
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    restart: always
   
   # Frontend apps
   admin:
-    build: ./admin-client
+    build:
+      context: .
+      dockerfile: Dockerfile-angular-nginx
+      args:
+        - APP_DIR=admin-client
+        - BUILD_ARGS=--prod --base-href /admin/
+        - DIST_DIR=config-admin
     container_name: admin
     ports: 
       - 4200:80
@@ -112,9 +150,15 @@ services:
       - admin-api
     volumes: 
       - ./nginx/client.conf:/etc/nginx/nginx.conf
- 
+    restart: always
   runner: 
-    build:  ./runner-client
+    build:
+      context: .
+      dockerfile: ./Dockerfile-angular-nginx
+      args:
+        - APP_DIR=runner-client
+        - BUILD_ARGS=--prod --base-href /runner/
+        - DIST_DIR=runner-client
     container_name: runner
     depends_on: 
       - runner-api
@@ -122,6 +166,7 @@ services:
       - 4201:80
     volumes: 
       - ./nginx/client.conf:/etc/nginx/nginx.conf
+    restart: always
 
   # Proxy
   nginx: 
@@ -134,7 +179,7 @@ services:
     depends_on: 
       - admin
       - runner
-      - builder
+    restart: always
 
 networks:
   default:

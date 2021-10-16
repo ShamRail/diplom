@@ -1,0 +1,17 @@
+FROM maven as maven
+WORKDIR /app
+ARG APP_DIR
+RUN echo "Copy code from source: $APP_DIR"
+COPY ${APP_DIR} /app
+ARG BUILD_COMMAND
+RUN echo "Build project by command: $BUILD_COMMAND"
+RUN $BUILD_COMMAND
+
+FROM openjdk
+WORKDIR /app
+ARG TARGET_JAR
+RUN echo "Target jar: $TARGET_JAR"
+COPY --from=maven /app/target/${TARGET_JAR} app.jar
+ARG JAVA_OPTIONS
+RUN echo "Container will run with options: $JAVA_OPTIONS"
+CMD java -jar ${JAVA_OPTIONS} app.jar

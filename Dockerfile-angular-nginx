@@ -1,0 +1,17 @@
+FROM node:latest as build
+WORKDIR /app
+ARG APP_DIR
+RUN echo "Copy code from source: $APP_DIR"
+COPY ${APP_DIR} /app
+RUN npm install
+ARG BUILD_ARGS
+RUN echo "Build app with args: ${BUILD_ARGS}"
+RUN npm install -g @angular/cli
+RUN ng build ${BUILD_ARGS}
+
+
+FROM nginx:latest
+ARG DIST_DIR
+RUN echo "Copy from dist/${DIST_DIR}"
+COPY --from=build /app/dist/${DIST_DIR} /usr/share/nginx/html
+EXPOSE 80

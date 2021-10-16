@@ -14,6 +14,5 @@ WORKDIR /app
 COPY --from=unzip /ws .
 COPY . .
 ARG BUILD_COMMAND
-RUN echo $BUILD_COMMAND > echo.txt
-RUN $BUILD_COMMAND > build_log.txt
+RUN $BUILD_COMMAND 
 ENTRYPOINT ./websocketd --port=80 --binary=true /bin/sh -c "/bin/sh 2>&1"
