@@ -13,6 +13,8 @@ import ru.ugasu.app.repo.ProjectRepository;
 import ru.ugasu.app.service.build.BuildService;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -57,18 +59,17 @@ public class BuildController {
         return buildOptional.get();
     }
 
-    @DeleteMapping("/deleteProject")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteProject(@RequestParam("projectID") int projectID) {
-        Optional<Project> optionalProject = projectRepository.findById(projectID);
-        if (optionalProject.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project is not found!");
-        }
+    @GetMapping("/build-logs")
+    public Map<String, String> getBuildLogs(@RequestParam("projectID") int projectID) {
         Optional<Build> buildOptional = buildService.getBuild(new Project(projectID));
-        if (buildOptional.isPresent() && buildOptional.get().getBuildStatus() == BuildStatus.BUILDING) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project is building now. Removing will be available after buildings endings.");
+        if (buildOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Build is not running yet!");
         }
-        buildService.removeProject(optionalProject.get());
+        try {
+            return buildService.getLogs(buildOptional.get());
+        } catch (IOException e) {
+            return Map.of();
+        }
     }
 
     private Project mapDTO(ProjectDTO projectDTO) {

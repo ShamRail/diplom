@@ -15,12 +15,13 @@ create table project
 
 create table build
 (
-    id           serial primary key,
-    build_status text,
-    message      text,
-    start_at     timestamp,
-    end_at       timestamp,
-    log_path     text,
-    project_id   int references project (id)
+    id              serial primary key,
+    build_status    text,
+    message         text,
+    start_at        timestamp,
+    end_at          timestamp,
+    log_path        text,
+    docker_log_path text,
+    project_id      int references project (id)
 );
 

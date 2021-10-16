@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +34,9 @@ public abstract class ThreadPoolBuildService implements BuildService {
 
     @Value("${app.projects.build.logpath}")
     private String logPath;
+
+    @Value("${app.projects.build.dockerlogpath}")
+    private String dockerLogPath;
 
     @Autowired
     private ExecutorService executorService;
@@ -50,6 +54,7 @@ public abstract class ThreadPoolBuildService implements BuildService {
     public void initDirs() {
         try {
             Files.createDirectories(Path.of(logPath));
+            Files.createDirectories(Path.of(dockerLogPath));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -68,6 +73,7 @@ public abstract class ThreadPoolBuildService implements BuildService {
         build.setStartAt(LocalDateTime.now());
 
         deletePreviousImageAndDbData(project);
+        build.setLogPath(buildPath);
         buildRepository.save(build);
 
         projectRepository.updateStatusById(project.getId(), BuildStatus.STARTED);
@@ -87,6 +93,22 @@ public abstract class ThreadPoolBuildService implements BuildService {
         LOGGER.info("Remove project with id {}", project.getId());
         deletePreviousImageAndDbData(project);
         projectRepository.delete(project);
+    }
+
+    @Override
+    public Map<String, String> getLogs(Build build) throws IOException {
+        var logs = "";
+        var dockerLogs = "";
+        if (build.getLogPath() != null) {
+            logs = Files.readString(Path.of(build.getLogPath()));
+        }
+        if (build.getDockerLogPath() != null) {
+            dockerLogs = Files.readString(Path.of(build.getDockerLogPath()));
+        }
+        return Map.of(
+                "logs", logs,
+                "buildingLogs", dockerLogs
+        );
     }
 
     @Lookup
@@ -111,6 +133,10 @@ public abstract class ThreadPoolBuildService implements BuildService {
             LOGGER.info("Delete build logs");
             try {
                 Files.delete(Path.of(buildOptional.get().getLogPath()));
+                var dockerLog = buildOptional.get().getDockerLogPath();
+                if (dockerLog != null) {
+                    Files.delete(Path.of(dockerLog));
+                }
             } catch (IOException e) {
                 LOGGER.info("Failed to remove build logs. File is not found.");
             }

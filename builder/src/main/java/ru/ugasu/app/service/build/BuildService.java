@@ -4,6 +4,8 @@ import ru.ugasu.app.model.build.Build;
 import ru.ugasu.app.model.build.Project;
 import ru.ugasu.app.service.io.load.AppRepositoryLoader;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 // TODO добавить инспекцию лога
@@ -34,5 +36,7 @@ public interface BuildService {
     Optional<Build> getBuild(Project project);
 
     void removeProject(Project project);
+
+    Map<String, String> getLogs(Build build) throws IOException;
 
 }

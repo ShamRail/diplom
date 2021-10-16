@@ -1,10 +1,12 @@
 package ru.ugasu.app.service.build;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.BuildImageCmd;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.ugasu.app.model.build.Build;
@@ -17,6 +19,7 @@ import ru.ugasu.app.service.build.logger.BuildLogger;
 import ru.ugasu.app.service.io.archive.DecompressService;
 import ru.ugasu.app.service.io.load.AppRepositoryLoader;
 
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -51,6 +54,9 @@ public class CallableBuildTask implements BuildTask, Callable<Build> {
 
     @Autowired
     private ConfigService configService;
+
+    @Value("${app.projects.build.dockerlogpath}")
+    private String dockerLogDir;
 
     public CallableBuildTask(Project project,
                              Build build,
@@ -188,8 +194,13 @@ public class CallableBuildTask implements BuildTask, Callable<Build> {
             buildLogger.append("Args prepared. Start building");
 
             updateBuildInDB(BuildStatus.BUILDING, "Start building");
-            imageID = Optional.of(buildImageCmd.start().awaitImageId());
 
+            var file = Path.of(dockerLogDir, System.currentTimeMillis() + ".txt");
+            Files.createFile(file);
+            try (PrintStream logOut = new PrintStream(file.toFile())) {
+                imageID = Optional.of(buildImageCmd.exec(new LoggedBuildResponseItem(logOut)).awaitImageId());
+            }
+            build.setDockerLogPath(file.toString());
             buildLogger.append(String.format("Building complete %s", imageID.get()));
 
         } catch (Exception ex) {

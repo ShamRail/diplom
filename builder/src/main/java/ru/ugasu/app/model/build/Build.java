@@ -38,6 +38,9 @@ public class Build extends TimeRanged {
     @Column(name = "log_path")
     private String logPath;
 
+    @Column(name = "docker_log_path")
+    private String dockerLogPath;
+
     public Build() { }
 
     public Build(Project project, String message) {
@@ -91,6 +94,14 @@ public class Build extends TimeRanged {
         this.logPath = logPath;
     }
 
+    public String getDockerLogPath() {
+        return dockerLogPath;
+    }
+
+    public void setDockerLogPath(String dockerLogPath) {
+        this.dockerLogPath = dockerLogPath;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -122,4 +133,5 @@ public class Build extends TimeRanged {
                 + ", id=" + id
                 + '}';
     }
+
 }
