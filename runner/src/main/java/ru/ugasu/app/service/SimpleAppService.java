@@ -133,13 +133,13 @@ public abstract class SimpleAppService implements AppService {
             String containerName = "app" + System.currentTimeMillis();
 
             ExposedPort exposedPort = ExposedPort.tcp(CONTAINER_WEBSOCKET_PORT);
-            Ports ports = new Ports();
-            ports.bind(exposedPort, Ports.Binding.bindPort(8090));
+            // Ports ports = new Ports();
+            // ports.bind(exposedPort, Ports.Binding.bindPort(8090));
 
             String containerId = dockerClient.createContainerCmd(project.getImageID())
                     .withTty(true).withStdinOpen(true)
                     .withExposedPorts(exposedPort)
-                    .withHostConfig(HostConfig.newHostConfig().withPortBindings(ports))
+                    //.withHostConfig(HostConfig.newHostConfig().withPortBindings(ports))
                     .withName(containerName)
                     .exec().getId();
             dockerClient.startContainerCmd(containerId).exec();
@@ -150,8 +150,8 @@ public abstract class SimpleAppService implements AppService {
                     .withNetworkId(netWork).exec();
 
             String message = "Environment is started";
-            app.setWsURI(websocketHost);
-            // app.setWsURI(String.format("ws://%s/ws/%s", websocketHost, containerName));
+            // app.setWsURI(websocketHost);
+            app.setWsURI(String.format("ws://%s/ws/%s", websocketHost, containerName));
             app.setContainerID(containerId);
 
             updateInDb(app, AppStatus.STARTED, message);

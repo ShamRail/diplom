@@ -74,7 +74,7 @@ public abstract class ThreadPoolBuildService implements BuildService {
 
         deletePreviousImageAndDbData(project);
         build.setLogPath(buildPath);
-        buildRepository.save(build);
+        // buildRepository.save(build);
 
         projectRepository.updateStatusById(project.getId(), BuildStatus.STARTED);
         executorService.submit(buildTask(
