@@ -7,10 +7,10 @@ import (
 	"site_app/app_controllers"
 	"site_app/database"
 	"site_app/database/providers"
+	"site_app/services"
 )
 
 func main() {
-
 	var user = os.Getenv("POSTGRES_USER")
 	var password = os.Getenv("POSTGRES_PASSWORD")
 	var dbName = os.Getenv("POSTGRES_DB")
@@ -38,8 +38,17 @@ func main() {
 	var us = providers.UserProvider{
 		DataBase: db,
 	}
+
+	var pd = providers.ProjectDocProvider{
+		DataBase: db,
+	}
+
+	var auth = services.CreateNewAuthService(&us)
+
 	var app = app_controllers.App{
-		UserProvider: &us,
+		UserProvider:       &us,
+		ProjectDocProvider: &pd,
+		Auth:               auth,
 	}
 
 	var router = addRoutes(&app)

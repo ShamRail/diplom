@@ -1,4 +1,4 @@
-package halpers
+package helpers
 
 import uuid "github.com/satori/go.uuid"
 

@@ -1,4 +1,4 @@
-package halpers
+package helpers
 
 import "fmt"
 

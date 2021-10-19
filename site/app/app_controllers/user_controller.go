@@ -7,6 +7,7 @@ import (
 )
 
 func (app *App) AddUser(writer http.ResponseWriter, request *http.Request) {
+
 	writer.Header().Set("Content-Type", "application/json")
 	var user User
 	var err = json.NewDecoder(request.Body).Decode(&user)
