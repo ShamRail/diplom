@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"site_app/database"
 	"site_app/database/models/project_doc_models"
-	"site_app/halpers"
+	"site_app/helpers"
 	"strings"
 )
 
@@ -26,23 +26,23 @@ func (pd *ProjectDocProvider) List(filter *project_doc_models.ProjectDocFilter) 
 		queryString += " WHERE ("
 		var strs []string
 		if filter.Ids != nil {
-			strs = halpers.UuidsToStrings(filter.Ids)
-			halpers.UseCommas(strs)
+			strs = helpers.UuidsToStrings(filter.Ids)
+			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" id in (%s) and", strings.Join(strs, ", "))
 		}
 		if filter.Names != nil {
 			strs = filter.Names
-			halpers.UseCommas(strs)
+			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" name in (%s) and", strings.Join(strs, ", "))
 		}
 		if filter.BuildStatuses != nil {
 			strs = filter.BuildStatuses
-			halpers.UseCommas(strs)
+			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" build_status in (%s) and", strings.Join(strs, ", "))
 		}
 		if filter.ConfigurationIds != nil {
 			var confIds = filter.ConfigurationIds
-			strs = halpers.UseCommasToString(confIds)
+			strs = helpers.UseCommasToString(confIds)
 			queryString += fmt.Sprintf(" configuration_id in (%s) and", strings.Join(strs, ", "))
 		}
 		queryString = queryString[:len(queryString)-4] + ")"
@@ -85,8 +85,8 @@ func (pd *ProjectDocProvider) Delete(doc *project_doc_models.ProjectDocDelete) e
 		deleteString += " WHERE ("
 		var strs []string
 		if doc.Ids != nil {
-			strs = halpers.UuidsToStrings(doc.Ids)
-			halpers.UseCommas(strs)
+			strs = helpers.UuidsToStrings(doc.Ids)
+			helpers.UseCommas(strs)
 			deleteString += fmt.Sprintf(" id in (%s) and", strings.Join(strs, ", "))
 		}
 		deleteString = deleteString[:len(deleteString)-4] + ")"

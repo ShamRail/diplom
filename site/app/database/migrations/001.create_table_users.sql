@@ -1,5 +1,6 @@
 CREATE TABLE if not exists users (
     id    uuid PRIMARY KEY,
-    name  varchar(30) NOT NULL,
-    password varchar(30)
+    name  varchar(100) NOT NULL,
+    email  varchar(100) NOT NULL,
+    password bytea NOT NULL
 );
