@@ -67,3 +67,19 @@ func (app *App) GetProjectDocs(writer http.ResponseWriter, request *http.Request
 
 	json.NewEncoder(writer).Encode(ProjectDocs)
 }
+
+func (app *App) GetUserDocs(writer http.ResponseWriter, request *http.Request) {
+
+	writer.Header().Set("Content-Type", "application/json")
+	var projectDocFilter *ProjectDocFilter
+	var err = json.NewDecoder(request.Body).Decode(&projectDocFilter)
+	var ProjectDocs []ProjectDoc
+	if err != nil {
+		ProjectDocs = app.ProjectDocProvider.List(nil)
+	} else {
+		ProjectDocs = app.ProjectDocProvider.List(projectDocFilter)
+	}
+
+	json.NewEncoder(writer).Encode(ProjectDocs)
+
+}
