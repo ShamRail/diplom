@@ -3,6 +3,7 @@ package services
 import (
 	"crypto/sha256"
 	"crypto/subtle"
+	"github.com/AfterShip/email-verifier"
 	"net/http"
 	"site_app/database/models/user_models"
 	"site_app/database/providers"
@@ -11,6 +12,7 @@ import (
 type IAuthService interface {
 	BasicAuth(next http.HandlerFunc) http.HandlerFunc
 	isAuth(username, password string) bool
+	CheckEmail(mail string) bool
 }
 
 type AuthService struct {
@@ -21,7 +23,7 @@ func (auth *AuthService) isAuth(username, password string) bool {
 	usernameHash := sha256.Sum256([]byte(username))
 	passwordHash := sha256.Sum256([]byte(password))
 
-	var user = auth.userProvider.List(&user_models.UserFilter{Names: []string{
+	var user = auth.userProvider.List(&user_models.UserFilter{Emails: []string{
 		username,
 	}})[0]
 
@@ -47,6 +49,15 @@ func (auth *AuthService) BasicAuth(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}
+}
+
+func (auth *AuthService) CheckEmail(email string) bool {
+	var verifier = emailverifier.NewVerifier()
+	_, err := verifier.Verify(email)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 func CreateNewAuthService(userProvider providers.IUserProvider) IAuthService {
