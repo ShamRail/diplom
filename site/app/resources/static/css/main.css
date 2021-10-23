@@ -9,7 +9,7 @@ header{
 	border-radius: 4px;
 	border-bottom-width: 2px;
 	box-shadow: 0 0 10px;
-	height: 100px;
+	height: 90px;
 	position: sticky;
 	top: 0;
 }
@@ -36,7 +36,7 @@ header{
 	float: left;
 }
 
-.btn-group button {
+.btn-group a {
     color: black;
     border: 0;
     cursor: pointer;
@@ -46,7 +46,7 @@ header{
     font-size: 20px;
 }
 
-.btn-group button:hover{
+.btn-group a:hover{
 	color: red;
 }
 
