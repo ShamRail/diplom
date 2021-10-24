@@ -39,7 +39,10 @@ public class BuildController {
 
         fieldValidation(projectDTO);
 
-        Optional<Build> buildOptional = buildService.getBuild(new Project(projectDTO.getId()));
+        Project project = projectRepository.findById(projectDTO.getId())
+                .orElse(mapDTO(projectDTO));
+
+        Optional<Build> buildOptional = buildService.getBuild(project);
         if (buildOptional.isPresent()) {
             BuildStatus buildStatus = buildOptional.get().getBuildStatus();
             if (buildStatus != BuildStatus.BUILT && buildStatus != BuildStatus.FALLEN) {
@@ -47,7 +50,7 @@ public class BuildController {
             }
         }
 
-        return buildService.start(projectRepository.save(mapDTO(projectDTO)));
+        return buildService.start(projectRepository.save(project));
     }
 
     @GetMapping("/build-status")

@@ -121,12 +121,11 @@ public abstract class ThreadPoolBuildService implements BuildService {
         try {
             LOGGER.info("Remove previous image");
             if (project.getImageID() != null) {
-                dockerClient.removeImageCmd(project.getImageID())
-                        .withForce(true)
-                        .exec();
+                removeContainers(project.getImageID());
+                dockerClient.removeImageCmd(project.getImageID()).withForce(true).exec();
             }
         } catch (Exception e) {
-            LOGGER.info("Failed to remove image. Image with id {} not found", project.getImageID());
+            LOGGER.info("Failed to remove image. {}", e.toString());
         }
         var buildOptional = buildRepository.findByProject(project);
         if (buildOptional.isPresent()) {
@@ -143,6 +142,19 @@ public abstract class ThreadPoolBuildService implements BuildService {
         }
         LOGGER.info("Remove previous builds from DB");
         buildRepository.deleteByProject(project);
+    }
+
+    private void removeContainers(String imageId) {
+        dockerClient.listContainersCmd().withShowAll(true).exec().stream()
+                .filter(container -> container.getImage().equals(imageId))
+                .forEach(container -> {
+                    LOGGER.info("Found container related to image. Remove it");
+                    try {
+                        dockerClient.removeContainerCmd(container.getId()).withForce(true).exec();
+                    } catch (Exception e) {
+                        LOGGER.info("Failed to remove container. {}", e.toString());
+                    }
+                });
     }
 
 }
