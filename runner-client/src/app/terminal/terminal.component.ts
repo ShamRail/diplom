@@ -111,6 +111,7 @@ export class TerminalComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.websocketService.subscribeOnClose().subscribe(() => {
       this.app.isActive = false;
+      console.log('Соединение прервано. Контейнер будет уничтожен');
       this.killApp();
       alert('Соединение прервано. Повторите запуск приложения.');
     });
@@ -130,10 +131,12 @@ export class TerminalComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    console.log('Компонент был разрушен. Контейнер будет уничтожен');
     this.killApp();
   }
 
   @HostListener('window:beforeunload', ['$event']) onClose(event: any) {
+    console.log('Пользователь покинул страницу. Контейнер будет уничтожен');
     this.killApp();
   }
 
