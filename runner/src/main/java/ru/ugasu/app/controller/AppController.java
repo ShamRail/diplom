@@ -98,6 +98,9 @@ public class AppController {
     @GetMapping(value = "/kill", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> kill(@RequestParam("id") int id) {
         App app = validateAppRequest(id);
+        if (app.getAppStatus() == AppStatus.DIED) {
+            return ResponseEntity.ok().build();
+        }
         CommandInfo commandInfo = appService.kill(app);
         if (commandInfo.getCommandStatus() != CommandStatus.COMPLETE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, commandInfo.getMessage());

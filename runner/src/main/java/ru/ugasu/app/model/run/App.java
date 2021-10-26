@@ -6,6 +6,7 @@ import ru.ugasu.app.model.TimeRanged;
 import ru.ugasu.app.service.AppStatus;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -48,7 +49,13 @@ public class App extends TimeRanged {
     @Column(name = "message")
     private String message;
 
-    public App() { }
+    public App() {
+
+    }
+
+    public App(String containerID) {
+        this.containerID = containerID;
+    }
 
     public App(Project project, String appPath) {
         this.project = project;

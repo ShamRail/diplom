@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.ugasu.app.model.BaseEntity;
@@ -33,28 +34,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 
 /**
- * Сервис для работы с контейнером приложений
+ * Сервис для работы с контейнером приложения
  */
 @Service
-@EnableAsync
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-public abstract class SimpleAppService implements AppService {
+@EnableScheduling
+// @EnableAspectJAutoProxy(proxyTargetClass = true)
+public class SimpleAppService implements AppService {
 
     @Value("${app.apps}")
     private String appsPath;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleAppService.class.getSimpleName());
 
-    public static final int REMOVING_DELAY = 4; // in hours
+    public static final int REMOVING_DELAY = 1; // in hours
 
     @Autowired
     private AppRepository appRepository;
@@ -63,8 +61,6 @@ public abstract class SimpleAppService implements AppService {
     private DockerClient dockerClient;
 
     private static final int CONTAINER_WEBSOCKET_PORT = 80;
-
-    private final Map<Integer, AppLogger> loggers = new ConcurrentHashMap<>();
 
     @Autowired
     @Qualifier("tarDecompressService")
@@ -84,20 +80,6 @@ public abstract class SimpleAppService implements AppService {
             e.printStackTrace();
             System.exit(-1);
         }
-    }
-
-    @PreDestroy
-    private void flushLog() {
-        loggers.values().forEach(AppLogger::flush);
-    }
-
-    /**
-     * Асихронно записываем каждые 10 секунд лог запущенных приложений
-     */
-    @Scheduled(fixedDelay = 10_000)
-    @Async
-    void flush() {
-        loggers.values().forEach(AppLogger::flush);
     }
 
     /**
@@ -123,19 +105,15 @@ public abstract class SimpleAppService implements AppService {
         app.setStartAt(LocalDateTime.now());
         app.setAppPath(appPath);
         app = appRepository.save(app);
-        loggers.put(app.getId(), appLogger(Path.of(appPath, "log.txt").toString()));
 
         try {
-            logOut(app, "Create app root directory");
             Files.createDirectory(Path.of(app.getAppPath()));
-
-            logOut(app, "Create container and start it");
-            String containerName = "app" + System.currentTimeMillis();
 
             ExposedPort exposedPort = ExposedPort.tcp(CONTAINER_WEBSOCKET_PORT);
             // Ports ports = new Ports();
             // ports.bind(exposedPort, Ports.Binding.bindPort(8090));
 
+            String containerName = "app" + System.currentTimeMillis();
             String containerId = dockerClient.createContainerCmd(project.getImageID())
                     .withTty(true).withStdinOpen(true)
                     .withExposedPorts(exposedPort)
@@ -144,7 +122,6 @@ public abstract class SimpleAppService implements AppService {
                     .exec().getId();
             dockerClient.startContainerCmd(containerId).exec();
 
-            logOut(app, "Connect container to network");
             dockerClient.connectToNetworkCmd()
                     .withContainerId(containerId)
                     .withNetworkId(netWork).exec();
@@ -155,16 +132,13 @@ public abstract class SimpleAppService implements AppService {
             app.setContainerID(containerId);
 
             updateInDb(app, AppStatus.STARTED, message);
-            logOut(app, message);
         } catch (Exception e) {
             String message = String.format(
                     "Failed to create and start container. %s occurs. Exception message: %s",
                     e.getClass(), e.getMessage()
             );
             updateInDb(app, AppStatus.FALLEN, message);
-            logOut(app, message);
         }
-        flush();
         return app;
     }
 
@@ -181,23 +155,18 @@ public abstract class SimpleAppService implements AppService {
     @Override
     public CommandInfo copyIn(App app, InputStream content, Path file) {
         CommandInfo commandInfo = new CommandInfo();
-        logOut(app, "Try to copy in");
         if (app.getAppStatus() != AppStatus.STARTED) {
-            String message = "Failed to copy in. App is not started!";
-            logOut(app, message);
-            commandInfo.setMessage(message);
+            commandInfo.setMessage("Failed to copy in. App is not started!");
             commandInfo.setCommandStatus(CommandStatus.FALLEN);
+            return commandInfo;
         }
         try {
 
-            logOut(app, "Create subdirs of specified apps path");
             Path absoluteFilePath = Path.of(app.getAppPath(), file.getParent().toString());
             Files.createDirectories(absoluteFilePath);
 
-            logOut(app, "Create file and write data");
             Path fileFullPath = Path.of(absoluteFilePath.toString(), file.getFileName().toString());
             if (Files.exists(fileFullPath)) {
-                logOut(app, "File is already exists. Remove it");
                 Files.delete(fileFullPath);
             }
 
@@ -206,25 +175,19 @@ public abstract class SimpleAppService implements AppService {
                 content.transferTo(out);
             }
 
-            logOut(app, "Writing complete. Try to copy file from host");
             dockerClient.copyArchiveToContainerCmd(app.getContainerID())
                     .withHostResource(up(Path.of(app.getAppPath()), absoluteFilePath).toString())
                     .withRemotePath("/app").exec();
 
             commandInfo.setCommandStatus(CommandStatus.COMPLETE);
-            String message = "File successfully copied!";
-            commandInfo.setMessage(message);
-            logOut(app, message);
+            commandInfo.setMessage("File successfully copied!");
 
         } catch (Exception e) {
-            String message = String.format(
+            commandInfo.setMessage(String.format(
                     "Failed during file copying. %s occurs. Message: %s", e.getClass(), e.getMessage()
-            );
-            logOut(app, message);
-            commandInfo.setMessage(message);
+            ));
             commandInfo.setCommandStatus(CommandStatus.FALLEN);
         }
-        flush();
         return commandInfo;
     }
 
@@ -239,45 +202,35 @@ public abstract class SimpleAppService implements AppService {
     @Override
     public CommandInfo copyFrom(App app, Path file) {
         CommandInfo commandInfo = new CommandInfo();
-        logOut(app, "Try to copy out");
         if (app.getAppStatus() != AppStatus.STARTED) {
             String message = "Failed to copy out. App is started!";
-            logOut(app, message);
             commandInfo.setMessage(message);
             commandInfo.setCommandStatus(CommandStatus.FALLEN);
+            return commandInfo;
         }
-
         try {
 
-            logOut(app, "Create subdirs of file");
             Path absolutePath = Path.of(app.getAppPath(), file.getParent().toString());
             Files.createDirectories(absolutePath);
 
             Path fileFullPath = Path.of(absolutePath.toString(), file.getFileName().toString());
             if (Files.exists(fileFullPath)) {
-                logOut(app, "File is already exists. Remove it");
                 Files.delete(fileFullPath);
             }
 
-            logOut(app, "Copy from file from remote app");
             try (InputStream in = dockerClient.copyArchiveFromContainerCmd(app.getContainerID(),
                     "/app/" + file.getParent().toString()).exec()) {
-                logOut(app, "Decompressing tar archive");
                 decompressService.decompress(in, absolutePath.getParent());
                 String message = "Copying is complete";
-                logOut(app, message);
                 commandInfo.setCommandStatus(CommandStatus.COMPLETE);
                 commandInfo.setMessage(message);
             }
         } catch (Exception e) {
-            String message = String.format(
-                    "Failed to copy out. %s occurs. Message: %s",
-                    e.getClass(), e.getMessage());
-            logOut(app, message);
-            commandInfo.setMessage(message);
+            commandInfo.setMessage(String.format(
+                    "Failed to copy out. %s occurs. Message: %s", e.getClass(), e.getMessage())
+            );
             commandInfo.setCommandStatus(CommandStatus.FALLEN);
         }
-        flush();
         return commandInfo;
     }
 
@@ -289,90 +242,51 @@ public abstract class SimpleAppService implements AppService {
      */
     @Override
     public CommandInfo kill(App app) {
-        logOut(app, "Try to remove container");
         app.setEndAt(LocalDateTime.now());
-        CommandInfo commandInfo = new CommandInfo();
+        String message = "Container is removed";
+        CommandInfo commandInfo = new CommandInfo(message, CommandStatus.COMPLETE);
         try {
-            dockerClient.removeContainerCmd(app.getContainerID())
-                    .withForce(true)
-                    .exec();
-            String message = "Container is removed";
-            commandInfo.setMessage(message);
-            commandInfo.setCommandStatus(CommandStatus.COMPLETE);
-            updateInDb(app, AppStatus.DIED, message);
-            AppLogger appLogger = loggers.remove(app.getId());
-            if (appLogger != null) {
-                appLogger.flush();
-            }
+            dockerClient.removeContainerCmd(app.getContainerID()).withForce(true).exec();
         } catch (Exception e) {
-            String message = String.format(
-                    "Removing is failed. %s occurs. Message: %s",
-                    e.getClass(), e.getMessage()
-            );
+            message = String.format("Removing is failed. %s occurs. Message: %s", e.getClass(), e.getMessage());
             commandInfo.setMessage(message);
             commandInfo.setCommandStatus(CommandStatus.FALLEN);
-            updateInDb(app, AppStatus.FALLEN, message);
-            logOut(app, message);
         }
-        flush();
+        updateInDb(app, AppStatus.DIED, message);
         return commandInfo;
     }
 
+    @Scheduled(fixedDelay = 15 * 60 * 1000)
     @Async
-    @Scheduled(fixedDelay = REMOVING_DELAY * 60 * 60 * 1000)
     public void removeOldContainers() {
-        dockerClient.listContainersCmd().exec().stream()
-                .filter(container ->
-                        Arrays.stream(container.getNames()).anyMatch(name -> name.startsWith("app")))
-                .filter(container -> {
-                    var creatingTime = new Timestamp(container.getCreated()).toLocalDateTime();
-                    var limit = LocalDateTime.now().minusHours(REMOVING_DELAY);
-                    return creatingTime.isBefore(limit);
-                })
-                .forEach(container -> {
-                    LOGGER.info("Remove old container with id {}", container.getId());
-                    var appOptional = appRepository.findByContainerID(container.getId());
-                    if (appOptional.isPresent()) {
-                        LOGGER.info("App exists on db. Killing from AppService");
-                        kill(appOptional.get());
-                        return;
-                    }
-                    try {
-                        LOGGER.info("App doesnt exist on db. Killing by Docker engine directly");
-                        dockerClient.removeContainerCmd(container.getId()).withForce(true).exec();
-                    } catch (Exception e) {
-                        LOGGER.info("Failed to remove container. {}. {}", e.getMessage(), e.getMessage());
-                    }
-                });
-    }
-
-    @Async
-    @Scheduled(fixedDelay = 60 * 60 * 1000)
-    public void removeAlreadyDeleted() {
-        var workingAppsIds = appRepository.findAllById(loggers.keySet()).stream()
-                .collect(Collectors.toMap(App::getContainerID, BaseEntity::getId));
-        var existingContainersIds = dockerClient.listContainersCmd().exec()
-                .stream()
-                .filter(container -> Arrays.stream(container.getNames()).anyMatch(name -> name.startsWith("app")))
+        LOGGER.info("Run removing old container task.");
+        var workingApps = appRepository.findAll().stream()
+                .filter(app -> app.getContainerID() != null)
+                .filter(app -> app.getAppStatus() != null && app.getAppStatus() != AppStatus.DIED)
+                .collect(Collectors.toMap(App::getContainerID, app -> app));
+        var containersIds = dockerClient.listContainersCmd().withShowAll(true).exec().stream()
+                .filter(container -> Arrays.stream(container.getNames()).anyMatch(n -> n.startsWith("/app")))
                 .map(Container::getId)
                 .collect(Collectors.toSet());
-        workingAppsIds.entrySet().stream()
-                .filter(entry -> !existingContainersIds.contains(entry.getKey()))
-                .forEach(entry -> {
-                    LOGGER.info("Found removed container with id {}", entry.getKey());
-                    var logger = loggers.remove(entry.getValue());
-                    if (logger != null) {
-                        logger.flush();
-                    }
-                    appRepository.findById(entry.getValue())
-                            .ifPresent(value -> updateInDb(value, AppStatus.DIED, "Container is already removed from outside"));
-                });
-    }
-
-    private void logOut(App app, String message) {
-        AppLogger appLogger = loggers.get(app.getId());
-        if (appLogger != null) {
-            appLogger.append(message);
+        for (Map.Entry<String, App> entry : workingApps.entrySet()) {
+            var app = entry.getValue();
+            var creatingTime = app.getStartAt();
+            var limit = LocalDateTime.now().minusHours(REMOVING_DELAY);
+            if (!containersIds.contains(entry.getKey()) || creatingTime.isBefore(limit)) {
+                LOGGER.info("Remove old container with id {}", app.getContainerID());
+                LOGGER.info("App exists on db. Killing from AppService");
+                kill(app);
+            }
+        }
+        for (String id : containersIds) {
+            if (!workingApps.containsKey(id)) {
+                try {
+                    LOGGER.info("App doesnt exist on db. Killing by Docker engine directly");
+                    dockerClient.removeContainerCmd(id).withForce(true).exec();
+                } catch (Exception e) {
+                    LOGGER.info("Failed to remove container. {}. {}", e.getMessage(), e.getMessage());
+                }
+            }
         }
     }
 
@@ -388,8 +302,5 @@ public abstract class SimpleAppService implements AppService {
         }
         return up(appPath, current.getParent());
     }
-
-    @Lookup
-    protected abstract AppLogger appLogger(String path);
 
 }
