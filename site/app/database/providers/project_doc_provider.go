@@ -42,7 +42,7 @@ func (pd *ProjectDocProvider) List(filter *project_doc_models.ProjectDocFilter) 
 		}
 		if filter.ConfigurationIds != nil {
 			var confIds = filter.ConfigurationIds
-			strs = helpers.UseCommasToString(confIds)
+			strs = helpers.UseCommasIntsToString(confIds)
 			queryString += fmt.Sprintf(" configuration_id in (%s) and", strings.Join(strs, ", "))
 		}
 		queryString = queryString[:len(queryString)-4] + ")"

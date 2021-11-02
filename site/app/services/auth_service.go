@@ -2,7 +2,7 @@ package services
 
 import (
 	"crypto/sha256"
-	"crypto/subtle"
+	"fmt"
 	"github.com/AfterShip/email-verifier"
 	"net/http"
 	"site_app/database/models/user_models"
@@ -20,23 +20,28 @@ type AuthService struct {
 }
 
 func (auth *AuthService) isAuth(username, password string) bool {
-	usernameHash := sha256.Sum256([]byte(username))
 	passwordHash := sha256.Sum256([]byte(password))
 
-	var user = auth.userProvider.List(&user_models.UserFilter{Emails: []string{
+	var users, _ = auth.userProvider.List(&user_models.UserFilter{Emails: []string{
 		username,
-	}})[0]
+	}})
+	if len(users) == 0 {
+		return false
+	}
+	var user = users[0]
+	expectedUsername := user.Email
 
-	expectedUsernameHash := sha256.Sum256([]byte(user.Name))
-	expectedPasswordHash := sha256.Sum256([]byte(user.Password))
+	expectedPasswordHash := string(user.Password)
+	var s = fmt.Sprintf("%x", passwordHash)
 
-	return subtle.ConstantTimeCompare(usernameHash[:], expectedUsernameHash[:]) == 1 &&
-		subtle.ConstantTimeCompare(passwordHash[:], expectedPasswordHash[:]) == 1
+	var res = expectedUsername == username && expectedPasswordHash == s
+	return res
 }
 
 func (auth *AuthService) BasicAuth(next http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		username, password, ok := r.BasicAuth()
 		if ok {
 			var isOk = auth.isAuth(username, password)
@@ -47,6 +52,7 @@ func (auth *AuthService) BasicAuth(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
+
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}
 }

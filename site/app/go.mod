@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/AfterShip/email-verifier v1.3.0
+	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.3
@@ -11,6 +12,7 @@ require (
 )
 
 require (
+	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/hbollon/go-edlib v1.4.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	golang.org/x/net v0.0.0-20201207224615-747e23833adb // indirect

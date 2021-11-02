@@ -9,7 +9,7 @@ import (
 )
 
 type IUserProvider interface {
-	List(filter *user_models.UserFilter) []user_models.User
+	List(filter *user_models.UserFilter) ([]user_models.User, error)
 	Delete(userDelete *user_models.UserDelete) error
 	Update(user user_models.User) error
 	Add(users []user_models.User) error
@@ -19,7 +19,7 @@ type UserProvider struct {
 	DataBase *database.DataBase
 }
 
-func (u *UserProvider) List(filter *user_models.UserFilter) []user_models.User {
+func (u *UserProvider) List(filter *user_models.UserFilter) ([]user_models.User, error) {
 	var users []user_models.User
 	var queryString = "SELECT * FROM users"
 	if filter != nil {
@@ -35,24 +35,27 @@ func (u *UserProvider) List(filter *user_models.UserFilter) []user_models.User {
 			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" name in (%s) and", strings.Join(strs, ", "))
 		}
+
 		if filter.Emails != nil {
 			strs = filter.Emails
 			helpers.UseCommas(strs)
-			queryString += fmt.Sprintf(" password in (%s) and", strings.Join(strs, ", "))
+			queryString += fmt.Sprintf(" email in (%s) and", strings.Join(strs, ", "))
 		}
 		queryString = queryString[:len(queryString)-4] + ")"
 	}
-	u.DataBase.Db.Select(&users, queryString)
-	return users
+	var err = u.DataBase.Db.Select(&users, queryString)
+	return users, err
 }
 
 func (u *UserProvider) Add(userList []user_models.User) error {
 	var _, err = u.DataBase.Db.NamedExec(
 		`INSERT INTO users (id,
                    name,
+                   email,
                    password) 
                    VALUES (:id,
                            :name,
+                           :email,
                            :password)`,
 		userList)
 	return err

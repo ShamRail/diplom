@@ -21,12 +21,12 @@ func addRoutes(app *app_controllers.App) *mux.Router {
 
 	/*project_doc controllers*/
 	router.HandleFunc("/project_doc", app.Auth.BasicAuth(app.AddProjectDoc)).Methods("POST")
-	router.HandleFunc("/project_docs", app.Auth.BasicAuth(app.GetProjectDocs)).Methods("GET")
+	router.HandleFunc("/project_docs", app.Auth.BasicAuth(app.GetProjectDocs)).Methods("POST")
 	router.HandleFunc("/delete_project_doc", app.Auth.BasicAuth(app.DeleteProjectDoc)).Methods("POST")
 	router.HandleFunc("/project_docs", app.Auth.BasicAuth(app.UpdateProjectDoc)).Methods("PUT")
 
 	/*user_project_doc*/
-	router.HandleFunc("/user_doc", app.Auth.BasicAuth(app.GetUserProjectDoc)).Methods("POST")
+	router.HandleFunc("/user_doc", app.Auth.BasicAuth(app.GetProject)).Methods("POST")
 
 	/*set file directory*/
 	router.PathPrefix("/app/").Handler(http.StripPrefix("/app/", a))
