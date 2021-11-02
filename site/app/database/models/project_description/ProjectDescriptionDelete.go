@@ -1,7 +1,7 @@
-package user_user_doc_models
+package project_description
 
 import uuid "github.com/satori/go.uuid"
 
-type UserProjectDocDelete struct {
+type ProjectDescriptionDelete struct {
 	Ids []uuid.UUID `json:"ids"`
 }

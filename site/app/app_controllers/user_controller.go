@@ -8,6 +8,7 @@ import (
 )
 
 func (app *App) AddUser(writer http.ResponseWriter, request *http.Request) {
+
 	writer.Header().Set("Content-Type", "application/json")
 	var user User
 	var err = json.NewDecoder(request.Body).Decode(&user)
@@ -15,7 +16,7 @@ func (app *App) AddUser(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(500)
 	} else {
 		if app.Auth.CheckEmail(user.Email) {
-			var exist = app.UserProvider.List(&UserFilter{
+			var exist, _ = app.UserProvider.List(&UserFilter{
 				Emails: []string{
 					user.Email,
 				},
@@ -75,19 +76,19 @@ func (app *App) DeleteUser(writer http.ResponseWriter, request *http.Request) {
 
 func (app *App) GetUsers(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var userFilter *UserFilter
-	var err = json.NewDecoder(request.Body).Decode(&userFilter)
+	query := request.URL.Query()
+	email := query.Get("email")
 	var users []User
-	if err != nil {
-		users = app.UserProvider.List(nil)
+	if email == "" {
+		users, _ = app.UserProvider.List(nil)
 	} else {
-		users = app.UserProvider.List(userFilter)
+		users, _ = app.UserProvider.List(&UserFilter{Emails: []string{email}})
 	}
 
 	json.NewEncoder(writer).Encode(users)
 }
 
-func (app *App) GetUserProjectDoc(writer http.ResponseWriter, request *http.Request) {
+func (app *App) GetProject(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	var projectDocFilter *project_doc_models.ProjectDocFilter
 	var err = json.NewDecoder(request.Body).Decode(&projectDocFilter)

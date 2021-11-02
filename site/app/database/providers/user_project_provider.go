@@ -3,25 +3,25 @@ package providers
 import (
 	"fmt"
 	"site_app/database"
-	m "site_app/database/models/user_user_doc_models"
+	m "site_app/database/models/user_project_models"
 	"site_app/helpers"
 	"strings"
 )
 
-type IUserDocProvider interface {
-	List(filter *m.UserProjectDocFilter) []m.UserUserDoc
-	Delete(toDelete *m.UserProjectDocDelete) error
-	Update(toUpdate m.UserUserDoc) error
-	Add(toAdd []m.UserUserDoc) error
+type IUserProjectProvider interface {
+	List(filter *m.UserProjectFilter) []m.UserProject
+	Delete(toDelete *m.UserProjectDelete) error
+	Update(toUpdate m.UserProject) error
+	Add(toAdd []m.UserProject) error
 }
 
 type UserDocProvider struct {
 	DataBase *database.DataBase
 }
 
-func (u *UserDocProvider) List(filter *m.UserProjectDocFilter) []m.UserUserDoc {
-	var uDoc []m.UserUserDoc
-	var queryString = "SELECT * FROM user_project_doc"
+func (u *UserDocProvider) List(filter *m.UserProjectFilter) []m.UserProject {
+	var uDoc []m.UserProject
+	var queryString = "SELECT * FROM user_project"
 	if filter != nil {
 		queryString += " WHERE ("
 		var strs []string
@@ -46,8 +46,8 @@ func (u *UserDocProvider) List(filter *m.UserProjectDocFilter) []m.UserUserDoc {
 	return uDoc
 }
 
-func (u *UserDocProvider) Delete(toDelete *m.UserProjectDocDelete) error {
-	var deleteString = "DELETE FROM user_project_doc"
+func (u *UserDocProvider) Delete(toDelete *m.UserProjectDelete) error {
+	var deleteString = "DELETE FROM user_project"
 	if toDelete != nil {
 		deleteString += " WHERE ("
 		var strs []string
@@ -62,15 +62,15 @@ func (u *UserDocProvider) Delete(toDelete *m.UserProjectDocDelete) error {
 	return err
 }
 
-func (u *UserDocProvider) Update(toUpdate m.UserUserDoc) error {
-	var updateString = `UPDATE user_project_doc SET user_id=$1, project_id=$2 WHERE id=$3`
+func (u *UserDocProvider) Update(toUpdate m.UserProject) error {
+	var updateString = `UPDATE user_project SET user_id=$1, project_id=$2 WHERE id=$3`
 	var _, err = u.DataBase.Db.Exec(updateString, toUpdate.UserId, toUpdate.ProjectId, toUpdate.Id)
 	return err
 }
 
-func (u *UserDocProvider) Add(toAdd []m.UserUserDoc) error {
+func (u *UserDocProvider) Add(toAdd []m.UserProject) error {
 	var _, err = u.DataBase.Db.NamedExec(
-		`INSERT INTO user_project_doc (id,
+		`INSERT INTO user_project (id,
                    user_id,
                    project_id) 
                    VALUES (:id,
