@@ -4,10 +4,10 @@ body {
 
 section{
   background: white;
-	border: solid;
+  border: solid;
   border-radius: 4px;
-	width: 30%;
-	height: 40%;
+  width: 450px;
+  height: 350px;
   margin: auto;
   position: absolute;
   bottom: 0;
@@ -60,18 +60,21 @@ footer h5{
 }
 
 h2{
-	text-align: center
+  text-align: center
 }
 
-section a, input{
+section a{
   text-decoration: none;
-  width: 80%;
+  width: 90%;
   display: block;
-  margin: 9px auto;
-  font-size: 100%;
+  margin: 50% 0 0 4%;
+  font-size: 20px;
   color: #fff;
+  border-radius: 8px;
   padding: 8px;
   border-width: 0 0 1px 0;
+  text-align: center;
+  background: red;
   -webkit-transition: all 2s ease-in-out;
   -moz-transition: all 2s ease-in-out;
   -o-transition: all 2s ease-in-out;
@@ -80,12 +83,6 @@ section a, input{
 
 input:focus{
   box-shadow: 3px 3px 10px #333;
-}
-
-section a{
-  text-align: center;
-  padding: 4px 8px;
-  background: red;
 }
 
 section a:hover{
@@ -98,20 +95,47 @@ section a:hover{
   padding: 15px 0 0 15px;
 }
 
-.profile{
-  background-color: red;
-    border: none;
-    color: white;
-    padding: 10px;
-    width: 50px;
-    height: 50px;
-    box-shadow: 0 3px 20px rgba(0,0,0,.25),
-  inset 0 2px 0 rgba(255,255,255,.6);
-    border-radius: 100%;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 30px;
-    float: right; 
-    margin: 20px 20px 5px 10px;
+.fio{
+  text-decoration: none;
+  width: 40%;
+  float: left; 
+  margin: 9px 5px 10px 20px;
+  font-size: 20px;
+  color: #fff;
+  padding: 8px;
+  border-width: 0 0 1px 0;
+  -webkit-transition: all 2s ease-in-out;
+  -moz-transition: all 2s ease-in-out;
+  -o-transition: all 2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.mail{
+  text-decoration: none;
+  width: 89%;
+  float: left; 
+  margin: 9px 5px 10px 20px;
+  font-size: 20px;
+  color: #fff;
+  padding: 8px;
+  border-width: 0 0 1px 0;
+  -webkit-transition: all 2s ease-in-out;
+  -moz-transition: all 2s ease-in-out;
+  -o-transition: all 2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.pass{
+  text-decoration: none;
+  width: 40%;
+  float: left; 
+  margin: 9px 5px 10px 20px;
+  font-size: 20px;
+  color: #fff;
+  padding: 8px;
+  border-width: 0 0 1px 0;
+  -webkit-transition: all 2s ease-in-out;
+  -moz-transition: all 2s ease-in-out;
+  -o-transition: all 2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
