@@ -1,0 +1,86 @@
+.info{
+	border-width: 2px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px;
+	padding: 5px 5px 5px 5px;
+	display: inline-block;
+	border: solid;
+	background: white;
+	margin: 0 0 0 5%;
+	width: 280px;
+	height: 220px;
+}
+
+.projects{
+	background: white;
+	width: 700px;
+	border: solid;
+	border-width: 2px;
+	box-shadow: 0 0 10px;
+	float: right;
+	height: 300px;
+	overflow: auto;
+	margin: 0 100px 0 0;
+}
+
+.my_project {
+  font-size: 20px;
+}
+
+.my_project dt, .my_project dd, .my_project da, .my_project db{
+  height: 2.5em;
+  padding: 0 0.625em 0 0.875em;
+  box-sizing: border-box;
+}
+dt {
+  width: 30%;
+  float: left;
+  background: white;
+  font-weight: bold;
+}
+dd {
+  width: 20%;
+  float: left;
+  background: white;
+  margin-left: 0;
+}
+da {
+  width: 10%;
+  float: left;
+  background: white;
+  margin-left: 0;
+}
+db {
+  width: 20%;
+  background: white;
+  float: left;
+}
+dr{
+  width: 20%;
+  background: white;
+  float: left;
+}
+
+.my_project a{
+  text-align: center;
+  background: transparent;
+  text-decoration: none;
+  color: black;
+}
+
+.avatar{
+	background-color: red;
+    border: none;
+    color: white;
+    padding: 10px;
+    width: 50px;
+  	height: 50px;
+  	box-shadow: 0 3px 20px rgba(0,0,0,.25),
+	inset 0 2px 0 rgba(255,255,255,.6);
+    border-radius: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 30px;
+    margin: 20px 0 5px 110px;
+}
