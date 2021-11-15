@@ -69,7 +69,7 @@ section a, input{
   display: block;
   margin: 9px auto;
   font-size: 100%;
-  color: #fff;
+  color: black;
   padding: 8px;
   border-width: 0 0 1px 0;
   -webkit-transition: all 2s ease-in-out;
