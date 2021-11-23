@@ -1,86 +1,57 @@
 .info{
-	border-width: 2px;
 	border-radius: 10px;
 	box-shadow: 0 0 10px;
 	padding: 5px 5px 5px 5px;
-	display: inline-block;
-	border: solid;
+  position: absolute;
 	background: white;
-	margin: 0 0 0 5%;
-	width: 280px;
-	height: 220px;
+	margin: 10px 0 0 10px;
+	width: 20%;
+  font-size: 13px;
+	height: auto;
 }
 
 .projects{
 	background: white;
-	width: 700px;
-	border: solid;
-	border-width: 2px;
+	width: 70%;
 	box-shadow: 0 0 10px;
 	float: right;
-	height: 300px;
 	overflow: auto;
-	margin: 0 100px 0 0;
+	margin: 10px 50px 70px 0;
 }
 
-.my_project {
-  font-size: 20px;
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
 }
 
-.my_project dt, .my_project dd, .my_project da, .my_project db{
-  height: 2.5em;
-  padding: 0 0.625em 0 0.875em;
-  box-sizing: border-box;
-}
-dt {
-  width: 30%;
-  float: left;
-  background: white;
-  font-weight: bold;
-}
-dd {
-  width: 20%;
-  float: left;
-  background: white;
-  margin-left: 0;
-}
-da {
-  width: 10%;
-  float: left;
-  background: white;
-  margin-left: 0;
-}
-db {
-  width: 20%;
-  background: white;
-  float: left;
-}
-dr{
-  width: 20%;
-  background: white;
-  float: left;
-}
-
-.my_project a{
-  text-align: center;
-  background: transparent;
-  text-decoration: none;
-  color: black;
-}
-
-.avatar{
-	background-color: red;
-    border: none;
-    color: white;
-    padding: 10px;
-    width: 50px;
-  	height: 50px;
-  	box-shadow: 0 3px 20px rgba(0,0,0,.25),
-	inset 0 2px 0 rgba(255,255,255,.6);
-    border-radius: 100%;
+th, td {
     text-align: center;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+@media screen and (max-width: 600px) {
+    .info{
+        font-size: 8px;
+        margin: auto;
+        position: static;
+    }
+}
+
+.projects a {
+    float: left;
+    display: block;
+    color: black;
+    margin: 0 0 0 0;
+    text-align: center;
+    padding: 3px 5px;
     text-decoration: none;
-    display: inline-block;
-    font-size: 30px;
-    margin: 20px 0 5px 110px;
+    font-size: 15px;
+}
+
+.projects a:hover {
+    color: red;
 }
