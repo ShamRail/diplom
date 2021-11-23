@@ -2,127 +2,111 @@ body {
     margin: 0;
 }
 
-header{
-	border: solid;
-	background-color: #fff;
-	border-width: 0;
-	border-radius: 4px;
-	border-bottom-width: 2px;
-	height: 90px;
-	position: sticky;
-	top: 0;
+form {
+    background: white;
+    width: 50%;
+    margin: auto;
 }
 
-textarea{
-	resize: none;
-}
-
-button{
-  text-decoration: none;
-  width: 20%;
-  background: red;
-  margin: 9px auto;
-  font-size: 100%;
-  color: white;
-  padding: 8px;
-  border-width: 0 0 1px 0;
-  -webkit-transition: all 2s ease-in-out;
-  -moz-transition: all 2s ease-in-out;
-  -o-transition: all 2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-}
-
-.logo{
-	width: 170px;
-	height: 70px;
-	padding: 15px 0 0 15px;
-}
-
-.noselect {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.logo_project{
-	width: 200px;
-	height: 140px;
-	margin: 5px 0 0 5px;
-	float: left;
-}
-
-.btn-group a {
-    color: black;
-    border: 0;
-    cursor: pointer;
-    background: transparent;
-    float: right; 
-    margin: 30px 30px 0 0;
-    font-size: 20px;
-}
-
-.btn-group a:hover{
-	color: red;
-}
-
-.red_project{
-	border: solid;
-	background: white;
-	margin: auto;
-	height: 50%;
-	width: 90%;
-}
-
-footer{
-	position:fixed;
-   	left:0px;
-   	bottom:0px;
-	border: solid;
-	background-color: #fff;
-	border-width: 0;
-	border-radius: 4px;
-	border-top-width: 2px;
-	margin: 10px 0 0 0;
-	width: 100%;
-	height: 90px;
-	background: white;
-}
-
-footer a{
-	color: black;
-	float: right; 
-    margin: 30px 30px 0 0;
-    font-size: 20px;
-}
-
-footer a:hover{
-	color: red;
-}
-
-footer h5{
-	color: black;
-	float: left; 
-    margin: 35px 0 0 30px;
-    font-size: 15px;
-}
-
-.profile{
-	background-color: red;
-    border: none;
-    color: white;
-    padding: 10px;
-    width: 50px;
-  	height: 50px;
-  	box-shadow: 0 3px 20px rgba(0,0,0,.25),
-	inset 0 2px 0 rgba(255,255,255,.6);
-    border-radius: 100%;
-    text-align: center;
-    text-decoration: none;
+.container input[type=text], .container input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
     display: inline-block;
-    font-size: 30px;
-    float: right; 
-    margin: 20px 20px 5px 10px;
+    border-bottom: 1px solid #ccc;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    box-sizing: border-box;
+}
+
+.container input:focus{
+  box-shadow: 3px 3px 10px #333;
+}
+
+.container h2{
+    text-align: center;
+}
+
+button {
+    background-color: red;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+
+.content{
+  padding: 10px;
+  background: white;
+  position: fixed; top: 50%; left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.container {
+    padding: 16px;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+@media screen and (max-width: 600px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+    .topnav a{
+        display: none;
+    }
+}
+
+input[type=text], select, textarea {
+    width: 100%; /* Full width */
+    padding: 12px; /* Some padding */ 
+    border: 1px solid #ccc; /* Gray border */
+    border-radius: 4px; /* Rounded borders */
+    box-sizing: border-box; /* Make sure that padding and width stays in place */
+    margin-top: 6px; /* Add a top margin */
+    margin-bottom: 16px; /* Bottom margin */
+    resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
+}
+
+/* Style the submit button with a specific background color etc */
+input[type=submit] {
+    background-color: red;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* When moving the mouse over the submit button, add a darker green color */
+input[type=submit]:hover {
+     opacity: 0.8;
+}
+
+/* Add a background color and some padding around the form */
+.container {
+    border-radius: 5px;
+    padding: 20px;
+    width: 50%;
+    height: auto;
+    padding: 10px;
+    background: white;
+    position: fixed; top: 50%; left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }

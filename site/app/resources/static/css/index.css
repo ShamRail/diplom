@@ -1,0 +1,52 @@
+body {
+    margin: 0;
+}
+
+.info_project {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.logo_project{
+	width: 30%;
+	height: auto;
+	margin: 5px 0 0 5px;
+	float: left;
+}
+
+.project{
+	display: inline-block;
+	border: solid;
+	background: white;
+	padding: 1px 1px 1px 1px;
+	border-width: 1px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px;
+	margin: 20px 0 0 10px;
+	width: 300px;
+	height: 150px;
+	cursor: pointer;
+}
+
+.project:hover{
+	box-shadow: 0 0 20px;
+}
+
+@media screen and (max-width: 600px) {
+    .project {
+        float: none;
+        display: block;
+        text-align: left;
+        width: 90%;
+        margin: 3px auto;
+        padding: 14px;
+    }
+}
+
+.content{
+	margin: 0 0 60px 0;
+}

@@ -3,32 +3,37 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../css/main.css">
-	<link rel="stylesheet" href="../css/login.css">
+	<link rel="stylesheet" href="../css/sidenav.css">
+	<link rel="stylesheet" href="../css/header_and_footer.css">
+	<link rel="stylesheet" href="../css/index.css">
 	<link rel="stylesheet" href="../css/red_project.css">
+	<script src="../js/sidenav.js"></script>
 	<title>Редактировать проект</title>
 </head>
 <body bgcolor="#E5E5E5">
-	<header>
-		<div class="btn-group" style="width:100%">
-		 	<img src="../img/logo.png" alt="УГАТУ" class="logo">
-		    <a class="profile" href="profile.html" style="text-decoration: none">C</a>
-		    <a href="create_project.html" style="text-decoration: none">Создать проект</a>
-		</div>
-	</header>
-	<section class="red_project">
-		<img src="../img/logo_project.png" alt="проект" class="logo_project">
-		<input type="text" name="name" placeholder="Название проекта" ></input>
-		<input type="text" name="conf" placeholder="Конфигурация" ></input>
-		<textarea type="text" cols="125" rows="8" name="inf" placeholder="Описание" ></textarea>
-		<div>
-			<button vertical-align="top" href="#" style="text-decoration: none">Сохранить изменения</button>
-			<button vertical-align="top" href="#" style="text-decoration: none">Изменить логотип</button>
-		</div>
-	</section>
-	<footer>
-		<a  href="about.html" style="text-decoration: none">О нас</a>
-		<h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
-	</footer>
+		<div class="navbar">
+	  <h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
+	</div>
+	<div class="topnav">		
+	  <img src="../img/logo.png" alt="УГАТУ">
+	  <a href="index.html">Главная</a>
+	  <div id="mySidenav" class="sidenav">
+		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+		  <a href="profile.html">Личный кабинет</a>
+		  <a href="create_project.html">Создать проект</a>
+		  <a href="#">Выйти</a>
+	  </div>
+	  <a href="#" onclick="openNav()">Надеев Сергей</a>
+	</div>
+	  <form class="container">
+	    <input type="text" id="fname" name="firstname" placeholder="Название проекта"
+	    value="Проект №1">
+	    <select>
+	      <option value="C++">C++</option>
+	      <option value="Java">Java</option>
+	    </select>	
+	    <textarea id="subject" name="subject" placeholder="Описание" style="height:150px"></textarea>
+	    <input type="submit" value="Изменить">
+	  </form>
 </body>
 </html>

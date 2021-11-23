@@ -2,140 +2,72 @@ body {
     margin: 0;
 }
 
-section{
-  background: white;
-  border: solid;
-  border-radius: 4px;
-  width: 450px;
-  height: 350px;
-  margin: auto;
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  right: 0;
+/* Bordered form */
+form {
+    background: white;
+    width: 50%;
+    margin: auto;
 }
 
-header{
-  border: solid;
-  background-color: #fff;
-  border-width: 0;
-  border-radius: 4px;
-  border-bottom-width: 2px;
-  height: 90px;
-  position: sticky;
+.container input[type=text], .container input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border-bottom: 1px solid #ccc;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    box-sizing: border-box;
 }
 
-footer{
-  position:fixed;
-  left:0px;
-  bottom:0px;
-  width: 100%;
-  border: solid;
-  background-color: #fff;
-  border-width: 0;
-  border-radius: 4px;
-  border-top-width: 2px;
-  margin: 10px 0 0 0;
-  height: 90px;
-  background: white;
-}
-
-footer a{
-  color: black;
-  float: right; 
-  margin: 30px 30px 0 0;
-  font-size: 20px;
-}
-
-footer a:hover{
-  color: red;
-}
-
-footer h5{
-  color: black;
-  float: left; 
-  margin: 35px 0 0 30px;
-  font-size: 15px;
-}
-
-h2{
-  text-align: center
-}
-
-section a{
-  text-decoration: none;
-  width: 90%;
-  display: block;
-  margin: 50% 0 0 4%;
-  font-size: 20px;
-  color: #fff;
-  border-radius: 8px;
-  padding: 8px;
-  border-width: 0 0 1px 0;
-  text-align: center;
-  background: red;
-  -webkit-transition: all 2s ease-in-out;
-  -moz-transition: all 2s ease-in-out;
-  -o-transition: all 2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-}
-
-input:focus{
+.container input:focus{
   box-shadow: 3px 3px 10px #333;
 }
 
-section a:hover{
-  opacity: 0.7;
+.container h2{
+    text-align: center;
 }
 
-.logo{
-  width: 170px;
-  height: 70px;
-  padding: 15px 0 0 15px;
+button {
+    background-color: red;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
 }
 
-.fio{
-  text-decoration: none;
-  width: 40%;
-  float: left; 
-  margin: 9px 5px 10px 20px;
-  font-size: 20px;
-  color: #fff;
-  padding: 8px;
-  border-width: 0 0 1px 0;
-  -webkit-transition: all 2s ease-in-out;
-  -moz-transition: all 2s ease-in-out;
-  -o-transition: all 2s ease-in-out;
-  transition: all 0.2s ease-in-out;
+button:hover {
+    opacity: 0.8;
 }
 
-.mail{
-  text-decoration: none;
-  width: 89%;
-  float: left; 
-  margin: 9px 5px 10px 20px;
-  font-size: 20px;
-  color: #fff;
-  padding: 8px;
-  border-width: 0 0 1px 0;
-  -webkit-transition: all 2s ease-in-out;
-  -moz-transition: all 2s ease-in-out;
-  -o-transition: all 2s ease-in-out;
-  transition: all 0.2s ease-in-out;
+
+.content{
+  padding: 10px;
+  background: white;
+  position: fixed; top: 50%; left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
-.pass{
-  text-decoration: none;
-  width: 40%;
-  float: left; 
-  margin: 9px 5px 10px 20px;
-  font-size: 20px;
-  color: #fff;
-  padding: 8px;
-  border-width: 0 0 1px 0;
-  -webkit-transition: all 2s ease-in-out;
-  -moz-transition: all 2s ease-in-out;
-  -o-transition: all 2s ease-in-out;
-  transition: all 0.2s ease-in-out;
+.container {
+    padding: 16px;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+@media screen and (max-width: 600px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+    .topnav a{
+        display: none;
+    }
 }

@@ -3,26 +3,30 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/header_and_footer.css">
 	<link rel="stylesheet" href="../css/login.css">
 	<title>Логин</title>
 </head>
 <body bgcolor="#E5E5E5">	
-	<header>
-		<div style="width:100%">
-		 	<img src="../img/logo.png" alt="УГАТУ" class="logo">
-		</div>
-	</header>
-	<section>
-		<div>
-			<h2>Войти в аккаунт</h2>
-			<input type="email" name="email" placeholder="E-mail">
-			<input type="password" name="pass" placeholder="Пароль">
-			<a href="#">Войти</a>
-		</div>
-	</section>
-	<footer>
-		<a href="about.html" style="text-decoration: none">О нас</a>
-		<h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
-	</footer>
+	<div class="topnav">		
+	  <img src="../img/logo.png" alt="УГАТУ">
+	  <a href="index.html">Главная</a>
+	  <a href="login.html">Вход</a>
+	  <a href="registration.html">Регистрация</a>
+	</div>
+	<form class="content">
+	  <div class="container">
+	    <h2>Войти в аккаунт</h2>
+	    <input type="text" placeholder="Введите e-mail" name="uname" required>
+	    <input type="password" placeholder="Введите пароль" name="psw" required>
+	    <label>
+	      <input type="checkbox" checked="checked" name="remember">Запомнить
+	    </label>
+	    <button type="button" class="cancelbtn">Войти</button>
+	  </div>
+	</form>
+	<div class="navbar">
+	  <h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
+	</div>
 </body>
 </html>

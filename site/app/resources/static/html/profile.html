@@ -3,40 +3,64 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../css/main.css">
+	<link rel="stylesheet" href="../css/index.css">
+	<link rel="stylesheet" href="../css/sidenav.css">
+	<link rel="stylesheet" href="../css/header_and_footer.css">
 	<link rel="stylesheet" href="../css/profile.css">
+	<script src="../js/sidenav.js"></script>
 	<title>Профиль</title>
 </head>
 <body bgcolor="#E5E5E5">
-	<header>
-		<div class="btn-group" style="width:100%">
-		 	<img src="../img/logo.png" alt="УГАТУ" class="logo">
-		    <button class="profile" href="#" style="text-decoration: none">C</button>
-		    <a href="create_project.html" style="text-decoration: none">Создать проект</a>
-		</div>
-	</header>
-	<h1 align="center">Мои проекты</h1>
+	<div class="topnav">		
+	  <img src="../img/logo.png" alt="УГАТУ">
+	  <a href="index.html">Главная</a>
+	  <div id="mySidenav" class="sidenav">
+		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+		  <a href="profile.html">Личный кабинет</a>
+		  <a href="create_project.html">Создать проект</a>
+		  <a href="#">Выйти</a>
+	  </div>
+	  <a href="#" onclick="openNav()">Надеев Сергей</a>
+	</div>
 	<section class="info">
 		<div>
-			<button class="avatar" style="text-decoration: none">C</button>
 			<h2 align="center">Надеев Сергей</h2>
-			<h3>Дата регистрации: </h3>
-			<h3>Email: </h3>
+			<h3>Дата регистрации: 27.10.2021</h3>
+			<h3>Email: nadeevsa@mail.ru</h3>
 		</div>
 	</section>
 	<section class="projects">
-		<dl class="my_project">
-			<dt>Проект1</dt> <dd>27.10.2021</dd> <da>Java</da> <db>В работе</db>
-			<dr> <a href="red_project.html">Редактировать</a></dr>
-			<dr> <a href="#">Удалить</a></dr>
-			<dt>Проект1</dt> <dd>27.10.2021</dd> <da>Java</da> <db>В работе</db>
-			<dr> <a href="red_project.html">Редактировать</a></dr>
-			<dr> <a href="#">Удалить</a></dr>
-		</dl>
-	</section>
-	<footer>
-		<a  href="about.html" style="text-decoration: none">О нас</a>
-		<h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
-	</footer>
+			<div style="overflow-x:auto;">
+			  <table>
+			    <tr>
+			      <th>Название проекта</th>
+			      <th>Дата создания</th>
+			      <th>Конфигурация</th>
+			      <th>Действие</th>
+			    </tr>
+			    <tr>
+			      <td>Проект №1</td>
+			      <td>23.11.2021</td>
+			      <td>Java</td>
+			      <td>
+			      	<a href="red_project.html">Редактировать</a>
+			      	<a>Удалить</a>
+			      </td>
+			    </tr>
+			    <tr>
+			      <td>Проект №2</td>
+			      <td>23.11.2021</td>
+			      <td>Java</td>
+			      <td>
+			      	<a href="red_project.html">Редактировать</a>
+			      	<a>Удалить</a>
+			      </td>
+			    </tr>
+			  </table>
+			</div>
+		</section>
+	<div class="navbar">
+	  <h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
+	</div>
 </body>
 </html>
