@@ -1,3 +1,8 @@
+body {
+    margin: 0;
+    font-family: "Lato", sans-serif;
+}
+
 /* Header */
 
 .topnav {
@@ -25,9 +30,8 @@
 .topnav img {
     float: left;
     display: block;
-    padding: 14px 16px;
     text-decoration: none;
-    width: 5%;
+    width: 7%;
     height: auto;  
 }
 
@@ -62,6 +66,12 @@
         display: block;
         margin: auto;
         width: 30%; 
+    }
+}
+
+@media screen and (max-height: 500px) {
+  .topnav img {
+        width: 15%; 
     }
 }
 

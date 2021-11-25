@@ -2,21 +2,19 @@
 	border-radius: 10px;
 	box-shadow: 0 0 10px;
 	padding: 5px 5px 5px 5px;
-  position: absolute;
+    position: absolute;
 	background: white;
-	margin: 10px 0 0 10px;
+	margin: 50px 0 0 10px;
 	width: 20%;
-  font-size: 13px;
+    font-size: 13px;
 	height: auto;
 }
 
 .projects{
 	background: white;
-	width: 70%;
 	box-shadow: 0 0 10px;
-	float: right;
 	overflow: auto;
-	margin: 10px 50px 70px 0;
+	margin: 15px 15px 15px 15px;
 }
 
 table {
@@ -42,7 +40,7 @@ tr:nth-child(even){background-color: #f2f2f2}
 }
 
 .projects a {
-    float: left;
+    float: center;
     display: block;
     color: black;
     margin: 0 0 0 0;
@@ -54,4 +52,8 @@ tr:nth-child(even){background-color: #f2f2f2}
 
 .projects a:hover {
     color: red;
+}
+
+.content{
+    margin: 0 0 90px 0;
 }
