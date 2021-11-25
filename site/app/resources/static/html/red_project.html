@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href='../img/favicon_usatu.ico'>
 	<link rel="stylesheet" href="../css/sidenav.css">
 	<link rel="stylesheet" href="../css/header_and_footer.css">
 	<link rel="stylesheet" href="../css/index.css">
@@ -11,29 +12,31 @@
 	<title>Редактировать проект</title>
 </head>
 <body bgcolor="#E5E5E5">
-		<div class="navbar">
+	<div class="navbar">
 	  <h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
 	</div>
 	<div class="topnav">		
 	  <img src="../img/logo.png" alt="УГАТУ">
 	  <a href="index.html">Главная</a>
-	  <div id="mySidenav" class="sidenav">
-		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-		  <a href="profile.html">Личный кабинет</a>
-		  <a href="create_project.html">Создать проект</a>
-		  <a href="#">Выйти</a>
-	  </div>
 	  <a href="#" onclick="openNav()">Надеев Сергей</a>
 	</div>
-	  <form class="container">
-	    <input type="text" id="fname" name="firstname" placeholder="Название проекта"
-	    value="Проект №1">
-	    <select>
-	      <option value="C++">C++</option>
-	      <option value="Java">Java</option>
-	    </select>	
-	    <textarea id="subject" name="subject" placeholder="Описание" style="height:150px"></textarea>
-	    <input type="submit" value="Изменить">
+	<div id="mySidenav" class="sidenav">
+		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+		  <a href="profile.html">Мои проекты</a>
+		  <a href="create_project.html">Создать проект</a>
+		  <a href="#">Выйти</a>
+	</div>
+	<section class="container">
+		<form>
+		    <input type="text" id="fname" name="firstname" placeholder="Название проекта"
+		    value="Проект №1">
+		    <select>
+		      <option value="C++">C++</option>
+		      <option value="Java">Java</option>
+		    </select>	
+		    <textarea id="subject" name="subject" placeholder="Описание" style="height:150px"></textarea>
+		    <input type="submit" value="Изменить">
 	  </form>
+	</section>
 </body>
 </html>
