@@ -40,6 +40,8 @@ func main() {
 		DataBase: db,
 	}
 
+	var usd = providers.ProjectDescriptionProvider{DataBase: db}
+
 	var pd = providers.ProjectDocProvider{
 		DataBase: db,
 	}
@@ -47,9 +49,10 @@ func main() {
 	var auth = services.CreateNewAuthService(&us)
 
 	var app = app_controllers.App{
-		UserProvider:       &us,
-		ProjectDocProvider: &pd,
-		Auth:               auth,
+		UserProvider:               &us,
+		ProjectDocProvider:         &pd,
+		ProjectDescriptionProvider: &usd,
+		Auth:                       auth,
 	}
 
 	var router = addRoutes(&app)

@@ -53,9 +53,9 @@ func TestCanAddAndListProjectDoc(t *testing.T) {
 		t.Fatal("List size must be 1")
 	}
 	log.Println(l)
-
-	err = projectDocProvider.Delete(&project_doc_models.ProjectDocDelete{Ids: projectDocIds})
-	if err != nil {
-		t.Fatal("Can not delete")
-	}
+	//
+	//err = projectDocProvider.Delete(&project_doc_models.ProjectDocDelete{Ids: projectDocIds})
+	//if err != nil {
+	//	t.Fatal("Can not delete")
+	//}
 }
