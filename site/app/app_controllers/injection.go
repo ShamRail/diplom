@@ -6,7 +6,8 @@ import (
 )
 
 type App struct {
-	UserProvider       providers.IUserProvider
-	ProjectDocProvider providers.IProjectDocProvider
-	Auth               services.IAuthService
+	UserProvider               providers.IUserProvider
+	ProjectDocProvider         providers.IProjectDocProvider
+	ProjectDescriptionProvider providers.IProjectDescriptionProvider
+	Auth                       services.IAuthService
 }

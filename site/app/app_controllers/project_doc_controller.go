@@ -2,6 +2,7 @@ package app_controllers
 
 import (
 	"encoding/json"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 	. "site_app/database/models/project_doc_models"
 )
@@ -56,10 +57,19 @@ func (app *App) DeleteProjectDoc(writer http.ResponseWriter, request *http.Reque
 
 func (app *App) GetProjectDocs(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var projectDocFilter *ProjectDocFilter
-	var err = json.NewDecoder(request.Body).Decode(&projectDocFilter)
+	projectIds, _ := request.URL.Query()["id"]
+	var id = uuid.FromStringOrNil(projectIds[0])
+	var projectDocFilter = &ProjectDocFilter{
+		Ids: []uuid.UUID{
+			id,
+		},
+		Names:            nil,
+		ConfigurationIds: nil,
+		BuildStatuses:    nil,
+	}
+
 	var ProjectDocs []ProjectDoc
-	if err != nil {
+	if projectDocFilter == nil {
 		ProjectDocs = app.ProjectDocProvider.List(nil)
 	} else {
 		ProjectDocs = app.ProjectDocProvider.List(projectDocFilter)

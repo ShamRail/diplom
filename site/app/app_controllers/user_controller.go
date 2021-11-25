@@ -76,8 +76,10 @@ func (app *App) DeleteUser(writer http.ResponseWriter, request *http.Request) {
 
 func (app *App) GetUsers(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
+
 	query := request.URL.Query()
 	email := query.Get("email")
+
 	var users []User
 	if email == "" {
 		users, _ = app.UserProvider.List(nil)

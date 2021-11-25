@@ -3,6 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script src="../js/queries.js"></script>
 	<link rel="icon" href='../img/favicon_usatu.ico'>
 	<link rel="stylesheet" href="../css/sidenav.css">
 	<link rel="stylesheet" href="../css/header_and_footer.css">
@@ -28,7 +30,7 @@
 	</div>
 	<section class="container">
 		<form>
-		    <input type="text" id="fname" name="firstname" placeholder="Название проекта"
+		    <input type="text" id="name" name="firstname" placeholder="Название проекта"
 		    value="Проект №1">
 		    <select>
 		      <option value="C++">C++</option>
@@ -40,3 +42,16 @@
 	</section>
 </body>
 </html>
+<script>
+	$(document).ready(function() {
+		let params = (new URL(document.location)).searchParams;
+		let id = params.get("id");
+		console.log(id)
+		GetProjectDocById(id).then(t => {
+			console.log(t)
+			t.map( tt => {
+				$("#subject").text(tt.Name)
+			})
+		})
+	})
+</script>

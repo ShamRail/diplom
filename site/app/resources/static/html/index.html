@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<script src="../js/queries.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href='../img/favicon_usatu.ico'>
 	<link rel="stylesheet" href="../css/header_and_footer.css">
@@ -9,40 +11,41 @@
 	<title>УГАТУ</title>
 </head>
 <body bgcolor="#E5E5E5">
-	<div class="topnav">		
+	<div class="topnav">
 	  <img src="../img/logo.png" alt="УГАТУ">
 	  <a href="index.html">Главная</a>
 	  <a href="login.html">Вход</a>
 	  <a href="registration.html">Регистрация</a>
 	  <input type="text" placeholder="Поиск..">
 	</div>
-	<section class="content">
-		<div class="project">
-			<img src="../img/logo_project.png" alt="проект" class="logo_project">
-			<h2 class="info_project">Проект № 1</h2>
-			<h3 class="info_project">Автор: Надеев С.А.</h3>
-			<h4 class="info_project">Описание: такой алгоритм хороший.</h4>
-		</div>
-		<div class="project">
-			<img src="../img/logo_project.png" alt="проект" class="logo_project">
-			<h2 class="info_project">Проект № 2</h2>
-			<h3 class="info_project">Автор: Иванов А.А.</h3>
-			<h4 class="info_project">Описание: невероятно.</h4>
-		</div>
-		<div class="project">
-			<img src="../img/logo_project.png" alt="проект" class="logo_project">
-			<h2 class="info_project">Проект № 2</h2>
-			<h3 class="info_project">Автор: Иванов А.А.</h3>
-			<h4 class="info_project">Описание: невероятно.</h4>
-		</div>
-		<div class="project">
-			<img src="../img/logo_project.png" alt="проект" class="logo_project">
-			<h2 class="info_project">Проект № 2</h2>
-			<h3 class="info_project">Автор: Иванов А.А.</h3>
-			<h4 class="info_project">Описание: невероятно.</h4>
-		</div>
+	<section class="content" id="projects">
 	</section>
 	<div class="navbar">
 	  <h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
 	</div>
+</body>
 </html>
+<script>
+	$(document).ready(function() {
+		let projects = $("#projects")
+
+		GetProjectDescription().then(json => {
+			json.map(t => {
+					console.log(t)
+					projects.append(`
+						<div class="project" id=${t.ProjectId}>
+							<img src="../img/logo_project.png" alt="проект" class="logo_project">
+							<h2 class="info_project" id="name">${t.Name}</h2>
+							<h3 class="info_project" id="author">Автор: ${t.Author}</h3>
+							<h4 class="info_project" id="short_description">${t.ShortDescription}</h4>
+						</div>`)
+			})
+		}).then(function (){
+			$(".project").click(function () {
+				window.location = 'red_project.html?id=' + this.id;
+			});
+		})
+
+	});
+
+</script>
