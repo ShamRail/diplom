@@ -3,6 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../js/queries.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<link rel="icon" href='../img/favicon_usatu.ico'>
 	<link rel="stylesheet" href="../css/sidenav.css">
   <link rel="stylesheet" href="../css/header_and_footer.css">
@@ -23,7 +25,7 @@
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="profile.html">Мои проекты</a>
     <a href="create_project.html">Создать проект</a>
-    <a href="#">Выйти</a>
+    <a id="logOut">Выйти</a>
   </div>
 	<section class="content">
 			<div class="projects">
@@ -102,3 +104,13 @@
 		</section>
 </body>
 </html>
+<script>
+	$(document).ready(function() {
+		$("#logOut").click(function (){
+			console.log("LogOut")
+			localStorage.removeItem('user');
+			console.log(localStorage.getItem('user'))
+			window.location = 'login.html';
+		})
+	})
+</script>

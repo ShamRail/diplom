@@ -80,12 +80,7 @@ func (app *App) GetUsers(writer http.ResponseWriter, request *http.Request) {
 	query := request.URL.Query()
 	email := query.Get("email")
 
-	var users []User
-	if email == "" {
-		users, _ = app.UserProvider.List(nil)
-	} else {
-		users, _ = app.UserProvider.List(&UserFilter{Emails: []string{email}})
-	}
+	users, _ := app.UserProvider.List(&UserFilter{Emails: []string{email}})
 
 	json.NewEncoder(writer).Encode(users)
 }

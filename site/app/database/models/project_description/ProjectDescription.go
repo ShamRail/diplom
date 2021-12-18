@@ -13,7 +13,7 @@ const (
 type ProjectDescription struct {
 	Id               *uuid.UUID `db:"id"`
 	ProjectId        *uuid.UUID `db:"project_id"`
-	Name             string     `db:"name"`
+	UserId           *uuid.UUID `db:"user_id"`
 	Author           string     `db:"author"`
 	ShortDescription string     `db:"short_description"`
 	Description      string     `db:"description"`
@@ -23,8 +23,7 @@ type ProjectDescription struct {
 type ProjectDescriptionFilter struct {
 	Ids               []uuid.UUID `json:"ids"`
 	ProjectIds        []uuid.UUID `json:"project_ids"`
-	Name              string      `db:"name"`
-	Author            string      `db:"author"`
+	UserIds           []uuid.UUID `json:"user_ids"`
 	ShortDescriptions []string    `json:"short_descriptions"`
 	Descriptions      []string    `json:"descriptions"`
 	ProjectStatuses   []Status    `json:"statuses"`

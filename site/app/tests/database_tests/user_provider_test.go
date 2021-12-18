@@ -106,19 +106,19 @@ func TestCanUpdateUser(t *testing.T) {
 	}
 }
 
-func TestCanDeleteUser(t *testing.T) {
-	var deleteUser = user_models.UserDelete{
-		Ids: uuidList,
-	}
-	userProvider.Delete(&deleteUser)
-	var users, err = userProvider.List(&user_models.UserFilter{
-		Ids: uuidList,
-	})
-	if len(users) != 0 {
-		t.Log(err.Error())
-		t.Fatal("Tests user_models count should be 0")
-	}
-}
+//func TestCanDeleteUser(t *testing.T) {
+//	var deleteUser = user_models.UserDelete{
+//		Ids: uuidList,
+//	}
+//	userProvider.Delete(&deleteUser)
+//	var users, err = userProvider.List(&user_models.UserFilter{
+//		Ids: uuidList,
+//	})
+//	if len(users) != 0 {
+//		t.Log(err.Error())
+//		t.Fatal("Tests user_models count should be 0")
+//	}
+//}
 
 func Test(t *testing.T) {
 	var s = "1234"

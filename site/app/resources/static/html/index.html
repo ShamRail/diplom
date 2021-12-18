@@ -29,20 +29,20 @@
 	$(document).ready(function() {
 		let projects = $("#projects")
 
-		GetProjectDescription().then(json => {
+		GetProjectDescriptionAll().then(json => {
 			json.map(t => {
 					console.log(t)
 					projects.append(`
 						<div class="project" id=${t.ProjectId}>
 							<img src="../img/logo_project.png" alt="проект" class="logo_project">
-							<h2 class="info_project" id="name">${t.Name}</h2>
+							<h2 class="info_project" id="name">${t.Description}</h2>
 							<h3 class="info_project" id="author">Автор: ${t.Author}</h3>
 							<h4 class="info_project" id="short_description">${t.ShortDescription}</h4>
 						</div>`)
 			})
 		}).then(function (){
 			$(".project").click(function () {
-				window.location = 'red_project.html?id=' + this.id;
+				window.location = 'red_project.html?project_id=' + this.id;
 			});
 		})
 

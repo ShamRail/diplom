@@ -7,25 +7,28 @@ import (
 	"site_app/database/models/project_description"
 )
 
-func (app *App) GetProjectDescription(writer http.ResponseWriter, request *http.Request) {
+func (app *App) GetProjectDescriptionFilter(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	query := request.URL.Query()
-	var id = uuid.FromStringOrNil(query.Get("id"))
+	var projectId = uuid.FromStringOrNil(query.Get("project_id"))
+
 	var projectDocFilter = &project_description.ProjectDescriptionFilter{
-		Ids: []uuid.UUID{
-			id,
+		ProjectIds: []uuid.UUID{
+			projectId,
 		},
 	}
 
-	var ProjectDescriptions []project_description.ProjectDescription
+	ProjectDescriptions, err := app.ProjectDescriptionProvider.List(projectDocFilter)
 
-	var err error
-
-	if projectDocFilter == nil {
-		ProjectDescriptions, err = app.ProjectDescriptionProvider.List(nil)
-	} else {
-		ProjectDescriptions, err = app.ProjectDescriptionProvider.List(projectDocFilter)
+	if err != nil {
+		json.NewEncoder(writer).Encode(err)
 	}
+	json.NewEncoder(writer).Encode(ProjectDescriptions)
+}
+
+func (app *App) GetAllProjectDescription(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	ProjectDescriptions, err := app.ProjectDescriptionProvider.List(nil)
 	if err != nil {
 		json.NewEncoder(writer).Encode(err)
 	}

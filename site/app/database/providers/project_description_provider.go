@@ -49,6 +49,11 @@ func (pd *ProjectDescriptionProvider) List(filter *p.ProjectDescriptionFilter) (
 			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" project_id in (%s) and", strings.Join(strs, ", "))
 		}
+		if filter.UserIds != nil {
+			strs = helpers.UuidsToStrings(filter.UserIds)
+			helpers.UseCommas(strs)
+			queryString += fmt.Sprintf(" user_id in (%s) and", strings.Join(strs, ", "))
+		}
 		queryString = queryString[:len(queryString)-4] + ")"
 	}
 	var err = pd.DataBase.Db.Select(&projectDocs, queryString)
@@ -57,10 +62,12 @@ func (pd *ProjectDescriptionProvider) List(filter *p.ProjectDescriptionFilter) (
 
 func (pd *ProjectDescriptionProvider) Add(d []p.ProjectDescription) error {
 	var _, err = pd.DataBase.Db.NamedExec(
-		`INSERT INTO project_description (id, project_id, short_description, description, project_status)
+		`INSERT INTO project_description (id, project_id, author, user_id, short_description, description, project_status)
                           VALUES (
                                   :id,
                                   :project_id,
+                                  :author,
+                                  :user_id,
                                   :short_description,
                                   :description,
                                   :project_status)`, d)
