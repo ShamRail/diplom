@@ -5,18 +5,32 @@
 	<script src="../js/queries.js"></script>
 	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/sidenav.css">
+	<link rel="stylesheet" href="../css/index.css">
+	<link rel="stylesheet" href="../css/header_and_footer.css">
 	<link rel="icon" href='../img/favicon_usatu.ico'>
 	<link rel="stylesheet" href="../css/header_and_footer.css">
 	<link rel="stylesheet" href="../css/index.css">
+	<script src="../js/sidenav.js"></script>
 	<title>УГАТУ</title>
 </head>
 <body bgcolor="#E5E5E5">
+<div class="navbar">
+	<h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
+</div>
 	<div class="topnav">
-	  <img src="../img/logo.png" alt="УГАТУ">
-	  <a href="index.html">Главная</a>
-	  <a href="login.html">Вход</a>
-	  <a href="registration.html">Регистрация</a>
-	  <input type="text" placeholder="Поиск..">
+		<img href="index.html" src="../img/logo.png" alt="УГАТУ">
+		<a href="index.html">Главная</a>
+		<a href="login.html">Вход</a>
+		<a href="registration.html">Регистрация</a>
+		<input type="text" placeholder="Поиск..">
+		<a href="#" id="user_name" onclick="openNav()"></a>
+	</div>
+	<div id="mySidenav" class="sidenav">
+		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+		<a href="profile.html">Мои проекты</a>
+		<a href="create_project.html">Создать проект</a>
+		<a href="#">Выйти</a>
 	</div>
 	<section class="content" id="projects">
 	</section>
@@ -28,7 +42,8 @@
 <script>
 	$(document).ready(function() {
 		let projects = $("#projects")
-
+		let userName = localStorage.getItem('userName')
+		$("#user_name").text(userName)
 		GetProjectDescriptionAll().then(json => {
 			json.map(t => {
 					console.log(t)
