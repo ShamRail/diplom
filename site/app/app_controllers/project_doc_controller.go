@@ -68,12 +68,7 @@ func (app *App) GetProjectDocs(writer http.ResponseWriter, request *http.Request
 		BuildStatuses:    nil,
 	}
 
-	var ProjectDocs []ProjectDoc
-	if projectDocFilter == nil {
-		ProjectDocs = app.ProjectDocProvider.List(nil)
-	} else {
-		ProjectDocs = app.ProjectDocProvider.List(projectDocFilter)
-	}
+	ProjectDocs := app.ProjectDocProvider.List(projectDocFilter)
 
 	json.NewEncoder(writer).Encode(ProjectDocs)
 }

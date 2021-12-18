@@ -1,0 +1,22 @@
+INSERT INTO project_description
+(id,
+ project_id,
+ user_id,
+ author,
+ short_description,
+ description,
+ project_status)
+values ('c329c925-8715-4e02-9291-bfa30bcf8d54',
+        '859e6d31-80e2-4002-bef1-9d905815494d',
+        '3b4f8105-0103-4f33-82d9-93e20e733a7b',
+        'TestUser',
+        'ShortDescr1',
+        'Descr1',
+        1),
+       ('bc4caa4d-cb11-4a37-8c2b-fee4ffc1f0ed',
+        'c1cc13e3-f28c-4201-b302-3bc10866fb6c',
+        '4db4f805-769f-4de8-8f04-2f89882a1b81',
+        'TestUser2',
+        'ShortDescr2',
+        'Descr2',
+        1);

@@ -1,5 +1,18 @@
 version: "3.9"
 services:
+#  site_app:
+#    build:
+#      context: /site/app
+#      dockerfile: Dockerfile
+#    environment:
+#      - POSTGRES_PASSWORD=postgres
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=postgres
+#      - POSTGRES_HOST=site_db
+#    depends_on:
+#      - site_db
+#    ports:
+#      - "8080:8080"
   site_db:
     volumes:
       - ./site/app/database/migrations/.:/docker-entrypoint-initdb.d/.
@@ -11,21 +24,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
-
-  site_app:
-    build:
-      context: /site/app
-      dockerfile: Dockerfile
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
-      - POSTGRES_HOST=site_db
-    depends_on:
-      - site_db
-    ports:
-      - "8080:8080"
-
 #  # DATABASES
 #  admindb:
 #    image: postgres

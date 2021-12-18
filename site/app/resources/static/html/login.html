@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<script src="../js/queries.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<link rel="icon" href='../img/favicon_usatu.ico'>
 	<link rel="stylesheet" href="../css/header_and_footer.css">
 	<link rel="stylesheet" href="../css/login.css">
@@ -18,12 +20,9 @@
 	<form class="content">
 	  <div class="container">
 	    <h2>Войти в аккаунт</h2>
-	    <input type="text" placeholder="Введите e-mail" name="uname" required>
-	    <input type="password" placeholder="Введите пароль" name="psw" required>
-	    <label>
-	      <input type="checkbox" checked="checked" name="remember">Запомнить
-	    </label>
-	    <button type="button" class="cancelbtn">Войти</button>
+	    <input type="text" id="email" placeholder="Введите e-mail" name="email" required>
+	    <input type="password" id="password" placeholder="Введите пароль" name="password" required>
+	    <button type="button" id="btn_submit" class="cancelbtn">Войти</button>
 	  </div>
 	</form>
 	<div class="navbar">
@@ -31,3 +30,26 @@
 	</div>
 </body>
 </html>
+<script>
+	$(document).ready(function() {
+
+		let btnSubmit = $("#btn_submit")
+
+		btnSubmit.click(function (){
+
+			let email = $('#email').val();
+			let password =  $('#password').val();
+
+			GetUser(email, password).then(response => {
+				if (response.ok){
+					response.json().then(json => {
+						localStorage.setItem('user', btoa(email + ":"+password));
+						// console.log(localStorage.getItem('user'))
+					})
+				} else {
+					alert("Wrong name or password")
+				}
+			})
+		})
+	})
+</script>

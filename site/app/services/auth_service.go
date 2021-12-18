@@ -25,6 +25,7 @@ func (auth *AuthService) isAuth(username, password string) bool {
 	var users, _ = auth.userProvider.List(&user_models.UserFilter{Emails: []string{
 		username,
 	}})
+
 	if len(users) == 0 {
 		return false
 	}
