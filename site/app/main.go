@@ -46,12 +46,17 @@ func main() {
 		DataBase: db,
 	}
 
+	var up = providers.UserProjectProvider{
+		DataBase: db,
+	}
+
 	var auth = services.CreateNewAuthService(&us)
 
 	var app = app_controllers.App{
 		UserProvider:               &us,
 		ProjectDocProvider:         &pd,
 		ProjectDescriptionProvider: &usd,
+		UserProjectProvider:        &up,
 		Auth:                       auth,
 	}
 

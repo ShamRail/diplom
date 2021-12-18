@@ -1,116 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="../js/queries.js"></script>
-	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-	<link rel="icon" href='../img/favicon_usatu.ico'>
-	<link rel="stylesheet" href="../css/sidenav.css">
-  <link rel="stylesheet" href="../css/header_and_footer.css">
-  <link rel="stylesheet" href="../css/profile.css">
-	<script src="../js/sidenav.js"></script>
-	<title>Профиль</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/queries.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <link rel="icon" href='../img/favicon_usatu.ico'>
+    <link rel="stylesheet" href="../css/sidenav.css">
+    <link rel="stylesheet" href="../css/header_and_footer.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <script src="../js/sidenav.js"></script>
+    <title>Профиль</title>
 </head>
 <body bgcolor="#E5E5E5">
-	<div class="navbar">
-	  <h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
-	</div>
-	<div class="topnav">		
-	  <img src="../img/logo.png" alt="УГАТУ">
-	  <a href="index.html">Главная</a>
-	  <a href="#" onclick="openNav()">Надеев Сергей</a>
-	</div>
-  <div id="mySidenav" class="sidenav">
+<div class="navbar">
+    <h5 style="text-decoration: none">&copy; UGATU 2021</h5>
+</div>
+<div class="topnav">
+    <img src="../img/logo.png" alt="УГАТУ">
+    <a href="index.html">Главная</a>
+    <a href="#" onclick="openNav()">Надеев Сергей</a>
+</div>
+<div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="profile.html">Мои проекты</a>
     <a href="create_project.html">Создать проект</a>
     <a id="logOut">Выйти</a>
-  </div>
-	<section class="content">
-			<div class="projects">
-			  <table>
-			    <tr>
-			      <th>Название проекта</th>
-			      <th>Дата создания</th>
-			      <th>Конфигурация</th>
-			      <th>Действие</th>
-			    </tr>
-			    <tr>
-			      <td>Проект №1</td>
-			      <td>23.11.2021</td>
-			      <td>Java</td>
-			      <td>
-			      	<a href="red_project.html">Редактировать</a>
-			      	<a>Удалить</a>
-			      </td>
-			    </tr>
-			    <tr>
-			      <td>Проект №2</td>
-			      <td>23.11.2021</td>
-			      <td>Java</td>
-			      <td>
-			      	<a href="red_project.html">Редактировать</a>
-			      	<a>Удалить</a>
-			      </td>
-			    </tr>
-			    <tr>
-			      <td>Проект №3</td>
-			      <td>23.11.2021</td>
-			      <td>Java</td>
-			      <td>
-			      	<a href="red_project.html">Редактировать</a>
-			      	<a>Удалить</a>
-			      </td>
-			    </tr>
-			    <tr>
-			      <td>Проект №4</td>
-			      <td>23.11.2021</td>
-			      <td>Java</td>
-			      <td>
-			      	<a href="red_project.html">Редактировать</a>
-			      	<a>Удалить</a>
-			      </td>
-			    </tr>
-			    <tr>
-			      <td>Проект №5</td>
-			      <td>23.11.2021</td>
-			      <td>Java</td>
-			      <td>
-			      	<a href="red_project.html">Редактировать</a>
-			      	<a>Удалить</a>
-			      </td>
-			    </tr>
-			    <tr>
-			      <td>Проект №6</td>
-			      <td>23.11.2021</td>
-			      <td>Java</td>
-			      <td>
-			      	<a href="red_project.html">Редактировать</a>
-			      	<a>Удалить</a>
-			      </td>
-			    </tr>
-			    <tr>
-			      <td>Проект №7</td>
-			      <td>23.11.2021</td>
-			      <td>Java</td>
-			      <td>
-			      	<a href="red_project.html">Редактировать</a>
-			      	<a>Удалить</a>
-			      </td>
-			    </tr>
-			  </table>
-			</div>
-		</section>
+</div>
+<section class="content">
+    <div class="projects">
+        <table id="project_table">
+        </table>
+    </div>
+</section>
 </body>
 </html>
 <script>
-	$(document).ready(function() {
-		$("#logOut").click(function (){
-			console.log("LogOut")
-			localStorage.removeItem('user');
-			console.log(localStorage.getItem('user'))
-			window.location = 'login.html';
-		})
-	})
+    $(document).ready(function () {
+        $("#logOut").click(function () {
+            console.log("LogOut")
+            localStorage.removeItem('user');
+            console.log(localStorage.getItem('user'))
+            window.location = 'login.html';
+        })
+        let userId = localStorage.getItem('userId')
+        GetProjectDocsByUserId(userId)
+            .then(resp => {
+                if (resp.ok) {
+					return resp.json()
+                } else {
+                    alert("Auth error")
+                }
+            })
+			.then(t => {
+				let table = $("#project_table")
+				table.append(`
+ 			<tr>
+				<th>Название проекта</th>
+				<th>Состояние</th>
+				<th>Источник</th>
+				<th>Действие</th>
+            </tr>`)
+			t.map(obj => {
+				console.log(obj)
+				table.append(
+			`<tr>
+				<th>${obj.Name}</th>
+				<th>${obj.BuildStatus}</th>
+				<th>${obj.SourceCodeUrl}</th>
+				<td>
+					<a class="edit" id=${obj.Id}>Редактировать</a>
+					<a class="btn-remove" id=${obj.Id}>Удалить</a>
+            	</td>
+            </tr>`)
+			})
+        	})
+			.then(function (){
+				$(".edit").click(function (){
+					console.log(this)
+				})
+				$(".btn-remove").click(function (){
+					let intent = {
+						ids: [this.id]
+					}
+					DeleteGetProjectDocs(intent).then(t => {
+						window.location.reload();
+					})
+				})
+			})
+    })
 </script>

@@ -15,11 +15,11 @@ type IUserProjectProvider interface {
 	Add(toAdd []m.UserProject) error
 }
 
-type UserDocProvider struct {
+type UserProjectProvider struct {
 	DataBase *database.DataBase
 }
 
-func (u *UserDocProvider) List(filter *m.UserProjectFilter) []m.UserProject {
+func (u *UserProjectProvider) List(filter *m.UserProjectFilter) []m.UserProject {
 	var uDoc []m.UserProject
 	var queryString = "SELECT * FROM user_project"
 	if filter != nil {
@@ -46,7 +46,7 @@ func (u *UserDocProvider) List(filter *m.UserProjectFilter) []m.UserProject {
 	return uDoc
 }
 
-func (u *UserDocProvider) Delete(toDelete *m.UserProjectDelete) error {
+func (u *UserProjectProvider) Delete(toDelete *m.UserProjectDelete) error {
 	var deleteString = "DELETE FROM user_project"
 	if toDelete != nil {
 		deleteString += " WHERE ("
@@ -62,13 +62,13 @@ func (u *UserDocProvider) Delete(toDelete *m.UserProjectDelete) error {
 	return err
 }
 
-func (u *UserDocProvider) Update(toUpdate m.UserProject) error {
+func (u *UserProjectProvider) Update(toUpdate m.UserProject) error {
 	var updateString = `UPDATE user_project SET user_id=$1, project_id=$2 WHERE id=$3`
 	var _, err = u.DataBase.Db.Exec(updateString, toUpdate.UserId, toUpdate.ProjectId, toUpdate.Id)
 	return err
 }
 
-func (u *UserDocProvider) Add(toAdd []m.UserProject) error {
+func (u *UserProjectProvider) Add(toAdd []m.UserProject) error {
 	var _, err = u.DataBase.Db.NamedExec(
 		`INSERT INTO user_project (id,
                    user_id,

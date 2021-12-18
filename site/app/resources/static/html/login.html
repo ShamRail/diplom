@@ -44,7 +44,8 @@
 				if (response.ok){
 					response.json().then(json => {
 						localStorage.setItem('user', btoa(email + ":"+password));
-						// console.log(localStorage.getItem('user'))
+						localStorage.setItem('userName', json[0].Name);
+						localStorage.setItem('userId', json[0].Id)
 					})
 				} else {
 					alert("Wrong name or password")

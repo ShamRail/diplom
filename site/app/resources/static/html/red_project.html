@@ -20,7 +20,7 @@
 	<div class="topnav">		
 	  <img src="../img/logo.png" alt="УГАТУ">
 	  <a href="index.html">Главная</a>
-	  <a href="#" onclick="openNav()">Надеев Сергей</a>
+	  <a href="#" id="user_name" onclick="openNav()"></a>
 	</div>
 	<div id="mySidenav" class="sidenav">
 		  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -39,6 +39,9 @@
 </html>
 <script>
 	$(document).ready(function() {
+
+		$("#user_name").text(localStorage.getItem('userName'))
+
 		let params = (new URL(document.location)).searchParams;
 		let project_id = params.get("project_id");
 		console.log(project_id)

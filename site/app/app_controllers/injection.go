@@ -9,5 +9,6 @@ type App struct {
 	UserProvider               providers.IUserProvider
 	ProjectDocProvider         providers.IProjectDocProvider
 	ProjectDescriptionProvider providers.IProjectDescriptionProvider
+	UserProjectProvider        providers.IUserProjectProvider
 	Auth                       services.IAuthService
 }

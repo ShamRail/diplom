@@ -3,8 +3,11 @@ package app_controllers
 import (
 	"encoding/json"
 	uuid "github.com/satori/go.uuid"
+	"log"
 	"net/http"
+	. "site_app/database/models/project_description"
 	. "site_app/database/models/project_doc_models"
+	. "site_app/database/models/user_project_models"
 )
 
 func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request) {
@@ -52,6 +55,18 @@ func (app *App) DeleteProjectDoc(writer http.ResponseWriter, request *http.Reque
 		} else {
 			writer.WriteHeader(200)
 		}
+
+		descriptions, _ := app.ProjectDescriptionProvider.List(&ProjectDescriptionFilter{
+			ProjectIds: projectDocDelete.Ids,
+		})
+
+		projectDescriptionsIds := make([]uuid.UUID, len(descriptions))
+		for i := range descriptions {
+			projectDescriptionsIds[i] = *descriptions[i].Id
+		}
+		app.ProjectDescriptionProvider.Delete(&ProjectDescriptionDelete{
+			Ids: projectDescriptionsIds,
+		})
 	}
 }
 
@@ -63,6 +78,32 @@ func (app *App) GetProjectDocs(writer http.ResponseWriter, request *http.Request
 		Ids: []uuid.UUID{
 			id,
 		},
+		Names:            nil,
+		ConfigurationIds: nil,
+		BuildStatuses:    nil,
+	}
+
+	ProjectDocs := app.ProjectDocProvider.List(projectDocFilter)
+
+	json.NewEncoder(writer).Encode(ProjectDocs)
+}
+
+func (app *App) GetProjectDocsByUserId(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	userId, _ := request.URL.Query()["userId"]
+	var id = uuid.FromStringOrNil(userId[0])
+
+	var userProjectDoc = app.UserProjectProvider.List(&UserProjectFilter{UserIds: []uuid.UUID{
+		id,
+	}})
+
+	projectIds := make([]uuid.UUID, len(userProjectDoc))
+	for i := range userProjectDoc {
+		projectIds[i] = *userProjectDoc[i].ProjectId
+	}
+	log.Println(projectIds)
+	var projectDocFilter = &ProjectDocFilter{
+		Ids:              projectIds,
 		Names:            nil,
 		ConfigurationIds: nil,
 		BuildStatuses:    nil,

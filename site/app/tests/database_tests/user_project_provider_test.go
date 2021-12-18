@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var userProject = providers.UserDocProvider{DataBase: db}
+var userProject = providers.UserProjectProvider{DataBase: db}
 
 var uuidListP = []uuid.UUID{
 	uuid.FromStringOrNil("e2322e4f-d76b-4bcf-b736-4aa138d5818b"),
