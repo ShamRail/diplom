@@ -14,7 +14,7 @@ func UseCommas(strings []string) {
 func UseCommasIntsToString(objects []int) []string {
 	var res = make([]string, len(objects))
 	for i := range objects {
-		res[i] = fmt.Sprintf("'%d'", objects[i])
+		res[i] = fmt.Sprintf("%d", objects[i])
 	}
 	return res
 }

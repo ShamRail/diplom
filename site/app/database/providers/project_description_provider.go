@@ -45,7 +45,7 @@ func (pd *ProjectDescriptionProvider) List(filter *p.ProjectDescriptionFilter) (
 			queryString += fmt.Sprintf(" description in (%s) and", strings.Join(strs, ", "))
 		}
 		if filter.ProjectIds != nil {
-			strs = helpers.UuidsToStrings(filter.ProjectIds)
+			strs = helpers.UseCommasIntsToString(filter.ProjectIds)
 			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" project_id in (%s) and", strings.Join(strs, ", "))
 		}

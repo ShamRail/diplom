@@ -1,5 +1,5 @@
 CREATE TABLE if not exists project_docs (
-    id    uuid PRIMARY KEY,
+    id    serial,
     name  varchar(600),
     source_code_url varchar(600),
     build_command varchar(600),

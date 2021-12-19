@@ -36,7 +36,7 @@ func (u *UserProjectProvider) List(filter *m.UserProjectFilter) []m.UserProject 
 			queryString += fmt.Sprintf(" user_id in (%s) and", strings.Join(strs, ", "))
 		}
 		if filter.ProjectIds != nil {
-			strs = helpers.UuidsToStrings(filter.ProjectIds)
+			strs = helpers.UseCommasIntsToString(filter.ProjectIds)
 			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" project_id in (%s) and", strings.Join(strs, ", "))
 		}

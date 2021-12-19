@@ -5,5 +5,5 @@ import uuid "github.com/satori/go.uuid"
 type UserProjectFilter struct {
 	Ids        []uuid.UUID `db:"id"`
 	UserIds    []uuid.UUID `db:"user_id"`
-	ProjectIds []uuid.UUID `db:"project_id"`
+	ProjectIds []int       `db:"project_id"`
 }

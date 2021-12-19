@@ -10,7 +10,7 @@ import (
 
 type IProjectDocProvider interface {
 	List(filter *project_doc_models.ProjectDocFilter) []project_doc_models.ProjectDoc
-	Add(projectDocList []project_doc_models.ProjectDoc) error
+	Add(projectDocList []project_doc_models.ProjectDoc) (int64, error)
 	Delete(projectDocDelete *project_doc_models.ProjectDocDelete) error
 	Update(projectDoc project_doc_models.ProjectDoc) error
 }
@@ -26,7 +26,7 @@ func (pd *ProjectDocProvider) List(filter *project_doc_models.ProjectDocFilter) 
 		queryString += " WHERE ("
 		var strs []string
 		if filter.Ids != nil {
-			strs = helpers.UuidsToStrings(filter.Ids)
+			strs = helpers.UseCommasIntsToString(filter.Ids)
 			helpers.UseCommas(strs)
 			queryString += fmt.Sprintf(" id in (%s) and", strings.Join(strs, ", "))
 		}
@@ -51,10 +51,9 @@ func (pd *ProjectDocProvider) List(filter *project_doc_models.ProjectDocFilter) 
 	return projectDocs
 }
 
-func (pd *ProjectDocProvider) Add(doc []project_doc_models.ProjectDoc) error {
-	var _, err = pd.DataBase.Db.NamedExec(
+func (pd *ProjectDocProvider) Add(doc []project_doc_models.ProjectDoc) (int64, error) {
+	var res, err = pd.DataBase.Db.NamedExec(
 		`INSERT INTO project_docs (
-                          id,
                           name,
                           source_code_url,
                           build_command,
@@ -65,7 +64,6 @@ func (pd *ProjectDocProvider) Add(doc []project_doc_models.ProjectDoc) error {
                           build_status,
                           archive_inner_dir)
                           VALUES (
-                                  :id,
                                   :name,
                                   :source_code_url,
                                   :build_command,
@@ -76,7 +74,8 @@ func (pd *ProjectDocProvider) Add(doc []project_doc_models.ProjectDoc) error {
                                   :build_status,
                                   :archive_inner_dir)`,
 		doc)
-	return err
+	id, _ := res.LastInsertId()
+	return id, err
 }
 
 func (pd *ProjectDocProvider) Delete(doc *project_doc_models.ProjectDocDelete) error {
@@ -85,7 +84,7 @@ func (pd *ProjectDocProvider) Delete(doc *project_doc_models.ProjectDocDelete) e
 		deleteString += " WHERE ("
 		var strs []string
 		if doc.Ids != nil {
-			strs = helpers.UuidsToStrings(doc.Ids)
+			strs = helpers.UseCommasIntsToString(doc.Ids)
 			helpers.UseCommas(strs)
 			deleteString += fmt.Sprintf(" id in (%s) and", strings.Join(strs, ", "))
 		}

@@ -8,6 +8,7 @@ import (
 	. "site_app/database/models/project_description"
 	. "site_app/database/models/project_doc_models"
 	. "site_app/database/models/user_project_models"
+	"strconv"
 )
 
 func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request) {
@@ -18,10 +19,8 @@ func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request)
 		writer.WriteHeader(500)
 		return
 	}
-	projectDocId := uuid.NewV4()
 
 	projectDoc := ProjectDoc{
-		Id:              &projectDocId,
 		Name:            projectDocIntent.Name,
 		SourceCodeUrl:   projectDocIntent.SourceCodeUrl,
 		BuildCommand:    projectDocIntent.BuildCommand,
@@ -33,21 +32,21 @@ func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request)
 		ArchiveInnerDir: projectDocIntent.ArchiveInnerDir,
 	}
 
+	id, err := app.ProjectDocProvider.Add([]ProjectDoc{
+		projectDoc,
+	})
+
 	projectDocDescriptionId := uuid.NewV4()
 
 	projectDocDescription := ProjectDescription{
 		Id:               &projectDocDescriptionId,
-		ProjectId:        &projectDocId,
+		ProjectId:        int(id),
 		UserId:           projectDocIntent.UserId,
 		Author:           projectDocIntent.UserName,
 		ShortDescription: projectDocIntent.Name,
 		Description:      projectDocIntent.Description,
 		ProjectStatus:    1,
 	}
-
-	app.ProjectDocProvider.Add([]ProjectDoc{
-		projectDoc,
-	})
 
 	app.ProjectDescriptionProvider.Add([]ProjectDescription{
 		projectDocDescription,
@@ -116,9 +115,9 @@ func (app *App) DeleteProjectDoc(writer http.ResponseWriter, request *http.Reque
 func (app *App) GetProjectDocs(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	projectIds, _ := request.URL.Query()["id"]
-	var id = uuid.FromStringOrNil(projectIds[0])
+	var id, _ = strconv.Atoi(projectIds[0])
 	var projectDocFilter = &ProjectDocFilter{
-		Ids: []uuid.UUID{
+		Ids: []int{
 			id,
 		},
 		Names:            nil,
@@ -141,9 +140,9 @@ func (app *App) GetProjectDocsByUserId(writer http.ResponseWriter, request *http
 	}})
 
 	if userProjectDoc != nil {
-		projectIds := make([]uuid.UUID, len(userProjectDoc))
+		projectIds := make([]int, len(userProjectDoc))
 		for i := range userProjectDoc {
-			projectIds[i] = *userProjectDoc[i].ProjectId
+			projectIds[i] = userProjectDoc[i].ProjectId
 		}
 
 		var projectDocFilter = &ProjectDocFilter{

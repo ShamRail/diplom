@@ -11,4 +11,5 @@ type App struct {
 	ProjectDescriptionProvider providers.IProjectDescriptionProvider
 	UserProjectProvider        providers.IUserProjectProvider
 	Auth                       services.IAuthService
+	BuilderService             services.BuilderService
 }

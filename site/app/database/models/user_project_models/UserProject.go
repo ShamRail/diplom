@@ -7,5 +7,5 @@ import (
 type UserProject struct {
 	Id        *uuid.UUID `db:"id"`
 	UserId    *uuid.UUID `db:"user_id"`
-	ProjectId *uuid.UUID `db:"project_id"`
+	ProjectId int        `db:"project_id"`
 }

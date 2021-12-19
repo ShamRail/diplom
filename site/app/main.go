@@ -16,6 +16,11 @@ func main() {
 	var password = os.Getenv("POSTGRES_PASSWORD")
 	var dbName = os.Getenv("POSTGRES_DB")
 	var host = os.Getenv("POSTGRES_HOST")
+	var builderUrl = os.Getenv("BUILDER")
+	var config = services.Config{
+		BuilderURL: builderUrl,
+	}
+
 	var port = "5432"
 	if user == "" || password == "" {
 		host = "localhost"
@@ -23,6 +28,7 @@ func main() {
 		password = "postgres"
 		dbName = "postgres"
 	}
+
 	var db = database.CreateDataBase(host, port, user, password, dbName, "disable")
 	log.Printf("Database connected with: \n"+
 		"host: %s \n"+
@@ -51,6 +57,7 @@ func main() {
 	}
 
 	var auth = services.CreateNewAuthService(&us)
+	var builderService = services.BuilderService{Config: config}
 
 	var app = app_controllers.App{
 		UserProvider:               &us,
@@ -58,6 +65,7 @@ func main() {
 		ProjectDescriptionProvider: &usd,
 		UserProjectProvider:        &up,
 		Auth:                       auth,
+		BuilderService:             builderService,
 	}
 
 	var router = addRoutes(&app)

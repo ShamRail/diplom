@@ -87,7 +87,7 @@
 				})
 				$(".btn-remove").click(function (){
 					let intent = {
-						ids: [this.id]
+						ids: [parseInt(this.id)]
 					}
 					DeleteGetProjectDocs(intent).then(t => {
 						window.location.reload();

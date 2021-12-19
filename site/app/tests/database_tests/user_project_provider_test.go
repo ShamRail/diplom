@@ -21,8 +21,8 @@ var uuidListP = []uuid.UUID{
 
 func TestCanAddUserProjectDoc(t *testing.T) {
 	var err = userProject.Add([]m.UserProject{
-		{Id: &uuidListP[0], UserId: &uuidListP[1], ProjectId: &uuidListP[2]},
-		{Id: &uuidListP[3], UserId: &uuidListP[4], ProjectId: &uuidListP[5]},
+		{Id: &uuidListP[0], UserId: &uuidListP[1]},
+		{Id: &uuidListP[3], UserId: &uuidListP[4]},
 	})
 	if err != nil {
 		t.Fatal("Can not add")
@@ -41,7 +41,7 @@ func TestCanListUserProjectDoc(t *testing.T) {
 	if (list == nil || len(list) == 0) ||
 		(list[0].Id.String() != uuidListP[0].String()) ||
 		(list[0].UserId.String() != uuidListP[1].String()) ||
-		(list[0].ProjectId.String() != uuidListP[2].String()) {
+		(list[0].ProjectId != 2) {
 		t.Fatal("Can not list")
 	}
 
@@ -55,21 +55,17 @@ func TestCanListUserProjectDoc(t *testing.T) {
 	if (list == nil || len(list) == 0) ||
 		(list[0].Id.String() != uuidListP[0].String()) ||
 		(list[0].UserId.String() != uuidListP[1].String()) ||
-		(list[0].ProjectId.String() != uuidListP[2].String()) {
+		(list[0].ProjectId != 2) {
 		t.Fatal("Can not list")
 	}
 
-	uuids = []uuid.UUID{
-		uuid.FromStringOrNil("f2e144c4-6198-4adc-9c39-258125bffcb5"),
-		uuid.FromStringOrNil("31e94497-046f-4fc4-a405-29a69cb9b546"),
-	}
 	list = userProject.List(&m.UserProjectFilter{
-		ProjectIds: uuids,
+		ProjectIds: []int{1, 2},
 	})
 	if (list == nil || len(list) == 0) ||
 		(list[0].Id.String() != uuidListP[0].String()) ||
 		(list[0].UserId.String() != uuidListP[1].String()) ||
-		(list[0].ProjectId.String() != uuidListP[2].String()) {
+		(list[0].ProjectId != 2) {
 		t.Fatal("Can not list")
 	}
 }

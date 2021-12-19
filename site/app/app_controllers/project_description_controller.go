@@ -2,18 +2,18 @@ package app_controllers
 
 import (
 	"encoding/json"
-	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"site_app/database/models/project_description"
+	"strconv"
 )
 
 func (app *App) GetProjectDescriptionFilter(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	query := request.URL.Query()
-	var projectId = uuid.FromStringOrNil(query.Get("project_id"))
+	var projectId, _ = strconv.Atoi(query.Get("project_id"))
 
 	var projectDocFilter = &project_description.ProjectDescriptionFilter{
-		ProjectIds: []uuid.UUID{
+		ProjectIds: []int{
 			projectId,
 		},
 	}
