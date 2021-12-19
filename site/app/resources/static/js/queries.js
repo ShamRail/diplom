@@ -66,3 +66,15 @@ async function DeleteGetProjectDocs(intent) {
         body: JSON.stringify(intent)
     })
 }
+
+async function CreateProject(intent){
+    let url = host + "project_doc"
+    let pass = localStorage.getItem('user')
+    return await fetch(url, {
+        headers: {
+            "Authorization": "Basic " + pass
+        },
+        method: "POST",
+        body: JSON.stringify(intent)
+    })
+}

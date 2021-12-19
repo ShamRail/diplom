@@ -5,6 +5,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"log"
 	"net/http"
+	"site_app/database/models/intents"
 	. "site_app/database/models/project_description"
 	. "site_app/database/models/project_doc_models"
 	. "site_app/database/models/user_project_models"
@@ -12,18 +13,46 @@ import (
 
 func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var projectDoc ProjectDoc
-	var err = json.NewDecoder(request.Body).Decode(&projectDoc)
+	var projectDocIntent intents.ProjectDocIntent
+	var err = json.NewDecoder(request.Body).Decode(&projectDocIntent)
 	if err != nil {
 		writer.WriteHeader(500)
-	} else {
-		err = app.ProjectDocProvider.Add([]ProjectDoc{projectDoc})
-		if err != nil {
-			writer.WriteHeader(500)
-		} else {
-			writer.WriteHeader(200)
-		}
+		return
 	}
+	projectDocId := uuid.NewV4()
+
+	projectDoc := ProjectDoc{
+		Id:              &projectDocId,
+		Name:            projectDocIntent.Name,
+		SourceCodeUrl:   projectDocIntent.SourceCodeUrl,
+		BuildCommand:    projectDocIntent.BuildCommand,
+		RunCommand:      projectDocIntent.RunCommand,
+		InFiles:         projectDocIntent.InFiles,
+		OutFiles:        projectDocIntent.OutFiles,
+		ConfigurationId: projectDocIntent.ConfigurationId,
+		BuildStatus:     projectDocIntent.BuildStatus,
+		ArchiveInnerDir: projectDocIntent.ArchiveInnerDir,
+	}
+
+	projectDocDescriptionId := uuid.NewV4()
+
+	projectDocDescription := ProjectDescription{
+		Id:               &projectDocDescriptionId,
+		ProjectId:        &projectDocId,
+		UserId:           projectDocIntent.UserId,
+		Author:           projectDocIntent.UserName,
+		ShortDescription: projectDocIntent.Name,
+		Description:      projectDocIntent.Description,
+		ProjectStatus:    1,
+	}
+
+	app.ProjectDocProvider.Add([]ProjectDoc{
+		projectDoc,
+	})
+
+	app.ProjectDescriptionProvider.Add([]ProjectDescription{
+		projectDocDescription,
+	})
 }
 
 func (app *App) UpdateProjectDoc(writer http.ResponseWriter, request *http.Request) {
@@ -64,8 +93,22 @@ func (app *App) DeleteProjectDoc(writer http.ResponseWriter, request *http.Reque
 		for i := range descriptions {
 			projectDescriptionsIds[i] = *descriptions[i].Id
 		}
+
 		app.ProjectDescriptionProvider.Delete(&ProjectDescriptionDelete{
 			Ids: projectDescriptionsIds,
+		})
+
+		userProjects := app.UserProjectProvider.List(&UserProjectFilter{
+			ProjectIds: projectDocDelete.Ids,
+		})
+
+		userProjectIds := make([]uuid.UUID, len(userProjects))
+		for i := range userProjects {
+			userProjectIds[i] = *userProjects[i].Id
+		}
+
+		app.UserProjectProvider.Delete(&UserProjectDelete{
+			Ids: userProjectIds,
 		})
 	}
 }

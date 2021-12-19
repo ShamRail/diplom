@@ -4,6 +4,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href='../img/favicon_usatu.ico'>
+	<script src="../js/queries.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<link rel="stylesheet" href="../css/sidenav.css">
 	<link rel="stylesheet" href="../css/index.css">
 	<link rel="stylesheet" href="../css/header_and_footer.css">
@@ -24,7 +26,7 @@
 			  <a href="create_project.html">Создать проект</a>
 			  <a href="#">Выйти</a>
 		</div>
-	  <a href="#" onclick="openNav()">Надеев Сергей</a>
+		<a href="#" id="user_name" onclick="openNav()"></a>
 	</div>
 	<section>
 		<div class="container">
@@ -32,32 +34,92 @@
 			  <form>
 			    <div class="row">
 			      <div class="col-100">
-			        <input type="text" id="fname" name="firstname" placeholder="Название проекта">
+			        <input type="text" id="name" name="firstname" placeholder="Название проекта">
 			      </div>
 			    </div>
 			    <div class="row">
 			      <div class="col-100">
-			        <input type="text" id="fname" name="firstname" placeholder="исходники">
-			    </div>
+			        <input type="text" id="source_code_url" name="firstname" placeholder="Ссылка">
+				  </div>
+				</div>
 			    <div class="row">
 			      <div class="col-100">
-			        <select id="configuration" name="configuration">
-			          <option value="C++">C++</option>
-			          <option value="Java">Java</option>
-			        </select>
+			        <textarea id="build_command" name="subject" placeholder="Команда сборки"></textarea>
 			      </div>
 			    </div>
-			    <div class="row">
-			      <div class="col-100">
-			        <textarea id="subject" name="subject" placeholder="Описание" style="height:100px"></textarea>
-			      </div>
-			    </div>
-			    <div class="row">
-			      <input type="submit" value="Создать">
-			      <input type="submit" value="Добавить исходник">
+				  <div class="row">
+					  <div class="col-100">
+						  <textarea id="run_command" name="subject" placeholder="Команда запуска"></textarea>
+					  </div>
+				  </div>
+				  <div class="row">
+					  <div class="col-100">
+						  <textarea id="in_files" name="subject" placeholder="Относительный путь"></textarea>
+					  </div>
+				  </div>
+				  <div class="row">
+					  <div class="col-100">
+						  <textarea id="out_files" name="subject" placeholder="Путь выходных файлов"></textarea>
+					  </div>
+				  </div>
+				  <div class="row">
+					  <div class="col-100">
+						  <textarea id="configuration_id" name="subject" placeholder="Конфигурация"></textarea>
+					  </div>
+				  </div>
+				  <div class="row">
+					  <div class="col-100">
+						  <textarea id="archive_inner_dir" name="subject" placeholder="Путь к проекту">archive$archive_inner_dir/</textarea>
+					  </div>
+				  </div>
+				  <div class="row">
+					  <div class="col-100">
+						  <textarea id="description" name="subject" placeholder="Детальное описание" style="height:100px"></textarea>
+					  </div>
+				  </div>
+
+				  <div class="row">
+			      <input type="button" id="bnt-create-proj" value="Создать">
 		    </div>
 		  </form>
 		</div>
 	</section>
 </body>
 </html>
+<script>
+	$(document).ready(function() {
+		$("#bnt-create-proj").click(function (){
+
+			let userName = localStorage.getItem('userName')
+			let userId = localStorage.getItem('userId')
+
+			let name = $("#name").val()
+			let source_code_url = $("#source_code_url").val()
+			let build_command = $("#build_command").val()
+			let run_command = $("#run_command").val()
+			let in_files = $("#in_files").val()
+			let out_files = $("#out_files").val()
+			let configuration_id = $("#configuration_id").val()
+			let archive_inner_dir = $("#archive_inner_dir").val()
+			let description = $("#description").val()
+
+			let intent = {
+				userName: userName,
+				userId: userId,
+
+				name: name,
+				source_code_url: source_code_url,
+				build_command: build_command,
+				run_command: run_command,
+				in_files: in_files,
+				out_files: out_files,
+				configuration_id: parseInt(configuration_id),
+				archive_inner_dir: archive_inner_dir,
+
+				description: description,
+			}
+
+			CreateProject(intent)
+		})
+	})
+</script>
