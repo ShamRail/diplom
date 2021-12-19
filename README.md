@@ -33,6 +33,7 @@ Frontend:
 | BuilderService | Service for building applications       |
 | RunnerService  | Service for running applications        |
 | RunnerClient   | Client for interacting with launched app|
+| Site           | User projects management                |
 
 #### Main models
 - Programming language

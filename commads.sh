@@ -1,10 +1,6 @@
 # 1. Pull need images
 
-docker pull node
-docker pull maven
-docker pull openjdk
-docker pull nginx
-docker pull alpine/socat
+docker-compose pull
 
 # 2. Create environment vars
 
