@@ -3,6 +3,7 @@ WORKDIR /app
 ARG APP_DIR
 RUN echo "Copy code from source: $APP_DIR"
 COPY ${APP_DIR} /app
+RUN export NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install
 ARG BUILD_ARGS
 RUN echo "Build app with args: ${BUILD_ARGS}"
