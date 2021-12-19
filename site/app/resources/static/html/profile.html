@@ -64,6 +64,9 @@
 				<th>Источник</th>
 				<th>Действие</th>
             </tr>`)
+                if (t == null){
+                    return
+                }
 			t.map(obj => {
 				console.log(obj)
 				table.append(
