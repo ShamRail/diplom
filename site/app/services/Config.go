@@ -1,6 +1,7 @@
 package services
 
 type Config struct {
-	BuilderURL string
-	AdminURL   string
+	BuilderApi string
+	AdminApi   string
+	RunnerApi  string
 }

@@ -16,9 +16,13 @@ func main() {
 	var password = os.Getenv("POSTGRES_PASSWORD")
 	var dbName = os.Getenv("POSTGRES_DB")
 	var host = os.Getenv("POSTGRES_HOST")
-	var builderUrl = os.Getenv("BUILDER")
+	var builderApi = os.Getenv("BUILDER_API")
+	var adminApi = os.Getenv("ADMIN_API")
+	var runnerApi = os.Getenv("RUNNER_API")
 	var config = services.Config{
-		BuilderURL: builderUrl,
+		BuilderApi: builderApi,
+		AdminApi:   adminApi,
+		RunnerApi:  runnerApi,
 	}
 
 	var port = "5432"
