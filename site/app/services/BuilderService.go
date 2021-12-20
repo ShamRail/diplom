@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	. "site_app/database/models/project_description"
 	"site_app/database/models/project_doc_models"
 )
 

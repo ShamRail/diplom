@@ -19,6 +19,17 @@ func main() {
 	var builderApi = os.Getenv("BUILDER_API")
 	var adminApi = os.Getenv("ADMIN_API")
 	var runnerApi = os.Getenv("RUNNER_API")
+
+	if adminApi == "" {
+		adminApi = "http://localhost/admin"
+	}
+	if builderApi == "" {
+		builderApi = "http://localhost/builder"
+	}
+	if runnerApi == "" {
+		runnerApi = "http://localhost/runner"
+	}
+
 	var config = services.Config{
 		BuilderApi: builderApi,
 		AdminApi:   adminApi,
@@ -75,5 +86,5 @@ func main() {
 
 	var router = addRoutes(&app)
 
-	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
+	log.Fatal(http.ListenAndServe(":8084", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(router)))
 }

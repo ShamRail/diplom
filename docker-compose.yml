@@ -27,7 +27,7 @@ services:
     depends_on:
       - site_db
     ports:
-      - "8084:8080"
+      - "8084:8084"
   # DATABASES
   admindb:
     image: postgres
