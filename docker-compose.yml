@@ -9,9 +9,6 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - BUILDER_API=http://builder-api:8080/api/builder
-      - RUNNER_API=http://runner-api:8080/api/runner
-      - ADMIN_API=http://admin-api:8080/api/admin
     ports:
       - "5432:5432"
   site_app:
@@ -24,17 +21,20 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
       - POSTGRES_HOST=site_db
+      - BUILDER_API=http://builder-api:8080/api/builder
+      - RUNNER_API=http://runner-api:8080/api/runner
+      - ADMIN_API=http://admin-api:8080/api/admin
     depends_on:
       - site_db
     ports:
-      - "8083:8080"
+      - "8084:8080"
   # DATABASES
   admindb:
     image: postgres
     container_name: admindb
     environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=admindb
       - PGDATA=/var/lib/postgresql/data
     volumes:
@@ -44,28 +44,29 @@ services:
     image: postgres
     container_name: builderdb
     environment:
-        - POSTGRES_PASSWORD=password
-        - POSTGRES_USER=postgres
-        - POSTGRES_DB=builderdb
-        - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=builderdb
+      - PGDATA=/var/lib/postgresql/data
     volumes:
-        - ./volumes/builderdb/data:/var/lib/postgresql/data
+      - ./volumes/builderdb/data:/var/lib/postgresql/data
     restart: always
   runnerdb:
     image: postgres
     container_name: runnerdb
     environment:
-        - POSTGRES_PASSWORD=password
-        - POSTGRES_USER=postgres
-        - POSTGRES_DB=runnerdb
-        - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=runnerdb
+      - PGDATA=/var/lib/postgresql/data
     volumes:
-        - ./volumes/runnerdb/data:/var/lib/postgresql/data
+      - ./volumes/runnerdb/data:/var/lib/postgresql/data
     restart: always
 
   # Backend apps
   docker-api:
     image: alpine/socat
+    container_name: docker-api
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
@@ -73,64 +74,102 @@ services:
     expose:
       - "2375"
   admin-api:
-    build: ./admin
+    build:
+      context: .
+      dockerfile: ./Dockerfile-java
+      args:
+        - APP_DIR=admin
+        - BUILD_COMMAND=mvn install -DskipTests
+        - TARGET_JAR=admin-1.0.0.jar
+        - JAVA_OPTIONS=-Xmx256m
     container_name: admin-api
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://admindb:5432/admindb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-      - ADMIN_LOGIN=admin
-      - ADMIN_PASSWORD=$$2a$$10$$qq//P.sGWolwxMJ2gMGjFOpKRGLiZq9E42IOE0GzsQtBB3KicYtG2
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - ADMIN_LOGIN=${ADMIN_LOGIN}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
       - 8080:8080
     depends_on:
       - admindb
     volumes:
       - ./volumes/admin/configurations:/app/configurations
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    restart: always
   builder-api:
-    build: ./builder
+    build:
+      context: .
+      dockerfile: ./Dockerfile-java
+      args:
+        - APP_DIR=builder
+        - BUILD_COMMAND=mvn install -DskipTests
+        - TARGET_JAR=builder-1.0.0.jar
+        - JAVA_OPTIONS=-Xmx256m
     container_name: builder-api
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
     environment:
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://builderdb:5432/builderdb
-        - SPRING_DATASOURCE_USERNAME=postgres
-        - SPRING_DATASOURCE_PASSWORD=password
-        - DOCKER_HOST=tcp://docker-api:2375
-        - DOCKER_USER=shrail
-        - DOCKER_PASSWORD=3857rail
-        - ADMIN_HOST=http://admin-api:8080/api/admin
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://builderdb:5432/builderdb
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - DOCKER_HOST=tcp://docker-api:2375
+      - DOCKER_USER=${DOCKER_USER}
+      - DOCKER_PASSWORD=${DOCKER_PASSWORD}
+      - ADMIN_HOST=http://admin-api:8080/api/admin
     ports:
-        - 8081:8080
+      - 8081:8080
     depends_on:
-        - builderdb
+      - builderdb
     volumes:
       - ./volumes/builder/builds/logs:/app/builds/logs
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    restart: always
   runner-api:
-    build: ./runner
+    build:
+      context: .
+      dockerfile: ./Dockerfile-java
+      args:
+        - APP_DIR=runner
+        - BUILD_COMMAND=mvn install -DskipTests
+        - TARGET_JAR=runner-1.0.0.jar
+        - JAVA_OPTIONS=-Xmx256m
     container_name: runner-api
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
     environment:
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://runnerdb:5432/runnerdb
-        - SPRING_DATASOURCE_USERNAME=postgres
-        - SPRING_DATASOURCE_PASSWORD=password
-        - DOCKER_HOST=tcp://docker-api:2375
-        - DOCKER_USER=shrail
-        - DOCKER_PASSWORD=3857rail
-        - DOCKET_NET=runner_net
-        - BUILDER_HOST=http://builder-api:8080/api/builder
-        - WEBSOCKET_HOST=localhost
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://runnerdb:5432/runnerdb
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - DOCKER_HOST=tcp://docker-api:2375
+      - DOCKER_USER=${DOCKER_USER}
+      - DOCKER_PASSWORD=${DOCKER_PASSWORD}
+      - DOCKER_NET=runner_net
+      - BUILDER_HOST=http://builder-api:8080/api/builder
+      - WEBSOCKET_HOST=${HOST}
     ports:
-        - 8082:8080
+      - 8082:8080
     depends_on:
-        - runnerdb
+      - runnerdb
     volumes:
       - ./volumes/runner/apps:/app/apps
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    restart: always
 
   # Frontend apps
   admin:
-    build: ./admin-client
+    build:
+      context: .
+      dockerfile: Dockerfile-angular-nginx
+      args:
+        - APP_DIR=admin-client
+        - BUILD_ARGS=--prod --base-href /admin/
+        - DIST_DIR=config-admin
     container_name: admin
     ports:
       - 4200:80
@@ -138,8 +177,18 @@ services:
       - admin-api
     volumes:
       - ./nginx/client.conf:/etc/nginx/nginx.conf
+      - ./nginx/templates:/etc/nginx/templates
+    restart: always
+    environment:
+      - WEB_DOMAIN=${HOST}
   runner:
-    build:  ./runner-client
+    build:
+      context: .
+      dockerfile: ./Dockerfile-angular-nginx
+      args:
+        - APP_DIR=runner-client
+        - BUILD_ARGS=--prod --base-href /runner/
+        - DIST_DIR=runner-client
     container_name: runner
     depends_on:
       - runner-api
@@ -147,21 +196,28 @@ services:
       - 4201:80
     volumes:
       - ./nginx/client.conf:/etc/nginx/nginx.conf
+      - ./nginx/templates:/etc/nginx/templates
+    restart: always
+    environment:
+      - WEB_DOMAIN=${HOST}
 
   # Proxy
   nginx:
     image: nginx
     container_name: nginx
     volumes:
-      - ./proxy/v3.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy/v4.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/templates:/etc/nginx/templates
     ports:
       - 80:80
     depends_on:
       - admin
       - runner
-      - site
+    restart: always
+    environment:
+      - WEB_DOMAIN=${HOST}
 
 networks:
   default:
-    external: true
+    # external: true
     name: runner_net

@@ -24,6 +24,7 @@ func main() {
 		AdminApi:   adminApi,
 		RunnerApi:  runnerApi,
 	}
+	log.Println(config)
 
 	var port = "5432"
 	if user == "" || password == "" {

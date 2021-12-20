@@ -1,4 +1,4 @@
-let host = "http://localhost:8080/"
+let host = "http://localhost:8084/"
 
 async function AuthGetFetch(url) {
     let pass = localStorage.getItem('user')
