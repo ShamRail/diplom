@@ -8,13 +8,14 @@ import (
 	"log"
 	"net/http"
 	. "site_app/database/models/project_description"
+	"site_app/database/models/project_doc_models"
 )
 
 type BuilderService struct {
 	Config Config
 }
 
-func (s *BuilderService) Build(p ProjectDescription) (string, error) {
+func (s *BuilderService) Build(p project_doc_models.ProjectDoc) (string, error) {
 	client := http.Client{}
 
 	var body, err = json.Marshal(p)
@@ -35,9 +36,9 @@ func (s *BuilderService) Build(p ProjectDescription) (string, error) {
 	return string(data), nil
 }
 
-func (s *BuilderService) GetBuildStatus(id int) (string, error) {
+func (s *BuilderService) GetBuildStatus(id string) (string, error) {
 	client := http.Client{}
-	resp, err := client.Get(s.Config.BuilderApi + "/status" + "?projectID=" + string(id))
+	resp, err := client.Get(s.Config.BuilderApi + "/status" + "?projectID=" + id)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
@@ -50,7 +51,7 @@ func (s *BuilderService) GetBuildStatus(id int) (string, error) {
 }
 
 func (s *BuilderService) GetConfigurationAll() (string, error) {
-	//http://localhost/api/admin/configuration/all
+
 	client := http.Client{}
 	resp, err := client.Get(s.Config.AdminApi + "/configuration/all")
 	if err != nil {
