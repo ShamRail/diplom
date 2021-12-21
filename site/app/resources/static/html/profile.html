@@ -18,7 +18,7 @@
     <h5 style="text-decoration: none">&copy; UGATU 2021</h5>
 </div>
 <div class="topnav">
-    <img src="../img/logo.png" alt="УГАТУ">
+    <img src="../img/logo_cut.png" alt="УГАТУ">
     <a href="index.html">Главная</a>
     <a href="#" id="user_name" onclick="openNav()"></a>
 </div>
@@ -75,10 +75,18 @@
 				<th>${obj.BuildStatus}</th>
 				<th>${obj.SourceCodeUrl}</th>
 				<td>
+                    <a class="build" id=${obj.Id}>Собрать проект</a>
+                    <a class="run" id=${obj.Id}>Запустить проект</a>
 					<a class="edit" id=${obj.Id}>Редактировать</a>
 					<a class="btn-remove" id=${obj.Id}>Удалить</a>
             	</td>
             </tr>`)
+            if(obj.BuildStatus == "build"){
+                $('.run').css('display','none');
+            }
+            else{
+                $('.build').css('display','none');
+            }
 			})
         	})
 			.then(function (){

@@ -18,15 +18,15 @@
 	  	<h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
 	</div>
 	<div class="topnav">		
-	  	<img src="../img/logo.png" alt="УГАТУ">
+	  	<img src="../img/logo_cut.png" alt="УГАТУ">
 	  	<a href="index.html">Главная</a>
-		<div id="mySidenav" class="sidenav">
-			  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-			  <a href="profile.html">Мои проекты</a>
-			  <a href="create_project.html">Создать проект</a>
-			  <a href="#">Выйти</a>
-		</div>
 		<a href="#" id="user_name" onclick="openNav()"></a>
+	</div>
+	<div id="mySidenav" class="sidenav">
+	  	<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+	  	<a href="profile.html">Мои проекты</a>
+	  	<a href="create_project.html">Создать проект</a>
+	  	<a href="#">Выйти</a>
 	</div>
 	<section>
 		<div class="container">
@@ -64,7 +64,8 @@
 				  </div>
 				  <div class="row">
 					  <div class="col-100">
-						  <textarea id="configuration_id" name="subject" placeholder="Конфигурация"></textarea>
+						  <select id="configuration_id" name="subject" placeholder="Конфигурация">
+						  </select>
 					  </div>
 				  </div>
 				  <div class="row">
@@ -77,9 +78,7 @@
 						  <textarea id="description" name="subject" placeholder="Детальное описание" style="height:100px"></textarea>
 					  </div>
 				  </div>
-
-				  <div class="row">
-			      <input type="button" id="bnt-create-proj" value="Создать">
+				<input type="submit" id="bnt-create-proj" value="Создать">
 		    </div>
 		  </form>
 		</div>
@@ -88,6 +87,22 @@
 </html>
 <script>
 	$(document).ready(function() {
+		let userName = localStorage.getItem('userName')
+		$("#user_name").text(userName)
+
+		let configuration = $("#configuration_id")
+		var select_configuration
+
+		GetAllConfiguration().then(t => {
+			if (t == null){
+                    return
+                }
+			t.map(obj => {
+				console.log(obj)
+				configuration.append('<option id="${obj.id}">${obj.name} ${obj.version}</option>')
+				})
+		})
+
 		$("#bnt-create-proj").click(function (){
 
 			let userName = localStorage.getItem('userName')
@@ -113,7 +128,7 @@
 				run_command: run_command,
 				in_files: in_files,
 				out_files: out_files,
-				configuration_id: parseInt(configuration_id),
+				configuration_id: configuration_id.options[configuration_id.selectedIndex].id,
 				archive_inner_dir: archive_inner_dir,
 
 				description: description,

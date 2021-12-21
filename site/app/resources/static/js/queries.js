@@ -81,7 +81,11 @@ async function CreateProject(intent){
 
 
 async function GetAllConfiguration(){
-    return AuthGetFetch(host + "configuration/all")
+    let response = AuthGetFetch(host + "configuration/all");
+    if(response.ok){
+        return await response.json();
+    }
+    //return AuthGetFetch(host + "configuration/all")
 }
 
 async function  GetStatusProject(id){

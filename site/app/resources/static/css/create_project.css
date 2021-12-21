@@ -63,7 +63,7 @@ input[type=submit] {
 .container {  
   width: 50%;
   overflow: auto;
-  height: auto;
+  height: 60%;
   position: fixed; top: 50%; left: 50%;
   -webkit-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
