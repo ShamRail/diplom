@@ -21,13 +21,13 @@ func main() {
 	var runnerApi = os.Getenv("RUNNER_API")
 
 	if adminApi == "" {
-		adminApi = "http://localhost/admin"
+		adminApi = "http://localhost/api/admin"
 	}
 	if builderApi == "" {
-		builderApi = "http://localhost/builder"
+		builderApi = "http://localhost/api/builder"
 	}
 	if runnerApi == "" {
-		runnerApi = "http://localhost/runner"
+		runnerApi = "http://localhost/api/runner"
 	}
 
 	var config = services.Config{

@@ -78,3 +78,27 @@ async function CreateProject(intent){
         body: JSON.stringify(intent)
     })
 }
+
+
+async function GetAllConfiguration(){
+    return AuthGetFetch(host + "configuration/all")
+}
+
+async function  GetStatusProject(id){
+    return AuthGetFetch(host + "/status?id=" + id)
+}
+
+async function BuildProject(projectId){
+    let obj = {
+        id: projectId
+    }
+    let url = host + "build"
+    let pass = localStorage.getItem('user')
+    return await fetch(url, {
+        headers: {
+            "Authorization": "Basic " + pass
+        },
+        method: "POST",
+        body: JSON.stringify(obj)
+    })
+}

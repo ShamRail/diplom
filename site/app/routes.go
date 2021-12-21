@@ -38,7 +38,7 @@ func addRoutes(app *app_controllers.App) *mux.Router {
 
 	/*service controller*/
 	router.HandleFunc("/configuration/all", app.GetAllConfigurations).Methods("GET")
-	router.HandleFunc("/status", app.GetAllConfigurations).Methods("GET")
+	router.HandleFunc("/status", app.GetProjectStatus).Methods("GET")
 	router.HandleFunc("/build", app.BuildProject).Methods("POST")
 
 	return router
