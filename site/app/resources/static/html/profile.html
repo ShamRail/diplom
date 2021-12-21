@@ -69,38 +69,54 @@
                 }
 			t.map(obj => {
 				console.log(obj)
-				table.append(
-			`<tr>
-				<th>${obj.Name}</th>
-				<th>${obj.BuildStatus}</th>
-				<th>${obj.SourceCodeUrl}</th>
-				<td>
-                    <a class="build" id=${obj.Id}>Собрать проект</a>
-                    <a class="run" id=${obj.Id}>Запустить проект</a>
-					<a class="edit" id=${obj.Id}>Редактировать</a>
-					<a class="btn-remove" id=${obj.Id}>Удалить</a>
-            	</td>
-            </tr>`)
-            if(obj.BuildStatus == "build"){
-                $('.run').css('display','none');
-            }
-            else{
-                $('.build').css('display','none');
-            }
-			})
-        	})
-			.then(function (){
-				$(".edit").click(function (){
-					console.log(this)
-				})
-				$(".btn-remove").click(function (){
-					let intent = {
-						ids: [parseInt(this.id)]
-					}
-					DeleteGetProjectDocs(intent).then(t => {
-						window.location.reload();
-					})
-				})
-			})
+
+
+                GetStatusProject(obj.id)
+                    .then(statusResp => statusResp.json().then(json => {
+                        console.log(json)
+                        let allowRun = false
+                        statusMessage = json.buildStatus
+                        table.append(
+                            `<tr>
+                            <th>${obj.name}</th>
+                            <th>${statusMessage}</th>
+                            <th>${obj.sourceCodeURL}</th>
+                            <td>
+                                <a class="run" id=${obj.id}>Запуск</a>
+                                <a class="build" id=${obj.id}>Билд</a>
+                                <a class="edit" id=${obj.id}>Редактировать</a>
+                                <a class="btn-remove" id=${obj.id}>Удалить</a>
+                            </td>
+                        </tr>`)
+                        if (allowRun){
+                            $("a#" + obj.id + ".build").css("visibility", "hidden");
+                        } else {
+                            $("a#" + obj.id + ".run").css("visibility", "hidden");
+                        }
+                    }))
+                    .then(function (){
+                        $(".edit").click(function (){
+                            console.log(this)
+                        })
+                        $(".run").click(function (){
+                            window.location.replace("http://localhost/runner/app/" + this.id)
+                        })
+                        $(".build").click(function (){
+                            BuildProject(this.id).then(t => {
+                                // document.location.reload();
+                            })
+                        })
+                        $(".btn-remove").click(function (){
+                            let intent = {
+                                ids: [parseInt(this.id)]
+                            }
+                            DeleteGetProjectDocs(intent).then(t => {
+                                window.location.reload();
+                            })
+                        })
+                    })
+            })
+            })
+
     })
 </script>

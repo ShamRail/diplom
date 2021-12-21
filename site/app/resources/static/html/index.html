@@ -18,9 +18,9 @@
 </div>
 	<div class="topnav">
 		<img href="index.html" src="../img/logo_cut.png" alt="УГАТУ">
-		<a href="index.html">Главная</a>
-		<a href="login.html">Вход</a>
-		<a href="registration.html">Регистрация</a>
+		<a href="index.html" id="main">Главная</a>
+		<a href="login.html" id="enter">Вход</a>
+		<a href="registration.html" id="reg">Регистрация</a>
 		<input type="text" placeholder="Поиск..">
 		<a href="#" id="user_name" onclick="openNav()"></a>
 	</div>
@@ -28,7 +28,7 @@
 		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 		<a href="profile.html">Мои проекты</a>
 		<a href="create_project.html">Создать проект</a>
-		<a href="#">Выйти</a>
+		<a href="#" id="logout">Выйти</a>
 	</div>
 	<section class="content" id="projects">
 	</section>
@@ -41,6 +41,10 @@
 	$(document).ready(function() {
 		let projects = $("#projects")
 		let userName = localStorage.getItem('userName')
+		if (userName !== null) {
+			$("#enter").css('display','none');
+			$("#reg").css('display','none');
+		}
 		$("#user_name").text(userName)
 		GetProjectDescriptionAll().then(json => {
 			json.map(t => {
@@ -54,7 +58,10 @@
 						</div>`)
 			})
 		})
-
+		$("#logout").click(function (){
+			localStorage.clear()
+			window.location.reload();
+		})
 	});
 
 </script>

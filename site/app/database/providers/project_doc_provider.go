@@ -10,7 +10,7 @@ import (
 
 type IProjectDocProvider interface {
 	List(filter *project_doc_models.ProjectDocFilter) []project_doc_models.ProjectDoc
-	Add(projectDocList []project_doc_models.ProjectDoc) (int64, error)
+	Add(projectDoc project_doc_models.ProjectDoc) (int, error)
 	Delete(projectDocDelete *project_doc_models.ProjectDocDelete) error
 	Update(projectDoc project_doc_models.ProjectDoc) error
 }
@@ -51,30 +51,11 @@ func (pd *ProjectDocProvider) List(filter *project_doc_models.ProjectDocFilter) 
 	return projectDocs
 }
 
-func (pd *ProjectDocProvider) Add(doc []project_doc_models.ProjectDoc) (int64, error) {
-	var res, err = pd.DataBase.Db.NamedExec(
-		`INSERT INTO project_docs (
-                          name,
-                          source_code_url,
-                          build_command,
-                          run_command,
-                          in_files,
-                          out_files,
-                          configuration_id,
-                          build_status,
-                          archive_inner_dir)
-                          VALUES (
-                                  :name,
-                                  :source_code_url,
-                                  :build_command,
-                                  :run_command,
-                                  :in_files,
-                                  :out_files,
-                                  :configuration_id,
-                                  :build_status,
-                                  :archive_inner_dir)`,
-		doc)
-	id, _ := res.LastInsertId()
+func (pd *ProjectDocProvider) Add(doc project_doc_models.ProjectDoc) (int, error) {
+
+	var id int
+	var err = pd.DataBase.Db.QueryRow("INSERT INTO project_docs (name,source_code_url,build_command,run_command,in_files,out_files,configuration_id,archive_inner_dir) values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+		doc.Name, doc.SourceCodeUrl, doc.BuildCommand, doc.RunCommand, doc.InFiles, doc.OutFiles, doc.ConfigurationId, doc.ArchiveInnerDir).Scan(&id)
 	return id, err
 }
 
@@ -102,9 +83,8 @@ func (pd *ProjectDocProvider) Update(doc project_doc_models.ProjectDoc) error {
                           in_files = $5,
                           out_files = $6,
                           configuration_id = $7,
-                          build_status = $8,
-                          archive_inner_dir = $9
-							WHERE id=$10`
+                          archive_inner_dir = $8
+							WHERE id=$9`
 
 	var _, err = pd.DataBase.Db.Exec(
 		updateString,
@@ -115,7 +95,6 @@ func (pd *ProjectDocProvider) Update(doc project_doc_models.ProjectDoc) error {
 		doc.InFiles,
 		doc.OutFiles,
 		doc.ConfigurationId,
-		doc.BuildStatus,
 		doc.ArchiveInnerDir,
 		doc.Id)
 

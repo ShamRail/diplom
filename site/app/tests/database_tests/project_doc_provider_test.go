@@ -1,5 +1,7 @@
 package database_tests
 
+/*package database_tests
+
 import (
 	"log"
 	"site_app/database/models/project_doc_models"
@@ -54,3 +56,4 @@ func TestCanAddAndListProjectDoc(t *testing.T) {
 	//	t.Fatal("Can not delete")
 	//}
 }
+*/

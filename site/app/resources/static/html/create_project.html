@@ -1,140 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href='../img/favicon_usatu.ico'>
-	<script src="../js/queries.js"></script>
-	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-	<link rel="stylesheet" href="../css/sidenav.css">
-	<link rel="stylesheet" href="../css/index.css">
-	<link rel="stylesheet" href="../css/header_and_footer.css">
-	<link rel="stylesheet" href="../css/create_project.css">
-	<script src="../js/sidenav.js"></script>
-	<title>Создание проекта</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href='../img/favicon_usatu.ico'>
+    <script src="../js/queries.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <link rel="stylesheet" href="../css/sidenav.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/header_and_footer.css">
+    <link rel="stylesheet" href="../css/create_project.css">
+    <script src="../js/sidenav.js"></script>
+    <title>Создание проекта</title>
 </head>
-<body bgcolor="#E5E5E5">	
-	<div class="navbar">
-	  	<h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
-	</div>
-	<div class="topnav">		
-	  	<img src="../img/logo_cut.png" alt="УГАТУ">
-	  	<a href="index.html">Главная</a>
-		<a href="#" id="user_name" onclick="openNav()"></a>
-	</div>
-	<div id="mySidenav" class="sidenav">
-	  	<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-	  	<a href="profile.html">Мои проекты</a>
-	  	<a href="create_project.html">Создать проект</a>
-	  	<a href="#">Выйти</a>
-	</div>
-	<section>
-		<div class="container">
-			<h1>Создать проект</h1>
-			  <form>
-			    <div class="row">
-			      <div class="col-100">
-			        <input type="text" id="name" name="firstname" placeholder="Название проекта">
-			      </div>
-			    </div>
-			    <div class="row">
-			      <div class="col-100">
-			        <input type="text" id="source_code_url" name="firstname" placeholder="Ссылка">
-				  </div>
-				</div>
-			    <div class="row">
-			      <div class="col-100">
-			        <textarea id="build_command" name="subject" placeholder="Команда сборки"></textarea>
-			      </div>
-			    </div>
-				  <div class="row">
-					  <div class="col-100">
-						  <textarea id="run_command" name="subject" placeholder="Команда запуска"></textarea>
-					  </div>
-				  </div>
-				  <div class="row">
-					  <div class="col-100">
-						  <textarea id="in_files" name="subject" placeholder="Относительный путь"></textarea>
-					  </div>
-				  </div>
-				  <div class="row">
-					  <div class="col-100">
-						  <textarea id="out_files" name="subject" placeholder="Путь выходных файлов"></textarea>
-					  </div>
-				  </div>
-				  <div class="row">
-					  <div class="col-100">
-						  <select id="configuration_id" name="subject" placeholder="Конфигурация">
-						  </select>
-					  </div>
-				  </div>
-				  <div class="row">
-					  <div class="col-100">
-						  <textarea id="archive_inner_dir" name="subject" placeholder="Путь к проекту">archive$archive_inner_dir/</textarea>
-					  </div>
-				  </div>
-				  <div class="row">
-					  <div class="col-100">
-						  <textarea id="description" name="subject" placeholder="Детальное описание" style="height:100px"></textarea>
-					  </div>
-				  </div>
-				<input type="submit" id="bnt-create-proj" value="Создать">
-		    </div>
-		  </form>
-		</div>
-	</section>
+<body bgcolor="#E5E5E5">
+<div class="navbar">
+    <h5 style="text-decoration: none">&copy; UGATU 2021</h5>
+</div>
+<div class="topnav">
+    <img src="../img/logo_cut.png" alt="УГАТУ">
+    <a href="index.html">Главная</a>
+    <a href="#" id="user_name" onclick="openNav()"></a>
+</div>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="profile.html">Мои проекты</a>
+    <a href="create_project.html">Создать проект</a>
+    <a href="#">Выйти</a>
+</div>
+<section>
+    <div class="container">
+        <h1>Создать проект</h1>
+        <form>
+            <div class="row">
+                <div class="col-100">
+                    <input type="text" id="name" name="firstname" placeholder="Название проекта">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <input type="text" id="source_code_url" name="firstname" placeholder="Ссылка">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <textarea id="build_command" name="subject" placeholder="Команда сборки"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <textarea id="run_command" name="subject" placeholder="Команда запуска"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <textarea id="in_files" name="subject" placeholder="Относительный путь"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <textarea id="out_files" name="subject" placeholder="Путь выходных файлов"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <select id="configuration_id" name="subject" placeholder="Конфигурация">
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <textarea id="archive_inner_dir" name="subject" placeholder="Путь к проекту">archive$archive_inner_dir/</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-100">
+                    <textarea id="description" name="subject" placeholder="Детальное описание"
+                              style="height:100px"></textarea>
+                </div>
+            </div>
+            <input type="submit" id="bnt-create-proj" value="Создать">
+    </div>
+    </form>
+    </div>
+</section>
 </body>
 </html>
 <script>
-	$(document).ready(function() {
-		let userName = localStorage.getItem('userName')
-		$("#user_name").text(userName)
+    $(document).ready(function () {
+        let userName = localStorage.getItem('userName')
+        $("#user_name").text(userName)
 
-		let configuration = $("#configuration_id")
-		var select_configuration
+        let configuration = $("#configuration_id")
 
-		GetAllConfiguration().then(t => {
-			if (t == null){
+        GetAllConfiguration().then(resp => resp.json()
+            .then(t => {
+                if (t == null) {
                     return
                 }
-			t.map(obj => {
-				console.log(obj)
-				configuration.append('<option id="${obj.id}">${obj.name} ${obj.version}</option>')
-				})
-		})
+                t.map(obj => {
+                    console.log(obj)
+                    configuration.append(`<option class="selected_config" id=${obj.id}>${obj.name} ${obj.version}</option>`)
+                })
+            }))
 
-		$("#bnt-create-proj").click(function (){
+        $("#bnt-create-proj").click(function () {
 
-			let userName = localStorage.getItem('userName')
-			let userId = localStorage.getItem('userId')
+            let userName = localStorage.getItem('userName')
+            let userId = localStorage.getItem('userId')
 
-			let name = $("#name").val()
-			let source_code_url = $("#source_code_url").val()
-			let build_command = $("#build_command").val()
-			let run_command = $("#run_command").val()
-			let in_files = $("#in_files").val()
-			let out_files = $("#out_files").val()
-			let configuration_id = $("#configuration_id").val()
-			let archive_inner_dir = $("#archive_inner_dir").val()
-			let description = $("#description").val()
+            let name = $("#name").val()
+            let source_code_url = $("#source_code_url").val()
+            let build_command = $("#build_command").val()
+            let run_command = $("#run_command").val()
+            let in_files = $("#in_files").val()
+            let out_files = $("#out_files").val()
+            let archive_inner_dir = $("#archive_inner_dir").val()
+            let description = $("#description").val()
 
-			let intent = {
-				userName: userName,
-				userId: userId,
+			let selectedId = $('#configuration_id').find(":selected").attr("id")
+            let intent = {
+                userName: userName,
+                userId: userId,
 
-				name: name,
-				source_code_url: source_code_url,
-				build_command: build_command,
-				run_command: run_command,
-				in_files: in_files,
-				out_files: out_files,
-				configuration_id: configuration_id.options[configuration_id.selectedIndex].id,
-				archive_inner_dir: archive_inner_dir,
+                name: name,
+                source_code_url: source_code_url,
+                build_command: build_command,
+                run_command: run_command,
+                in_files: in_files,
+                out_files: out_files,
+                configuration_id: parseInt(selectedId),
+                archive_inner_dir: archive_inner_dir,
 
-				description: description,
-			}
+                description: description,
+            }
 
-			CreateProject(intent)
-		})
-	})
+            CreateProject(intent)
+        })
+    })
 </script>

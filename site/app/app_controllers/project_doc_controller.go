@@ -28,19 +28,16 @@ func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request)
 		InFiles:         projectDocIntent.InFiles,
 		OutFiles:        projectDocIntent.OutFiles,
 		ConfigurationId: projectDocIntent.ConfigurationId,
-		BuildStatus:     projectDocIntent.BuildStatus,
 		ArchiveInnerDir: projectDocIntent.ArchiveInnerDir,
 	}
 
-	id, err := app.ProjectDocProvider.Add([]ProjectDoc{
-		projectDoc,
-	})
+	id, err := app.ProjectDocProvider.Add(projectDoc)
 
 	projectDocDescriptionId := uuid.NewV4()
 
 	projectDocDescription := ProjectDescription{
 		Id:               &projectDocDescriptionId,
-		ProjectId:        int(id),
+		ProjectId:        id,
 		UserId:           projectDocIntent.UserId,
 		Author:           projectDocIntent.UserName,
 		ShortDescription: projectDocIntent.Name,
@@ -50,6 +47,14 @@ func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request)
 
 	app.ProjectDescriptionProvider.Add([]ProjectDescription{
 		projectDocDescription,
+	})
+	uuidNew := uuid.NewV4()
+	app.UserProjectProvider.Add([]UserProject{
+		{
+			Id:        &uuidNew,
+			UserId:    projectDocIntent.UserId,
+			ProjectId: id,
+		},
 	})
 }
 

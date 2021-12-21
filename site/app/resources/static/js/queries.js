@@ -81,11 +81,7 @@ async function CreateProject(intent){
 
 
 async function GetAllConfiguration(){
-    let response = AuthGetFetch(host + "configuration/all");
-    if(response.ok){
-        return await response.json();
-    }
-    //return AuthGetFetch(host + "configuration/all")
+    return AuthGetFetch(host + "configuration/all")
 }
 
 async function  GetStatusProject(id){
@@ -93,9 +89,8 @@ async function  GetStatusProject(id){
 }
 
 async function BuildProject(projectId){
-    let obj = {
-        id: projectId
-    }
+    let formData = new FormData();
+    formData.append('id', projectId);
     let url = host + "build"
     let pass = localStorage.getItem('user')
     return await fetch(url, {
@@ -103,6 +98,6 @@ async function BuildProject(projectId){
             "Authorization": "Basic " + pass
         },
         method: "POST",
-        body: JSON.stringify(obj)
+        body: formData
     })
 }

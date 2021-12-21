@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -19,6 +20,7 @@ func (s *BuilderService) Build(p project_doc_models.ProjectDoc) (string, error) 
 
 	var body, err = json.Marshal(p)
 
+	fmt.Println(string(body))
 	if err != nil {
 		log.Println(err)
 	}
@@ -27,6 +29,9 @@ func (s *BuilderService) Build(p project_doc_models.ProjectDoc) (string, error) 
 	if err != nil {
 		fmt.Println(err)
 		return "", err
+	}
+	if resp.StatusCode == 400 {
+		return "", errors.New("400")
 	}
 
 	defer resp.Body.Close()
@@ -37,7 +42,7 @@ func (s *BuilderService) Build(p project_doc_models.ProjectDoc) (string, error) 
 
 func (s *BuilderService) GetBuildStatus(id string) (string, error) {
 	client := http.Client{}
-	resp, err := client.Get(s.Config.BuilderApi + "/status" + "?projectID=" + id)
+	resp, err := client.Get(s.Config.BuilderApi + "/build-status" + "?projectID=" + id)
 	if err != nil {
 		fmt.Println(err)
 		return "", err

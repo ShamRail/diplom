@@ -7,6 +7,5 @@ CREATE TABLE if not exists project_docs (
     in_files varchar(600) not null,
     out_files varchar(600) not null,
     configuration_id int,
-    build_status varchar(100),
     archive_inner_dir varchar(600)
 );
