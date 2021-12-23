@@ -93,15 +93,13 @@ func (pd *ProjectDescriptionProvider) Delete(doc *p.ProjectDescriptionDelete) er
 
 func (pd *ProjectDescriptionProvider) Update(p p.ProjectDescription) error {
 	var updateString = `UPDATE project_description SET description = $1,
-                          project_status = $2,
-                          project_id = $3,
-                          short_description = $4,
-						  WHERE id=$5`
+                          project_id = $2,
+                          short_description = $3
+						  WHERE id = $4`
 
 	var _, err = pd.DataBase.Db.Exec(
 		updateString,
 		p.Description,
-		p.ProjectStatus,
 		p.ProjectId,
 		p.ShortDescription,
 		p.Id)

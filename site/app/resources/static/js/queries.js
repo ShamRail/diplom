@@ -79,6 +79,17 @@ async function CreateProject(intent){
     })
 }
 
+async function UpdateProjectDoc(intent){
+    let url = host + "project_doc"
+    let pass = localStorage.getItem('user')
+    return await fetch(url, {
+        headers: {
+            "Authorization": "Basic " + pass
+        },
+        method: "PUT",
+        body: JSON.stringify(intent)
+    })
+}
 
 async function GetAllConfiguration(){
     return AuthGetFetch(host + "configuration/all")

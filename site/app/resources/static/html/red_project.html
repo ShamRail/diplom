@@ -17,29 +17,116 @@
 <body bgcolor="#E5E5E5">
 	<section id="header_and_footer">
 	</section>
-	<section class="container">
-		<form>
-		    <input type="text" id="form_name" name="firstname" placeholder="Название проекта" value="Проект №1">
-		    <textarea id="subject" name="subject" placeholder="Описание" style="height:150px"></textarea>
-		    <input type="submit" value="Изменить">
-	  </form>
+	<section>
+		<div class="container">
+			<h1>Редактировать</h1>
+			<form>
+				<div class="row">
+					<div class="col-100">
+						<input type="text" id="name" name="firstname" placeholder="Название проекта">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-100">
+						<input type="text" id="source_code_url" name="firstname" placeholder="Ссылка">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-100">
+						<textarea id="build_command" name="subject" placeholder="Команда сборки"></textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-100">
+						<textarea id="run_command" name="subject" placeholder="Команда запуска"></textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-100">
+						<textarea id="in_files" name="subject" placeholder="Относительный путь"></textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-100">
+						<textarea id="out_files" name="subject" placeholder="Путь выходных файлов"></textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-100">
+						<textarea id="archive_inner_dir" name="subject" placeholder="Путь к проекту">archive$archive_inner_dir/</textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-100">
+                    <textarea id="description" name="subject" placeholder="Детальное описание"
+							  style="height:100px"></textarea>
+					</div>
+				</div>
+				<input type="button" id="bnt-update-proj" value="Обновить">
+			</form>
+		</div>
 	</section>
 </body>
 </html>
 <script>
-	$(document).ready(function() {
 
-		$("#user_name").text(localStorage.getItem('userName'))
+	$(document).ready(function () {
+		let userName = localStorage.getItem('userName')
+		$("#user_name").text(userName)
 
 		let params = (new URL(document.location)).searchParams;
 		let project_id = params.get("project_id");
-		console.log(project_id)
+
 		GetProjectDescriptionByProjectId(project_id).then(t => {
-			console.log(t)
 			t.map( project => {
-				$("#subject").text(project.Description)
-				$("#form_name").val(project.ShortDescription)
+				$("#description").val(project.Description)
 			})
+		})
+
+		GetProjectDocById(project_id).then(t => {
+			t.map( project => {
+				console.log(project)
+
+				$("#name").val(project.name)
+				$("#source_code_url").val(project.sourceCodeURL)
+				$("#build_command").val(project.buildCommand)
+				$("#run_command").val(project.runCommand)
+				$("#in_files").val(project.inFiles)
+				$("#out_files").val(project.outFiles)
+				$("#archive_inner_dir").val(project.archiveInnerDir)
+
+			})
+		})
+
+		$("#bnt-update-proj").click(function () {
+
+			let name = $("#name").val()
+			let source_code_url = $("#source_code_url").val()
+			let build_command = $("#build_command").val()
+			let run_command = $("#run_command").val()
+			let in_files = $("#in_files").val()
+			let out_files = $("#out_files").val()
+			let archive_inner_dir = $("#archive_inner_dir").val()
+			let description = $("#description").val()
+
+			let intent = {
+				id: project_id,
+
+				name: name,
+				source_code_url: source_code_url,
+				build_command: build_command,
+				run_command: run_command,
+				in_files: in_files,
+				out_files: out_files,
+				archive_inner_dir: archive_inner_dir,
+
+				description: description,
+			}
+
+			console.log(intent)
+			UpdateProjectDoc(intent).then(resp => { if (resp.ok) {
+				window.location.reload()
+			}})
 		})
 	})
 </script>

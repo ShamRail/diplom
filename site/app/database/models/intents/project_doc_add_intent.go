@@ -2,7 +2,7 @@ package intents
 
 import uuid "github.com/satori/go.uuid"
 
-type ProjectDocIntent struct {
+type ProjectDocAddIntent struct {
 	UserId   *uuid.UUID `db:"id"`
 	UserName string     `json:"userName"`
 

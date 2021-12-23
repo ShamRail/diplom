@@ -43,6 +43,8 @@
 						localStorage.setItem('user', btoa(email + ":"+password));
 						localStorage.setItem('userName', json[0].Name);
 						localStorage.setItem('userId', json[0].Id)
+					}).then(function (){
+						location.href = "index.html"
 					})
 				} else {
 					alert("Wrong name or password")

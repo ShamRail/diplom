@@ -13,7 +13,7 @@ import (
 
 func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var projectDocIntent intents.ProjectDocIntent
+	var projectDocIntent intents.ProjectDocAddIntent
 	var err = json.NewDecoder(request.Body).Decode(&projectDocIntent)
 	if err != nil {
 		writer.WriteHeader(500)
@@ -60,18 +60,36 @@ func (app *App) AddProjectDoc(writer http.ResponseWriter, request *http.Request)
 
 func (app *App) UpdateProjectDoc(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	var projectDoc ProjectDoc
-	var err = json.NewDecoder(request.Body).Decode(&projectDoc)
-	if err != nil {
-		writer.WriteHeader(500)
+	var intent intents.ProjectDocUpdateIntent
+	var _ = json.NewDecoder(request.Body).Decode(&intent)
+	id, _ := strconv.Atoi(intent.Id)
+	projectDoc := app.ProjectDocProvider.List(&ProjectDocFilter{Ids: []int{id}})[0]
+
+	projectDoc.Name = intent.Name
+	projectDoc.OutFiles = intent.OutFiles
+	projectDoc.RunCommand = intent.RunCommand
+	projectDoc.InFiles = intent.InFiles
+	projectDoc.BuildCommand = intent.BuildCommand
+	projectDoc.SourceCodeUrl = intent.SourceCodeUrl
+	projectDoc.ArchiveInnerDir = intent.ArchiveInnerDir
+
+	err1 := app.ProjectDocProvider.Update(projectDoc)
+
+	projectDocDescs, _ := app.ProjectDescriptionProvider.List(&ProjectDescriptionFilter{
+		ProjectIds: []int{id},
+	})
+	projectDesc := projectDocDescs[0]
+
+	projectDesc.Description = intent.Description
+
+	err2 := app.ProjectDescriptionProvider.Update(projectDesc)
+
+	if err1 == nil && err2 == nil {
+		writer.WriteHeader(200)
 	} else {
-		err = app.ProjectDocProvider.Update(projectDoc)
-		if err != nil {
-			writer.WriteHeader(500)
-		} else {
-			writer.WriteHeader(200)
-		}
+		writer.WriteHeader(500)
 	}
+
 }
 
 func (app *App) DeleteProjectDoc(writer http.ResponseWriter, request *http.Request) {

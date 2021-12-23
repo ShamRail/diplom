@@ -28,4 +28,8 @@ $(document).ready(function() {
 		if (document.title != 'УГАТУ'){
 			$("#search").css('display','none');
 		}
+		$("#logout").click(function (){
+			localStorage.clear()
+			location.href = "login.html"
+		})
 });

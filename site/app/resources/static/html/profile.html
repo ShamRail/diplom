@@ -85,7 +85,7 @@
                     }))
                     .then(function (){
                         $(".edit").click(function (){
-                            console.log(this)
+                            window.location = 'red_project.html?project_id=' + this.id;
                         })
                         $(".run").click(function (){
                             window.location.replace("http://localhost/runner/app/" + this.id)
