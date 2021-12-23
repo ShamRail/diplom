@@ -4,6 +4,9 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href='../img/favicon_usatu.ico'>
+	<script src="../js/queries.js"></script>
+	<script src="../js/uuid_generator.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<link rel="stylesheet" href="../css/header_and_footer.css">
 	<link rel="stylesheet" href="../css/registration.css">
 	<title>Регистрация</title>
@@ -16,15 +19,14 @@
 	<form class="content">
 	  <div class="container">
 	    <h2>Регистрация</h2>
-	    <input type="text" placeholder="Имя" name="uname" required>
-	    <input type="text" placeholder="Фамилия" name="psw" required>
-	    <input type="password" placeholder="E-mail" name="psw" required>
-	    <input type="password" placeholder="Пароль" name="psw" required>
-	    <input type="password" placeholder="Повторите пароль" name="psw" required>
+		<input placeholder="Name" id="name" name="psw" required>
+	    <input type="email" placeholder="E-mail" id="email" name="psw" required>
+	    <input type="password" placeholder="Пароль" id="password" name="psw" required>
+	    <input type="password" placeholder="Повторите пароль" id="password_verification" name="psw" required>
 	    <label>
 	      <input type="checkbox" checked="checked" name="remember">Запомнить
 	    </label>
-	    <button type="button" class="cancelbtn">Регистрация</button>
+	    <button type="button" class="cancelbtn" id="reg">Регистрация</button>
 	  </div>
 	</form>
 	<div class="navbar">
@@ -32,3 +34,39 @@
 	</div>
 </body>
 </html>
+<script>
+	$(document).ready(function () {
+
+		$("#reg").click(function (){
+
+			let email = $("#email").val()
+			let name = $("#name").val()
+			let password = $("#password").val()
+			let password_verification = $("#password_verification").val()
+
+			if (password !== password_verification) {
+				alert("Пароль не совпадает")
+				return
+			}
+
+			let id = generateUUID()
+
+			let user = {
+				id : id,
+				name: name,
+				email: email,
+				password: password
+			}
+
+			CreateUser(user).then(t => {
+				if (t.ok){
+					localStorage.setItem('user', btoa(email + ":"+password));
+					localStorage.setItem('userName', name);
+					localStorage.setItem('userId', id)
+					location.href = "index.html"
+				}
+			})
+
+		})
+	})
+</script>

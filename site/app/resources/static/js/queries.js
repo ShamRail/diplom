@@ -112,3 +112,11 @@ async function BuildProject(projectId){
         body: formData
     })
 }
+
+async function CreateUser(intent){
+    let url = host + "users"
+    return await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(intent)
+    })
+}

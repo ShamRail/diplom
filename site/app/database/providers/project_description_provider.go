@@ -92,7 +92,8 @@ func (pd *ProjectDescriptionProvider) Delete(doc *p.ProjectDescriptionDelete) er
 }
 
 func (pd *ProjectDescriptionProvider) Update(p p.ProjectDescription) error {
-	var updateString = `UPDATE project_description SET description = $1,
+
+	updateString := `UPDATE project_description SET description = $1,
                           project_id = $2,
                           short_description = $3
 						  WHERE id = $4`

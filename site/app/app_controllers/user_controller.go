@@ -1,7 +1,10 @@
 package app_controllers
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"site_app/database/models/project_doc_models"
 	. "site_app/database/models/user_models"
@@ -10,24 +13,32 @@ import (
 func (app *App) AddUser(writer http.ResponseWriter, request *http.Request) {
 
 	writer.Header().Set("Content-Type", "application/json")
-	var user User
-	var err = json.NewDecoder(request.Body).Decode(&user)
+	var userIntent UserIntent
+	var err = json.NewDecoder(request.Body).Decode(&userIntent)
+	passwordHash := sha256.Sum256([]byte(userIntent.Password))
+	pass := []byte(fmt.Sprintf("%x", passwordHash))
+	id, _ := uuid.FromString(userIntent.Id)
 	if err != nil {
 		writer.WriteHeader(500)
 	} else {
-		if app.Auth.CheckEmail(user.Email) {
+		if app.Auth.CheckEmail(userIntent.Email) {
 			var exist, _ = app.UserProvider.List(&UserFilter{
 				Emails: []string{
-					user.Email,
+					userIntent.Email,
 				},
 			})
 			if exist == nil {
 				err = app.UserProvider.Add([]User{
-					user,
+					{
+						Id:       &id,
+						Name:     userIntent.Name,
+						Email:    userIntent.Email,
+						Password: pass,
+					},
 				})
 				if err != nil {
 					writer.WriteHeader(500)
-					writer.Write([]byte("Can not add user"))
+					writer.Write([]byte("Can not add userIntent"))
 				} else {
 					writer.WriteHeader(200)
 				}

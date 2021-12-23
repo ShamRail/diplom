@@ -65,6 +65,7 @@
                         console.log(json)
                         let allowRun = false
                         statusMessage = json.buildStatus
+                        if (statusMessage === "BUILT") allowRun = true
                         table.append(
                             `<tr>
                             <th>${obj.name}</th>

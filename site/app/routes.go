@@ -7,12 +7,11 @@ import (
 )
 
 var (
-	a      = http.FileServer(http.Dir("resources/static"))
-	router = mux.NewRouter()
+	a = http.FileServer(http.Dir("resources/static"))
 )
 
 func addRoutes(app *app_controllers.App) *mux.Router {
-
+	router := mux.NewRouter()
 	/*user controllers*/
 	router.HandleFunc("/users", app.AddUser).Methods("POST")
 	router.HandleFunc("/users", app.Auth.BasicAuth(app.GetUsers)).Methods("GET")

@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/AfterShip/email-verifier"
+	"github.com/smancke/mailck"
 	"net/http"
 	"site_app/database/models/user_models"
 	"site_app/database/providers"
@@ -12,12 +13,18 @@ import (
 type IAuthService interface {
 	BasicAuth(next http.HandlerFunc) http.HandlerFunc
 	isAuth(username, password string) bool
-	CheckEmail(mail string) bool
+	CheckEmail(email string) bool
 }
 
 type AuthService struct {
 	userProvider providers.IUserProvider
 }
+
+var (
+	verifier = emailverifier.
+		NewVerifier().
+		EnableSMTPCheck()
+)
 
 func (auth *AuthService) isAuth(username, password string) bool {
 	passwordHash := sha256.Sum256([]byte(password))
@@ -59,12 +66,21 @@ func (auth *AuthService) BasicAuth(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func (auth *AuthService) CheckEmail(email string) bool {
-	var verifier = emailverifier.NewVerifier()
-	_, err := verifier.Verify(email)
-	if err != nil {
+
+	result, _ := mailck.Check("noreply@mancke.net", email)
+	switch {
+
+	case result.IsValid():
+		return true
+
+	case result.IsError():
+		return false
+
+	case result.IsInvalid():
+		return false
+	default:
 		return false
 	}
-	return true
 }
 
 func CreateNewAuthService(userProvider providers.IUserProvider) IAuthService {
