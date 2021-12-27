@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  api: 'http://localhost/api/admin'
+  api: 'http://apprunner.ugatu.su/api/admin'
 };

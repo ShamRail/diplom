@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  configApi: 'http://localhost/api/admin',
-  runnerApi: 'http://localhost/api/runner'
+  configApi: 'http://apprunner.ugatu.su/api/admin',
+  runnerApi: 'http://apprunner.ugatu.su/api/runner'
 };
