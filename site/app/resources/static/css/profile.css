@@ -1,0 +1,59 @@
+.info{
+	border-radius: 10px;
+	box-shadow: 0 0 10px;
+	padding: 5px 5px 5px 5px;
+    position: absolute;
+	background: white;
+	margin: 50px 0 0 10px;
+	width: 20%;
+    font-size: 13px;
+	height: auto;
+}
+
+.projects{
+	background: white;
+	box-shadow: 0 0 10px;
+	overflow: auto;
+	margin: 15px 15px 15px 15px;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+th, td {
+    text-align: center;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+@media screen and (max-width: 600px) {
+    .info{
+        font-size: 8px;
+        margin: auto;
+        position: static;
+    }
+}
+
+.projects a {
+    float: center;
+    display: block;
+    color: black;
+    margin: 0 0 0 0;
+    text-align: center;
+    padding: 3px 5px;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.projects a:hover {
+    color: red;
+}
+
+.content{
+    margin: 0 0 90px 0;
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/queries.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <link rel="icon" href='../img/favicon_usatu.ico'>
+    <link rel="stylesheet" href="../css/sidenav.css">
+    <link rel="stylesheet" href="../css/header_and_footer.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <script src="../js/sidenav.js"></script>
+    <script src="../js/header_and_footer.js"></script>
+    <title>Профиль</title>
+</head>
+<body bgcolor="#E5E5E5">
+<section id="header_and_footer">
+</section>
+<section class="content">
+    <div class="projects">
+        <table id="project_table">
+        </table>
+    </div>
+</section>
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        let userName = localStorage.getItem('userName')
+        $("#user_name").text(userName)
+        $("#logOut").click(function () {
+            console.log("LogOut")
+            localStorage.removeItem('user');
+            console.log(localStorage.getItem('user'))
+            window.location = 'login.html';
+        })
+        let userId = localStorage.getItem('userId')
+        GetProjectDocsByUserId(userId)
+            .then(resp => {
+                if (resp.ok) {
+					return resp.json()
+                } else {
+                    alert("Auth error")
+                }
+            })
+			.then(t => {
+				let table = $("#project_table")
+				table.append(`
+ 			<tr>
+				<th>Название проекта</th>
+				<th>Состояние</th>
+				<th>Источник</th>
+				<th>Действие</th>
+            </tr>`)
+                if (t == null){
+                    return
+                }
+			t.map(obj => {
+				console.log(obj)
+
+
+                GetStatusProject(obj.id)
+                    .then(statusResp => statusResp.json().then(json => {
+                        console.log(json)
+                        let allowRun = false
+                        statusMessage = json.buildStatus
+                        if (statusMessage === "BUILT") allowRun = true
+                        table.append(
+                            `<tr>
+                            <th>${obj.name}</th>
+                            <th>${statusMessage}</th>
+                            <th>${obj.sourceCodeURL}</th>
+                            <td>
+                                <a class="run" id=${obj.id}>Запуск</a>
+                                <a class="build" id=${obj.id}>Билд</a>
+                                <a class="edit" id=${obj.id}>Редактировать</a>
+                                <a class="btn-remove" id=${obj.id}>Удалить</a>
+                            </td>
+                        </tr>`)
+                        if (allowRun){
+                            $("a#" + obj.id + ".build").css("visibility", "hidden");
+                        } else {
+                            $("a#" + obj.id + ".run").css("visibility", "hidden");
+                        }
+                    }))
+                    .then(function (){
+                        $(".edit").click(function (){
+                            window.location = 'red_project.html?project_id=' + this.id;
+                        })
+                        $(".run").click(function (){
+                            window.location.replace("http://localhost/runner/app/" + this.id)
+                        })
+                        $(".build").click(function (){
+                            BuildProject(this.id).then(t => {
+                                // document.location.reload();
+                            })
+                        })
+                        $(".btn-remove").click(function (){
+                            let intent = {
+                                ids: [parseInt(this.id)]
+                            }
+                            DeleteGetProjectDocs(intent).then(t => {
+                                window.location.reload();
+                            })
+                        })
+                    })
+            })
+            })
+
+    })
+</script>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="../js/queries.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<link rel="icon" href='../img/favicon_usatu.ico'>
+	<link rel="stylesheet" href="../css/sidenav.css">
+	<link rel="stylesheet" href="../css/header_and_footer.css">
+	<link rel="stylesheet" href="../css/login.css">
+	<title>Логин</title>
+</head>
+<body bgcolor="#E5E5E5">	
+	<div class="topnav">		
+	  <img src="../img/logo_cut.png" alt="УГАТУ">
+	  <a href="index.html">Главная</a>
+	</div>
+	<form class="content">
+	  <div class="container">
+	    <h2>Войти в аккаунт</h2>
+	    <input type="text" id="email" placeholder="Введите e-mail" name="email" required>
+	    <input type="password" id="password" placeholder="Введите пароль" name="password" required>
+	    <button type="button" id="btn_submit" class="cancelbtn">Войти</button>
+	  </div>
+	</form>
+	<div class="navbar">
+	  <h5 style="text-decoration: none" >&copy; UGATU 2021</h5>
+	</div>
+</body>
+</html>
+<script>
+	$(document).ready(function() {
+		let btnSubmit = $("#btn_submit")
+		btnSubmit.click(function (){
+
+			let email = $('#email').val();
+			let password =  $('#password').val();
+
+			GetUser(email, password).then(response => {
+				if (response.ok){
+					response.json().then(json => {
+						localStorage.setItem('user', btoa(email + ":"+password));
+						localStorage.setItem('userName', json[0].Name);
+						localStorage.setItem('userId', json[0].Id)
+					}).then(function (){
+						location.href = "index.html"
+					})
+				} else {
+					alert("Wrong name or password")
+				}
+			})
+		})
+	})
+</script>

@@ -1,0 +1,65 @@
+<!doctype HTMl>
+<html>
+<head>
+    <title>App</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="scripts/script.js"></script>
+</head>
+<header id="header"></header>
+<body>
+    <ul id="users"></ul>
+    <button id="btn">Show Users</button>
+</body>
+<footer id="footer"></footer>
+</html>
+<script>
+    $(function () {
+        $("#header").load("./header.html");
+    });
+
+    $(function () {
+        $("#footer").load("./footer.html");
+    });
+
+    $(document).ready(async function () {
+        console.log("Doc ready")
+        $("#btn").click(function () {
+            console.log("Btn press")
+            GetUsers()
+        })
+        await getUser("truba24032016@mail.ru", "1234", "http://localhost:8080/users").then(t => console.log(t) )
+    })
+
+    async function GetUsers() {
+        let url = "http://localhost:8080/users"
+        let pass = btoa("truba24032016@mail.ru" + ":"+"1234")
+        console.log(pass)
+        let response = await fetch(url, {
+            headers: {
+                "Authorization": "Basic " + pass
+            }
+        });
+
+        if (response.ok) {
+            console.log(response)
+            let json = await response.json();
+            let list = $("#users")
+            json.map(t => list.append(`<li>${t.Name}</li>`))
+        } else {
+            alert("Ошибка HTTP: " + response.status);
+        }
+    }
+    async function getUser(email, password, userUrl) {
+
+        let pass = btoa(email + ":"+password)
+        let response = await fetch(userUrl + "?email=" + email, {
+            headers: {
+                "Authorization": "Basic " + pass
+            },
+        });
+        if (response.ok) {
+            let json = await response.json();
+            return json
+        }
+    }
+</script>

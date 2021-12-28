@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="../js/queries.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../css/sidenav.css">
+	<link rel="stylesheet" href="../css/index.css">
+	<link rel="stylesheet" href="../css/header_and_footer.css">
+	<link rel="icon" href='../img/favicon_usatu.ico'>
+	<script src="../js/sidenav.js"></script>
+	<script src="../js/header_and_footer.js"></script>
+	<title>УГАТУ</title>
+</head>
+<body bgcolor="#E5E5E5">
+	<section id="header_and_footer">
+	</section>
+	<section class="content" id="projects">
+	</section>
+</body>
+</html>
+<script>
+	$(document).ready(function() {
+		let projects = $("#projects")
+		GetProjectDescriptionAll().then(json => {
+			json.map(t => {
+					console.log(t)
+					projects.append(`
+						<div class="project" id=${t.ProjectId}>
+							<img src="../img/logo_project.png" alt="проект" class="logo_project">
+							<h2 class="info_project" id="name">${t.Description}</h2>
+							<h3 class="info_project" id="author">Автор: ${t.Author}</h3>
+							<h4 class="info_project" id="short_description">${t.ShortDescription}</h4>
+						</div>`)
+			})
+		})
+	});
+
+</script>
