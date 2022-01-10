@@ -206,7 +206,7 @@ services:
     image: nginx
     container_name: nginx
     volumes:
-      - ./nginx/proxy/v4.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy/v5.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/templates:/etc/nginx/templates
     ports:
       - 80:80
