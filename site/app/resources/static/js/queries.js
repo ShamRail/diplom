@@ -1,4 +1,8 @@
-let host = "http://localhost:8084/app/"
+let host = "http://localhost:8084/app/";
+let hostRunner =  "http://localhost:8084/runner/app/";
+
+// let serviceHostApp = "apprunner.ugatu.su/app/"
+// let serviceHostRunnerApp = "http://apprunner.ugatu.su/runner/app/"
 
 async function AuthGetFetch(url) {
     let pass = localStorage.getItem('user')

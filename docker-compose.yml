@@ -24,6 +24,7 @@ services:
       - BUILDER_API=http://builder-api:8080/api/builder
       - RUNNER_API=http://runner-api:8080/api/runner
       - ADMIN_API=http://admin-api:8080/api/admin
+      - WEBSOCKET_HOST=${HOST}
     depends_on:
       - site_db
       - admin-api

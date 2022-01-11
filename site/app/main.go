@@ -19,6 +19,12 @@ func main() {
 	var builderApi = os.Getenv("BUILDER_API")
 	var adminApi = os.Getenv("ADMIN_API")
 	var runnerApi = os.Getenv("RUNNER_API")
+	var webSocketHost = os.Getenv("WEBSOCKET_HOST")
+
+	if webSocketHost != "" {
+		log.Println(webSocketHost)
+		ReplaceStrings(webSocketHost, "./resources/static/js/queries.js")
+	}
 
 	if adminApi == "" {
 		adminApi = "http://localhost/api/admin"
