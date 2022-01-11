@@ -26,6 +26,9 @@ services:
       - ADMIN_API=http://admin-api:8080/api/admin
     depends_on:
       - site_db
+      - admin-api
+      - builder-api
+      - runner-api
     ports:
       - "8084:8084"
   # DATABASES
