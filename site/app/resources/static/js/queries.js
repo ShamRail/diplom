@@ -1,4 +1,4 @@
-let host = "http://localhost:8084/"
+let host = "http://localhost:8084/app/"
 
 async function AuthGetFetch(url) {
     let pass = localStorage.getItem('user')
@@ -113,9 +113,13 @@ async function BuildProject(projectId){
     })
 }
 
-async function CreateUser(intent){
+async function CreateUser(intent, email, password){
     let url = host + "users"
+    let t = btoa(email + ":"+password)
     return await fetch(url, {
+        headers: {
+            "Authorization": "Basic " + t
+        },
         method: "POST",
         body: JSON.stringify(intent)
     })

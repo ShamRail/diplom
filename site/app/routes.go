@@ -13,32 +13,32 @@ var (
 func addRoutes(app *app_controllers.App) *mux.Router {
 	router := mux.NewRouter()
 	/*user controllers*/
-	router.HandleFunc("/users", app.AddUser).Methods("POST")
-	router.HandleFunc("/users", app.Auth.BasicAuth(app.GetUsers)).Methods("GET")
-	router.HandleFunc("/delete_user", app.Auth.BasicAuth(app.DeleteUser)).Methods("DELETE")
-	router.HandleFunc("/user", app.Auth.BasicAuth(app.UpdateUser)).Methods("PUT")
+	router.HandleFunc("/app/users", app.AddUser).Methods("POST")
+	router.HandleFunc("/app/users", app.Auth.BasicAuth(app.GetUsers)).Methods("GET")
+	router.HandleFunc("/app/delete_user", app.Auth.BasicAuth(app.DeleteUser)).Methods("DELETE")
+	router.HandleFunc("/app/user", app.Auth.BasicAuth(app.UpdateUser)).Methods("PUT")
 
 	/*project_doc controllers*/
-	router.HandleFunc("/project_doc", app.Auth.BasicAuth(app.AddProjectDoc)).Methods("POST")
-	router.HandleFunc("/project_docs", app.GetProjectDocs).Methods("GET")
-	router.HandleFunc("/delete_project_doc", app.Auth.BasicAuth(app.DeleteProjectDoc)).Methods("DELETE")
-	router.HandleFunc("/project_doc", app.Auth.BasicAuth(app.UpdateProjectDoc)).Methods("PUT")
+	router.HandleFunc("/app/project_doc", app.Auth.BasicAuth(app.AddProjectDoc)).Methods("POST")
+	router.HandleFunc("/app/project_docs", app.GetProjectDocs).Methods("GET")
+	router.HandleFunc("/app/delete_project_doc", app.Auth.BasicAuth(app.DeleteProjectDoc)).Methods("DELETE")
+	router.HandleFunc("/app/project_doc", app.Auth.BasicAuth(app.UpdateProjectDoc)).Methods("PUT")
 
 	/*project_description*/
-	router.HandleFunc("/project_description/filter", app.GetProjectDescriptionFilter).Methods("GET")
-	router.HandleFunc("/project_description/all", app.GetAllProjectDescription).Methods("GET")
+	router.HandleFunc("/app/project_description/filter", app.GetProjectDescriptionFilter).Methods("GET")
+	router.HandleFunc("/app/project_description/all", app.GetAllProjectDescription).Methods("GET")
 
 	/*user_project_doc*/
-	router.HandleFunc("/user_doc", app.GetProject).Methods("POST")
-	router.HandleFunc("/project_doc/user", app.Auth.BasicAuth(app.GetProjectDocsByUserId)).Methods("GET")
+	router.HandleFunc("/app/user_doc", app.GetProject).Methods("POST")
+	router.HandleFunc("/app/project_doc/user", app.Auth.BasicAuth(app.GetProjectDocsByUserId)).Methods("GET")
 
 	/*set file directory*/
 	router.PathPrefix("/app/").Handler(http.StripPrefix("/app/", a))
 
 	/*service controller*/
-	router.HandleFunc("/configuration/all", app.GetAllConfigurations).Methods("GET")
-	router.HandleFunc("/status", app.GetProjectStatus).Methods("GET")
-	router.HandleFunc("/build", app.BuildProject).Methods("POST")
+	router.HandleFunc("/app/configuration/all", app.GetAllConfigurations).Methods("GET")
+	router.HandleFunc("/app/status", app.GetProjectStatus).Methods("GET")
+	router.HandleFunc("/app/build", app.BuildProject).Methods("POST")
 
 	return router
 }
