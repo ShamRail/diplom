@@ -55,10 +55,9 @@
 				id : id,
 				name: name,
 				email: email,
-				password: password
 			}
 
-			CreateUser(user).then(t => {
+			CreateUser(user, email, password).then(t => {
 				if (t.ok){
 					localStorage.setItem('user', btoa(email + ":"+password));
 					localStorage.setItem('userName', name);
