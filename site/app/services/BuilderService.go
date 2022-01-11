@@ -65,6 +65,6 @@ func (s *BuilderService) GetConfigurationAll() (string, error) {
 
 	defer resp.Body.Close()
 	data, _ := ioutil.ReadAll(resp.Body)
-
-	return string(data), nil
+	res := string(data)
+	return res, nil
 }
