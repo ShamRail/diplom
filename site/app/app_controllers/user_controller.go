@@ -14,8 +14,9 @@ func (app *App) AddUser(writer http.ResponseWriter, request *http.Request) {
 
 	writer.Header().Set("Content-Type", "application/json")
 	var userIntent UserIntent
+	_, password, _ := request.BasicAuth()
 	var err = json.NewDecoder(request.Body).Decode(&userIntent)
-	passwordHash := sha256.Sum256([]byte(userIntent.Password))
+	passwordHash := sha256.Sum256([]byte(password))
 	pass := []byte(fmt.Sprintf("%x", passwordHash))
 	id, _ := uuid.FromString(userIntent.Id)
 	if err != nil {
