@@ -18,11 +18,59 @@
 	<section id="header_and_footer">
 	</section>
 	<div class="container">
-			<h2 id="nameProject">Название проекта</h2>
+			<h2 id="nameProject"></h2>
 			<input readonly type="text" id="status" placeholder="Статус проекта">
-			<textarea readonly id="description" name="subject" placeholder="Описание"style="height:100px; resize: none"></textarea>
-			<button>Запустить</button>
-			<button>Собрать</button>
+			<textarea readonly id="description" name="subject" placeholder="Описание" style="height:100px; resize: none"></textarea>
+			<button id="btn-run" disabled>Запустить</button>
+			<button id="btn-build" disabled>Собрать</button>
 	</div>
 </body>
 </html>
+<script>
+	$(document).ready(function() {
+		let params = (new URL(document.location)).searchParams;
+		let id = params.get("id");
+		console.log(id)
+		GetProjectDocById(id).then(doc => {
+			console.log(doc)
+
+			GetProjectDescriptionByProjectId(id).then(projDesc => {
+				let desc = projDesc[0].Description
+				let nameProject = doc[0].name
+
+				$("#nameProject").text(nameProject)
+				$("#description").text(desc)
+
+				GetStatusProject(id).then(statusResp => {
+					if (statusResp.ok){
+						statusResp.json().then(json => {
+
+							let allowRun = false
+							statusMessage = json.buildStatus
+							if (statusMessage === "BUILT") allowRun = true
+							if (allowRun){
+								$('#btn-build').prop('disabled', true);
+								$('#btn-run').prop('disabled', false);
+							} else {
+								$('#btn-build').prop('disabled', false);
+								$('#btn-run').prop('disabled', true);
+							}
+						})
+					} else {
+						$('#btn-build').prop('disabled', true);
+						$('#btn-run').prop('disabled', true);
+					}
+				})
+			})
+		})
+
+		$("#btn-run").click(function (){
+			console.log("click")
+			window.location.replace(hostRunner + this.id)
+		})
+		$("#btn-build").click(function (){
+			BuildProject(this.id)
+		})
+	})
+
+</script>

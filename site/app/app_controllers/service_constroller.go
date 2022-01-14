@@ -13,7 +13,7 @@ func (app *App) GetAllConfigurations(writer http.ResponseWriter, request *http.R
 	if err == nil {
 		writer.Write([]byte(res))
 	} else {
-		writer.Write([]byte(err.Error()))
+		writer.WriteHeader(500)
 	}
 }
 
@@ -24,7 +24,7 @@ func (app *App) GetProjectStatus(writer http.ResponseWriter, request *http.Reque
 	if err == nil {
 		writer.Write([]byte(res))
 	} else {
-		writer.Write([]byte(err.Error()))
+		writer.WriteHeader(500)
 	}
 }
 
@@ -36,6 +36,6 @@ func (app *App) BuildProject(writer http.ResponseWriter, request *http.Request) 
 	if err == nil {
 		writer.Write([]byte(resp))
 	} else {
-		writer.Write([]byte(err.Error()))
+		writer.WriteHeader(500)
 	}
 }

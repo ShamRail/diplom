@@ -10,13 +10,7 @@ async function AuthGetFetch(url) {
         headers: {
             "Authorization": "Basic " + pass
         }
-    }).then(resp => {
-        if (resp.ok) {
-            return resp
-        } else {
-            alert("Not authorized")
-        }
-    });
+    }).then(resp => resp);
 }
 
 async function GetProjectDescriptionAll() {
@@ -100,7 +94,8 @@ async function GetAllConfiguration(){
 }
 
 async function  GetStatusProject(id){
-    return AuthGetFetch(host + "/status?id=" + id)
+    // return AuthGetFetch(host + "status?id=" + id)
+    return await fetch(host + "status?id=" + id).then(resp => resp);
 }
 
 async function BuildProject(projectId){

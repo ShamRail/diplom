@@ -25,7 +25,6 @@
 		let projects = $("#projects")
 		GetProjectDescriptionAll().then(json => {
 			json.map(t => {
-					console.log(t)
 					projects.append(`
 						<div class="project" id=${t.ProjectId}>
 							<img src="../img/logo_project.png" alt="проект" class="logo_project">
@@ -34,6 +33,10 @@
 							<h4 class="info_project" id="short_description">${t.ShortDescription}</h4>
 						</div>`)
 			})
+		}).then(function (){
+			$(".project").click(function () {
+				window.location = 'project.html?id=' + this.id;
+			});
 		})
 	});
 
