@@ -21,10 +21,10 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
       - POSTGRES_HOST=site_db
-      - BUILDER_API=http://builder-api:8080/api/builder
-      - RUNNER_API=http://runner-api:8080/api/runner
-      - ADMIN_API=http://admin-api:8080/api/admin
-      - WEBSOCKET_HOST=${HOST}
+      - BUILDER_API=http://apprunner.ugatu.su/api/builder
+      - RUNNER_API=http://apprunner.ugatu.su/api/runner
+      - ADMIN_API=http://apprunner.ugatu.su/api/admin
+      - WEBSOCKET_HOST=apprunner.ugatu.su
     depends_on:
       - site_db
       - admin-api

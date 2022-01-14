@@ -1,7 +1,6 @@
 package app_controllers
 
 import (
-	"log"
 	"net/http"
 	"site_app/database/models/project_doc_models"
 	"strconv"
@@ -9,7 +8,6 @@ import (
 
 func (app *App) GetAllConfigurations(writer http.ResponseWriter, request *http.Request) {
 	res, err := app.BuilderService.GetConfigurationAll()
-	log.Println("Trying get configurations")
 	if err == nil {
 		writer.Write([]byte(res))
 	} else {

@@ -47,6 +47,8 @@
 
 							let allowRun = false
 							statusMessage = json.buildStatus
+							$("#status").text(statusMessage)
+
 							if (statusMessage === "BUILT") allowRun = true
 							if (allowRun){
 								$('#btn-build').prop('disabled', true);
@@ -66,10 +68,10 @@
 
 		$("#btn-run").click(function (){
 			console.log("click")
-			window.location.replace(hostRunner + this.id)
+			window.location.replace(hostRunner + id)
 		})
 		$("#btn-build").click(function (){
-			BuildProject(this.id)
+			BuildProject(id)
 		})
 	})
 

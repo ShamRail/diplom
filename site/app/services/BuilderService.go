@@ -57,6 +57,7 @@ func (s *BuilderService) GetBuildStatus(id string) (string, error) {
 func (s *BuilderService) GetConfigurationAll() (string, error) {
 
 	client := http.Client{}
+	log.Println(s.Config.AdminApi + "/configuration/all")
 	resp, err := client.Get(s.Config.AdminApi + "/configuration/all")
 	if err != nil {
 		fmt.Println(err)
