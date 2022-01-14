@@ -47,7 +47,7 @@
 
 							let allowRun = false
 							statusMessage = json.buildStatus
-							$("#status").text(statusMessage)
+							$("#status").val(statusMessage)
 
 							if (statusMessage === "BUILT") allowRun = true
 							if (allowRun){
