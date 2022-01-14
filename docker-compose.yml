@@ -24,7 +24,7 @@ services:
       - BUILDER_API=http://apprunner.ugatu.su/api/builder
       - RUNNER_API=http://apprunner.ugatu.su/api/runner
       - ADMIN_API=http://apprunner.ugatu.su/api/admin
-      - WEBSOCKET_HOST=apprunner.ugatu.su
+      - WEBSOCKET_HOST=${HOST}
     depends_on:
       - site_db
       - admin-api
