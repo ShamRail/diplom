@@ -1,7 +1,6 @@
 package app_controllers
 
 import (
-	"log"
 	"net/http"
 	"site_app/database/models/project_doc_models"
 	"strconv"
@@ -9,11 +8,10 @@ import (
 
 func (app *App) GetAllConfigurations(writer http.ResponseWriter, request *http.Request) {
 	res, err := app.BuilderService.GetConfigurationAll()
-	log.Println("Trying get configurations")
 	if err == nil {
 		writer.Write([]byte(res))
 	} else {
-		writer.Write([]byte(err.Error()))
+		writer.WriteHeader(500)
 	}
 }
 
@@ -24,7 +22,7 @@ func (app *App) GetProjectStatus(writer http.ResponseWriter, request *http.Reque
 	if err == nil {
 		writer.Write([]byte(res))
 	} else {
-		writer.Write([]byte(err.Error()))
+		writer.WriteHeader(500)
 	}
 }
 
@@ -36,6 +34,6 @@ func (app *App) BuildProject(writer http.ResponseWriter, request *http.Request) 
 	if err == nil {
 		writer.Write([]byte(resp))
 	} else {
-		writer.Write([]byte(err.Error()))
+		writer.WriteHeader(500)
 	}
 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script src="../js/queries.js"></script>
+	<link rel="icon" href='../img/favicon_usatu.ico'>
+	<link rel="stylesheet" href="../css/sidenav.css">
+	<link rel="stylesheet" href="../css/header_and_footer.css">
+	<link rel="stylesheet" href="../css/index.css">
+	<link rel="stylesheet" href="../css/red_project.css">
+	<script src="../js/sidenav.js"></script>
+	<script src="../js/header_and_footer.js"></script>
+	<title>Проект</title>
+</head>
+<body bgcolor="#E5E5E5">
+	<section id="header_and_footer">
+	</section>
+	<div class="container">
+			<h2 id="nameProject"></h2>
+			<input readonly type="text" id="status" placeholder="Статус проекта">
+			<textarea readonly id="description" name="subject" placeholder="Описание" style="height:100px; resize: none"></textarea>
+			<button id="btn-run" disabled>Запустить</button>
+			<button id="btn-build" disabled>Собрать</button>
+	</div>
+</body>
+</html>
+<script>
+	$(document).ready(function() {
+		let params = (new URL(document.location)).searchParams;
+		let id = params.get("id");
+		console.log(id)
+		GetProjectDocById(id).then(doc => {
+			console.log(doc)
+
+			GetProjectDescriptionByProjectId(id).then(projDesc => {
+				let desc = projDesc[0].Description
+				let nameProject = doc[0].name
+
+				$("#nameProject").text(nameProject)
+				$("#description").text(desc)
+
+				GetStatusProject(id).then(statusResp => {
+					if (statusResp.ok){
+						statusResp.json().then(json => {
+
+							let allowRun = false
+							statusMessage = json.buildStatus
+							$("#status").text(statusMessage)
+
+							if (statusMessage === "BUILT") allowRun = true
+							if (allowRun){
+								$('#btn-build').prop('disabled', true);
+								$('#btn-run').prop('disabled', false);
+							} else {
+								$('#btn-build').prop('disabled', false);
+								$('#btn-run').prop('disabled', true);
+							}
+						})
+					} else {
+						$('#btn-build').prop('disabled', true);
+						$('#btn-run').prop('disabled', true);
+					}
+				})
+			})
+		})
+
+		$("#btn-run").click(function (){
+			console.log("click")
+			window.location.replace(hostRunner + id)
+		})
+		$("#btn-build").click(function (){
+			BuildProject(id)
+		})
+	})
+
+</script>

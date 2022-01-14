@@ -1,4 +1,8 @@
-let host = "http://localhost:8084/app/"
+let host = "http://localhost:8084/app/";
+let hostRunner =  "http://localhost:8084/runner/app/";
+
+// let serviceHostApp = "apprunner.ugatu.su/app/"
+// let serviceHostRunnerApp = "http://apprunner.ugatu.su/runner/app/"
 
 async function AuthGetFetch(url) {
     let pass = localStorage.getItem('user')
@@ -6,13 +10,7 @@ async function AuthGetFetch(url) {
         headers: {
             "Authorization": "Basic " + pass
         }
-    }).then(resp => {
-        if (resp.ok) {
-            return resp
-        } else {
-            alert("Not authorized")
-        }
-    });
+    }).then(resp => resp);
 }
 
 async function GetProjectDescriptionAll() {
@@ -96,7 +94,8 @@ async function GetAllConfiguration(){
 }
 
 async function  GetStatusProject(id){
-    return AuthGetFetch(host + "/status?id=" + id)
+    // return AuthGetFetch(host + "status?id=" + id)
+    return await fetch(host + "status?id=" + id).then(resp => resp);
 }
 
 async function BuildProject(projectId){

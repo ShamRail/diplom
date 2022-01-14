@@ -89,7 +89,7 @@
                             window.location = 'red_project.html?project_id=' + this.id;
                         })
                         $(".run").click(function (){
-                            window.location.replace("http://localhost/runner/app/" + this.id)
+                            window.location.replace(hostRunner + this.id)
                         })
                         $(".build").click(function (){
                             BuildProject(this.id).then(t => {
